@@ -1,7 +1,7 @@
 import { COMMA, ENTER, SPACE } from '@angular/cdk/keycodes';
 import { Component, ChangeDetectorRef, OnInit, AfterContentInit, ViewChild, Inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { MatGridList, MatChipInputEvent } from '@angular/material';
+import { MatGridList, MatChipInputEvent, MatTableDataSource } from '@angular/material';
 import { ObservableMedia, MediaChange } from '@angular/flex-layout';
 import { IpsService } from '../services/ips.service';
 import { WatchlistService } from '../services/watchlist.service';
@@ -19,6 +19,12 @@ import { Address4, Address6 } from 'ip-address';
 export interface Ip {
   label: string;
 }
+
+export interface Filters {
+  threatClassification: string,
+  blacklistClass: string,
+  networkType: string
+};
 
 export interface IPSummary {
   ipaddress: string;
@@ -62,6 +68,17 @@ export class IpQueryComponent implements OnInit {
 
   exportType = 'csv';
 
+  threatClassifications;
+  blacklistClasses;
+  networkTypes;
+
+  selectedThreatClassification = '';
+  selectedBlacklistClass = '';
+  selectedNetworkType = '';
+  selectedFilters: Filters;
+
+  filteredResult = new MatTableDataSource([]);
+
   constructor(
     public ipsService: IpsService,
     private observableMedia: ObservableMedia,
@@ -77,6 +94,7 @@ export class IpQueryComponent implements OnInit {
     // this.route.data.subscribe(routeData => {
     //   this.user = routeData['user'];
     // })
+    this.filteredResult.sort = this.sort;
     this.user = this.userService.user;
     if (this.userService.user.subscriptionPlanObject && this.userService.user.subscriptionPlanObject.ipQueryLimit) {
       this.ipQueryLimit = this.userService.user.subscriptionPlanObject.ipQueryLimit;
@@ -316,6 +334,25 @@ export class IpQueryComponent implements OnInit {
     window.open('https://musubu.io/app-pricing/', '_blank');
   }
 
+  filterValueChange(filterName, value) {
+
+    this.selectedFilters = {
+      ...this.selectedFilters,
+      [filterName]: value
+    };
+
+    this.filteredResult.data = this.ipsService.dataSource.data
+      .filter(item => !this.selectedFilters.threatClassification
+        ? true
+        : item.threat_classification === this.selectedFilters.threatClassification)
+      .filter(item => !this.selectedFilters.blacklistClass
+        ? true
+        : item.blacklist_class === this.selectedFilters.blacklistClass)
+      .filter(item => !this.selectedFilters.networkType
+        ? true
+        : item.network_type.indexOf(this.selectedFilters.networkType) > -1);
+  }
+
   submitQuery = (ipsList): void => {
     this.ipsService.highRiskCircle.count = 0;
     this.ipsService.mediumRiskCircle.count = 0;
@@ -328,7 +365,19 @@ export class IpQueryComponent implements OnInit {
 
         this.ipsService.getIpsDetail(cleanIpsList).then(
           results => {
+
+            this.threatClassifications = _.map(
+              _.uniqBy(results.ipsDetail, 'threat_classification'),
+              (item) => item.threat_classification
+            );
+            this.blacklistClasses = _.map(
+              _.uniqBy(results.ipsDetail, 'blacklist_class'),
+              (item) => item.blacklist_class
+            );
+            this.networkTypes = _.uniqBy(_.flatten(_.map(results.ipsDetail, 'network_type')));
+
             this.ipsService.dataSource.data = results.ipsDetail;
+            this.filteredResult.data = results.ipsDetail;
             this.ipsService.dataSource.sort = this.sort;
             results.ipsDetail.forEach(element => {
               if (element.threat_classification === 'High') {

@@ -70,6 +70,27 @@
     </section>
 
     <section [hidden]="ipsService.dataSource.data.length === 0">
+      <label class="horizontal-center">Threat Classification: </label>
+      <mat-form-field>
+          <mat-select class="horizontal-center" (selectionChange)="filterValueChange('threatClassification', selectedThreatClassification)"  [(value)]="selectedThreatClassification">
+              <mat-option value="">All</mat-option>
+              <mat-option *ngFor="let classification of threatClassifications" [value]="classification">{{classification}}</mat-option>
+          </mat-select>
+      </mat-form-field>
+      <label class="horizontal-center">Blacklist Class: </label>
+      <mat-form-field>
+          <mat-select class="horizontal-center" (selectionChange)="filterValueChange('blacklistClass', selectedBlacklistClass)" [(value)]="selectedBlacklistClass">
+              <mat-option value="">All</mat-option>
+              <mat-option *ngFor="let class of blacklistClasses" [value]="class">{{class}}</mat-option>
+          </mat-select>
+      </mat-form-field>
+      <label class="horizontal-center">Network Type: </label>
+      <mat-form-field>
+          <mat-select class="horizontal-center" (selectionChange)="filterValueChange('networkType', selectedNetworkType)" [(value)]="selectedNetworkType">
+              <mat-option value="">All</mat-option>
+              <mat-option *ngFor="let type of networkTypes" [value]="type">{{type}}</mat-option>
+          </mat-select>
+      </mat-form-field>
         <div class="export-component-box">
             <div class="export-upgrade-message" *ngIf="userService.user.subscriptionPlan !== 'large'">
                 <a (click)="onClickBuyApp()">Upgrade to export!</a>
@@ -87,7 +108,7 @@
         </div>
         <div class="table-wrapper">
             <!-- Using [hidden] here because the table needs to be rendered to be initialized -->
-            <table mat-table [dataSource]="ipsService.dataSource" matSort class="mat-elevation-z8 results-table">
+            <table mat-table [dataSource]="filteredResult" matSort class="mat-elevation-z8 results-table">
                 <!--- Note that these columns can be defined in any order.
                       The actual rendered columns are set as a property on the row definition" -->
 
