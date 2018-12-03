@@ -358,6 +358,14 @@ export class IpQueryComponent implements OnInit {
     this.ipsService.mediumRiskCircle.count = 0;
     this.ipsService.lowRiskCircle.count = 0;
     this.ipsList = ipsList;
+    this.selectedFilters = {
+      threatClassification: '',
+      blacklistClass: '',
+      networkType: ''
+    };
+    this.selectedThreatClassification = '';
+    this.selectedBlacklistClass = '';
+    this.selectedNetworkType = '';
     if (ipsList.length !== 0) {
       this.validateIpListDeferred(ipsList)
       .then((cleanIpsList) => {
