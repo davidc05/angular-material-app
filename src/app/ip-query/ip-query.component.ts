@@ -21,10 +21,10 @@ export interface Ip {
 }
 
 export interface Filters {
-  threatClassification: string,
-  blacklistClass: string,
-  networkType: string
-};
+  threatClassification: string;
+  blacklistClass: string;
+  networkType: string;
+}
 
 export interface IPSummary {
   ipaddress: string;
