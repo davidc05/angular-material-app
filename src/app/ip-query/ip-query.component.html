@@ -121,21 +121,21 @@
                 </ng-container>
 
                 <!-- Threat Potential Column -->
-                <ng-container matColumnDef="threat_potential_score_pct">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Threat Score </th>
-                    <td mat-cell *matCellDef="let element"> {{element.threat_potential_score_pct}} </td>
-                </ng-container>
-
-                <!-- Threat Classification Column -->
-                <ng-container matColumnDef="threat_classification">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Threat Classification </th>
-                    <td mat-cell *matCellDef="let element"> {{element.threat_classification}} </td>
+                <ng-container matColumnDef="threat_profile">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Threat Profile </th>
+                    <td mat-cell *matCellDef="let element"> {{element.threat_profile}} </td>
                 </ng-container>
 
                 <!-- Blacklist Class Column -->
                 <ng-container matColumnDef="blacklist_class">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header> Blacklist Class </th>
                     <td mat-cell *matCellDef="let element"> {{element.blacklist_class}} </td>
+                </ng-container>
+
+                <!-- Network Type Column -->
+                <ng-container matColumnDef="network_type">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Network Type </th>
+                    <td mat-cell *matCellDef="let element"> {{element.network_type}} </td>
                 </ng-container>
 
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

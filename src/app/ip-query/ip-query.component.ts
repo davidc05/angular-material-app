@@ -54,7 +54,7 @@ export class IpQueryComponent implements OnInit {
   removable = true;
   addOnBlur = true;
   readonly separatorKeysCodes: number[] = [ENTER, COMMA, SPACE];
-  displayedColumns: string[] = ['ipaddress', 'threat_potential_score_pct', 'threat_classification', 'blacklist_class'];
+  displayedColumns: string[] = ['ipaddress', 'threat_profile', 'blacklist_class', 'network_type'];
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild('grid') grid: MatGridList;
 
@@ -76,6 +76,27 @@ export class IpQueryComponent implements OnInit {
   selectedBlacklistClass = '';
   selectedNetworkType = '';
   selectedFilters: Filters;
+
+  knownNetworkTypes = [
+    'Cryptocurrency Networks',
+    'Broadband Networks',
+    'Content Delivery Networks',
+    'Government Networks',
+    'Social Networking Networks',
+    'Academic Networks',
+    'File Sharing Networks',
+    'Financial Networks',
+    'Internet Authorities Networks',
+    'Search Engine Networks',
+    'Software Download Networks',
+    'Worldwide Networks',
+    'Entertainment Networks',
+    'Cloud Services Platform',
+    'Internet Security Networks',
+    'Healthcare Networks',
+    'TOR Anonymity Networks',
+    'Private Networks',
+  ];
 
   filteredResult = new MatTableDataSource([]);
 
@@ -382,10 +403,17 @@ export class IpQueryComponent implements OnInit {
               _.uniqBy(results.ipsDetail, 'blacklist_class'),
               (item) => item.blacklist_class
             );
-            this.networkTypes = _.uniqBy(_.flatten(_.map(results.ipsDetail, 'network_type')));
+            this.networkTypes = _.filter(
+              _.uniqBy(_.flatten(_.map(results.ipsDetail, 'network_type'))),
+              (item) => this.knownNetworkTypes.indexOf(item) > -1
+            );
 
             this.ipsService.dataSource.data = results.ipsDetail;
-            this.filteredResult.data = results.ipsDetail;
+            this.filteredResult.data = _.map(results.ipsDetail, (item) => ({
+              ...item,
+              threat_profile: `${item.threat_potential_score_pct} (${item.threat_classification})`,
+              network_type: _.filter(item.network_type, (item) => this.knownNetworkTypes.indexOf(item) > -1).join(', ')
+            }));
             this.ipsService.dataSource.sort = this.sort;
             results.ipsDetail.forEach(element => {
               if (element.threat_classification === 'High') {
@@ -524,6 +552,5 @@ export class ImportDialogComponent {
         };
         reader.readAsText(file);
     }
-}
-
+  }
 }
