@@ -112,7 +112,21 @@ label.horizontal-center {
     font-size: 14px;
 }
 
+.search.High {
+  background-color: #dc3545;
+}
 
+.search.Medium {
+  background-color: #ffc107;
+}
+
+.search.Low {
+  background-color: #28a745;
+}
+
+.search.Nuisance {
+  background-color: #686868;
+}
 
 
 @media screen and (max-width: 700px){

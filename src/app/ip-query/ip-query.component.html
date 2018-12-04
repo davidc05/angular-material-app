@@ -14,7 +14,7 @@
                 <form class="ip-query">
                     <mat-form-field class="search-width">
                         <mat-chip-list #chipList>
-                            <mat-chip *ngFor="let ip of ipsList" [removable]="removable" (removed)="remove(ip.label)" color="{{ ip.isInvalid ? 'warn' : ''}}">
+                            <mat-chip *ngFor="let ip of ipsList" [removable]="removable" class="search" [ngClass]="ip.threatLevel" (removed)="remove(ip.label)" color="{{ ip.isInvalid ? 'warn' : ''}}">
                                 {{ip.label}}
                                 <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
                             </mat-chip>
