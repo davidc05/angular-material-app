@@ -366,12 +366,22 @@ export class IpQueryComponent implements OnInit {
       .filter(item => !this.selectedFilters.threatClassification
         ? true
         : item.threat_classification === this.selectedFilters.threatClassification)
+      .map(item => ({
+        ...item,
+        threat_profile: `${item.threat_potential_score_pct} (${item.threat_classification})`,
+      }))
       .filter(item => !this.selectedFilters.blacklistClass
         ? true
         : item.blacklist_class === this.selectedFilters.blacklistClass)
       .filter(item => !this.selectedFilters.networkType
         ? true
-        : item.network_type.indexOf(this.selectedFilters.networkType) > -1);
+        : item.network_type.indexOf(this.selectedFilters.networkType) > -1)
+      .map(item => ({
+        ...item,
+        network_type: !_.filter(item.network_type, (item) => this.knownNetworkTypes.indexOf(item) > -1).join(', ').length
+            ? 'No Entry'
+            : _.filter(item.network_type, (item) => this.knownNetworkTypes.indexOf(item) > -1).join(', ')
+      }));
   }
 
   submitQuery = (ipsList): void => {
@@ -412,7 +422,9 @@ export class IpQueryComponent implements OnInit {
             this.filteredResult.data = _.map(results.ipsDetail, (item) => ({
               ...item,
               threat_profile: `${item.threat_potential_score_pct} (${item.threat_classification})`,
-              network_type: _.filter(item.network_type, (item) => this.knownNetworkTypes.indexOf(item) > -1).join(', ')
+              network_type: !_.filter(item.network_type, (item) => this.knownNetworkTypes.indexOf(item) > -1).join(', ').length
+                  ? 'No Entry'
+                  : _.filter(item.network_type, (item) => this.knownNetworkTypes.indexOf(item) > -1).join(', ')
             }));
             this.ipsService.dataSource.sort = this.sort;
             results.ipsDetail.forEach(element => {

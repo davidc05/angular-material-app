@@ -70,7 +70,7 @@
     </section>
 
     <section [hidden]="ipsService.dataSource.data.length === 0">
-      <label class="horizontal-center">Threat Classification: </label>
+      <label class="horizontal-center">Threat Profle: </label>
       <mat-form-field>
           <mat-select class="horizontal-center" (selectionChange)="filterValueChange('threatClassification', selectedThreatClassification)"  [(value)]="selectedThreatClassification">
               <mat-option value="">All</mat-option>
