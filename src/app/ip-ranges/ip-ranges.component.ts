@@ -4,6 +4,20 @@ import { Location } from '@angular/common';
 import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
 import { IpsService } from '../services/ips.service';
 
+import { map, filter, uniqBy, flatten } from 'lodash';
+
+export interface IpRangesFilters {
+  networkName: string;
+  networkType: string;
+  networkGroup: string;
+}
+
+export interface IpsListFilters {
+  threatClassification: string;
+  blacklistClass: string;
+  networkType: string;
+}
+
 @Component({
   selector: 'app-ip-ranges',
   templateUrl: './ip-ranges.component.html',
@@ -26,7 +40,7 @@ export class IpRangesComponent implements OnInit {
     private _location: Location,
   ) { }
   ipRangesColumns: string[] = ['ip_start_int', 'ip_end_int', 'network_name', 'network_type', 'network_group'];
-  ipsListColumns: string[] = ['ipaddress', 'threat_potential_score_pct', 'threat_classification', 'blacklist_class'];
+  ipsListColumns: string[] = ['ipaddress', 'threat_profile', 'blacklist_class', 'network_type'];
 
   ipRanges = [];
   ipsList = [];
@@ -41,6 +55,47 @@ export class IpRangesComponent implements OnInit {
   currentRoute;
   queryParam;
   isLoading = false;
+
+  networkTypes;
+  networkNames;
+  networkGroups;
+
+  threatClassifications;
+  blacklistClasses;
+
+  selectedNetworkName = '';
+  selectedNetworkType = '';
+  selectedNetworkGroup = '';
+
+  selectedThreatClassification = '';
+  selectedBlacklistClass = '';
+
+  selectedIpRangesFilters: IpRangesFilters;
+  selectedIpsListFilters: IpsListFilters;
+
+  filteredIpRangesResult = new MatTableDataSource([]);
+  filteredIpsListResult = new MatTableDataSource([]);
+
+  knownNetworkTypes = [
+    'Cryptocurrency Networks',
+    'Broadband Networks',
+    'Content Delivery Networks',
+    'Government Networks',
+    'Social Networking Networks',
+    'Academic Networks',
+    'File Sharing Networks',
+    'Financial Networks',
+    'Internet Authorities Networks',
+    'Search Engine Networks',
+    'Software Download Networks',
+    'Worldwide Networks',
+    'Entertainment Networks',
+    'Cloud Services Platform',
+    'Internet Security Networks',
+    'Healthcare Networks',
+    'TOR Anonymity Networks',
+    'Private Networks',
+  ];
 
   ngOnInit() {
     this.router.events.subscribe((event: NavigationEnd) => {
@@ -82,9 +137,14 @@ export class IpRangesComponent implements OnInit {
         default:
           break;
       }
+      if (this.currentRoute === 'network-name' || this.currentRoute === 'network-type' || this.currentRoute === 'network-group') {
+        this.initIpRangesFilter(this.dataSource.data);
+      } else {
+        this.initIpsListFilter(this.dataSource.data);
+      }
     });
 
-    this.dataSource.sortingDataAccessor = (data: any, sortHeaderId: string): string => {
+    this.filteredIpRangesResult.sortingDataAccessor = (data: any, sortHeaderId: string): string => {
       if (typeof data[sortHeaderId] === 'string') {
         return data[sortHeaderId].toLocaleLowerCase();
       }
@@ -94,16 +154,35 @@ export class IpRangesComponent implements OnInit {
 
   setDataSourceAttributes() {
     this.dataSource.sort = this.sort;
+    this.filteredIpRangesResult.sort = this.sort;
+    this.filteredIpsListResult.sort = this.sort;
   }
 
   getPageInfo(e) {
     this.isLoading = true;
+    this.selectedIpRangesFilters = {
+      networkType: '',
+      networkName: '',
+      networkGroup: ''
+    };
+    this.selectedIpsListFilters = {
+      threatClassification: '',
+      blacklistClass: '',
+      networkType: ''
+    };
+    this.selectedNetworkType = '';
+    this.selectedNetworkName = '';
+    this.selectedNetworkGroup = '';
+
+    this.selectedThreatClassification = '';
+    this.selectedBlacklistClass = '';
     return new Promise((resolve, reject) => {
       switch(this.currentRoute) {
         case 'network-name':
           this.ipsService.getIpRangesByNetworkName(this.queryParam, (e.pageIndex + 1).toString())
             .then(data => {
               this.dataSource.data = data.ipRanges.entries;
+              this.initIpRangesFilter(this.dataSource.data);
               this.isLoading = false;
             }, err => resolve(null));
           break;
@@ -111,6 +190,7 @@ export class IpRangesComponent implements OnInit {
           this.ipsService.getIpRangesByNetworkType(this.queryParam, (e.pageIndex + 1).toString())
             .then(data => {
               this.dataSource.data = data.ipRanges.entries;
+              this.initIpRangesFilter(this.dataSource.data);
               this.isLoading = false;
             }, err => resolve(null));
           break;
@@ -118,6 +198,7 @@ export class IpRangesComponent implements OnInit {
           this.ipsService.getIpRangesByNetworkGroup(this.queryParam, (e.pageIndex + 1).toString())
             .then(data => {
               this.dataSource.data = data.ipRanges.entries;
+              this.initIpRangesFilter(this.dataSource.data);
               this.isLoading = false;
             }, err => resolve(null));
           break;
@@ -127,6 +208,7 @@ export class IpRangesComponent implements OnInit {
               const ips = data.ipRanges.entries.map(item => item.ipaddress);
               this.ipsService.getIpsDetail(ips).then(response => {
                 this.dataSource.data = response.ipsDetail;
+                this.initIpsListFilter(this.dataSource.data);
                 this.isLoading = false;
               });
             }, err => resolve(null));
@@ -136,12 +218,87 @@ export class IpRangesComponent implements OnInit {
             e.pageIndex * (this.pageSize - 1),
             e.pageIndex * (this.pageSize - 1) + this.pageSize,
           );
+          this.initIpsListFilter(this.dataSource.data);
           this.isLoading = false;
           break;
         default:
           break;
       }
     });
+  }
+
+  initIpRangesFilter(data) {
+    this.networkNames = uniqBy(map(data, 'network_name'));
+    this.networkTypes = uniqBy(map(data, 'network_type'));
+    this.networkGroups = uniqBy(map(data, 'network_group'));
+    this.filteredIpRangesResult.data = data;
+  }
+
+  initIpsListFilter(data) {
+    this.threatClassifications = map(
+      uniqBy(data, 'threat_classification'),
+      (item) => item.threat_classification
+    );
+    this.blacklistClasses = map(
+      uniqBy(data, 'blacklist_class'),
+      (item) => item.blacklist_class
+    );
+    this.networkTypes = filter(
+      uniqBy(flatten(map(data, 'network_type'))),
+      (item) => this.knownNetworkTypes.indexOf(item) > -1
+    );
+
+    this.filteredIpsListResult.data = map(data, (item) => ({
+      ...item,
+      threat_profile: `${item.threat_potential_score_pct} (${item.threat_classification})`,
+      network_type: !filter(item.network_type, (item) => this.knownNetworkTypes.indexOf(item) > -1).join(', ').length
+          ? 'No Entry'
+          : filter(item.network_type, (item) => this.knownNetworkTypes.indexOf(item) > -1).join(', ')
+    }));
+  }
+
+  filterValueChange(filterName, value) {
+    if (this.currentRoute === 'network-name' || this.currentRoute === 'network-type' || this.currentRoute === 'network-group') {
+      this.selectedIpRangesFilters = {
+        ...this.selectedIpRangesFilters,
+        [filterName]: value
+      };
+      this.filteredIpRangesResult.data = this.dataSource.data
+      .filter(item => !this.selectedIpRangesFilters.networkName
+        ? true
+        : this.selectedIpRangesFilters.networkName === item.network_name)
+      .filter(item => !this.selectedIpRangesFilters.networkType
+        ? true
+        : this.selectedIpRangesFilters.networkType === item.network_type)
+      .filter(item => !this.selectedIpRangesFilters.networkGroup
+        ? true
+        : this.selectedIpRangesFilters.networkGroup === item.network_group)
+    } else {
+      this.selectedIpsListFilters = {
+        ...this.selectedIpsListFilters,
+        [filterName]: value
+      };
+      this.filteredIpsListResult.data = this.dataSource.data
+        .filter(item => !this.selectedIpsListFilters.threatClassification
+          ? true
+          : item.threat_classification === this.selectedIpsListFilters.threatClassification)
+        .map(item => ({
+          ...item,
+          threat_profile: `${item.threat_potential_score_pct} (${item.threat_classification})`,
+        }))
+        .filter(item => !this.selectedIpsListFilters.blacklistClass
+          ? true
+          : item.blacklist_class === this.selectedIpsListFilters.blacklistClass)
+        .filter(item => !this.selectedIpsListFilters.networkType
+          ? true
+          : item.network_type.indexOf(this.selectedIpsListFilters.networkType) > -1)
+        .map(item => ({
+          ...item,
+          network_type: !filter(item.network_type, (item) => this.knownNetworkTypes.indexOf(item) > -1).join(', ').length
+              ? 'No Entry'
+              : filter(item.network_type, (item) => this.knownNetworkTypes.indexOf(item) > -1).join(', ')
+        }));
+    }
   }
 
   backButton(){
