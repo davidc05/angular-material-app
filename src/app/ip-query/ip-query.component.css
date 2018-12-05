@@ -5,6 +5,10 @@
     width: 100%;
     margin-bottom: 10px;
 }
+
+
+/* Search box */
+
 .search-width {
     width: 100%;
 }
@@ -16,6 +20,62 @@
     font-weight: bold;
     font-family: 'Open Sans',Helvetica,Arial,Lucida,sans-serif;
 }
+.mat-chip.search{
+    padding: 4px 4px 4px 12px;
+    border-width: 3px;
+    border-style: solid;
+}
+.mat-chip.High {
+  background-color: #FDC6CA;
+  border-color: #DC3445;
+}
+.mat-chip.Medium {
+  background-color: #FFE9A9;
+  border-color: #FFC105;
+}
+.mat-chip.Low {
+  background-color: #B8ECC3;
+  border-color: #27A745;
+}
+.mat-chip.Nuisance {
+  background-color: #E0E0E0;
+  border-color: #686868;
+}
+
+
+/* Import Dialog */
+
+.code-sample-box {
+    margin-bottom: 1.25em;
+    padding: 10px 15px;
+    background: #fafafa;
+    border: 1px solid #ddd;
+    font-size: 13px;
+}
+.fileContainer {
+    overflow: hidden;
+    position: relative;
+}
+.fileContainer [type=file] {
+    cursor: inherit;
+    display: block;
+    font-size: 999px;
+    filter: alpha(opacity=0);
+    min-height: 100%;
+    min-width: 100%;
+    opacity: 0;
+    position: absolute;
+    right: 0;
+    text-align: right;
+    top: 0;
+}
+.file-contents-description{
+    margin-bottom: 0;
+    font-size: 14px;
+}
+
+
+/* Search Results */
 
 .risk-circles-grid-list {
     margin-bottom: 20px;
@@ -44,6 +104,10 @@ label.horizontal-center {
     margin-right: 15px;
     font-weight: bold;
 }
+
+
+/* CSV/JSON Export */
+
 .export-upgrade-message{
     font-size: 75%;
     text-align: right;
