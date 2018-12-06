@@ -4,7 +4,7 @@ import { Location } from '@angular/common';
 import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
 import { IpsService } from '../services/ips.service';
 
-import { map, filter, uniqBy, flatten } from 'lodash';
+import { map, filter, uniqBy, flatten, chain } from 'lodash';
 
 export interface IpRangesFilters {
   networkName: string;
@@ -235,25 +235,31 @@ export class IpRangesComponent implements OnInit {
   }
 
   initIpsListFilter(data) {
-    this.threatClassifications = map(
-      uniqBy(data, 'threat_classification'),
-      (item) => item.threat_classification
-    );
-    this.blacklistClasses = map(
-      uniqBy(data, 'blacklist_class'),
-      (item) => item.blacklist_class
-    );
-    this.networkTypes = filter(
-      uniqBy(flatten(map(data, 'network_type'))),
-      (item) => this.knownNetworkTypes.indexOf(item) > -1
-    );
+    this.threatClassifications = chain(data)
+      .map(item => item.threat_classification)
+      .uniqBy()
+      .value();
+
+    this.blacklistClasses = chain(data)
+      .map(item => item.blacklist_class)
+      .uniqBy()
+      .value();
+
+    this.networkTypes = chain(data)
+      .map(item => item.network_type)
+      .flatten()
+      .uniqBy()
+      .filter(item => this.knownNetworkTypes.indexOf(item) > -1)
+      .value();
 
     this.filteredIpsListResult.data = map(data, (item) => ({
       ...item,
       threat_profile: `${item.threat_potential_score_pct} (${item.threat_classification})`,
-      network_type: !filter(item.network_type, (item) => this.knownNetworkTypes.indexOf(item) > -1).join(', ').length
-          ? 'No Entry'
-          : filter(item.network_type, (item) => this.knownNetworkTypes.indexOf(item) > -1).join(', ')
+      network_type:
+        !filter(item.network_type, (item) => this.knownNetworkTypes.indexOf(item) > -1)
+          .join(', ').length
+        ? 'No Entry'
+        : filter(item.network_type, (item) => this.knownNetworkTypes.indexOf(item) > -1).join(', ')
     }));
   }
 
@@ -263,16 +269,44 @@ export class IpRangesComponent implements OnInit {
         ...this.selectedIpRangesFilters,
         [filterName]: value
       };
+
       this.filteredIpRangesResult.data = this.dataSource.data
-      .filter(item => !this.selectedIpRangesFilters.networkName
-        ? true
-        : this.selectedIpRangesFilters.networkName === item.network_name)
-      .filter(item => !this.selectedIpRangesFilters.networkType
-        ? true
-        : this.selectedIpRangesFilters.networkType === item.network_type)
-      .filter(item => !this.selectedIpRangesFilters.networkGroup
-        ? true
-        : this.selectedIpRangesFilters.networkGroup === item.network_group)
+        .filter(item => !this.selectedIpRangesFilters.networkName
+          ? true
+          : this.selectedIpRangesFilters.networkName === item.network_name)
+        .filter(item => !this.selectedIpRangesFilters.networkType
+          ? true
+          : this.selectedIpRangesFilters.networkType === item.network_type)
+        .filter(item => !this.selectedIpRangesFilters.networkGroup
+          ? true
+          : this.selectedIpRangesFilters.networkGroup === item.network_group)
+
+      this.networkNames =
+        chain(filterName === 'networkName' ? this.dataSource.data : this.filteredIpRangesResult.data)
+        .map(item => item.network_name)
+        .uniqBy()
+        .value();
+      this.networkTypes =
+        chain(filterName === 'networkType' ? this.dataSource.data : this.filteredIpRangesResult.data)
+        .map(item => item.network_type)
+        .uniqBy()
+        .value();
+      this.networkGroups =
+        chain(filterName === 'networkGroup' ? this.dataSource.data : this.filteredIpRangesResult.data)
+        .map(item => item.network_group)
+        .uniqBy()
+        .value();
+
+      this.selectedNetworkName = this.networkNames.length === 1 ? this.networkNames[0] : '';
+      this.selectedNetworkType = this.networkTypes.length === 1 ? this.networkTypes[0] : '';
+      this.selectedNetworkGroup = this.networkGroups.length === 1 ? this.networkGroups[0] : '';
+
+      this.selectedIpRangesFilters = {
+        networkName: this.networkNames.length === 1 ? this.selectedIpRangesFilters.networkName : '',
+        networkType: this.networkTypes.length === 1 ? this.selectedIpRangesFilters.networkType : '',
+        networkGroup: this.networkGroups.length === 1 ? this.selectedIpRangesFilters.networkGroup : '',
+      };
+
     } else {
       this.selectedIpsListFilters = {
         ...this.selectedIpsListFilters,
@@ -298,6 +332,34 @@ export class IpRangesComponent implements OnInit {
               ? 'No Entry'
               : filter(item.network_type, (item) => this.knownNetworkTypes.indexOf(item) > -1).join(', ')
         }));
+
+      this.threatClassifications =
+        chain(filterName === 'threatClassification' ? this.dataSource.data : this.filteredIpsListResult.data)
+        .map(item => item.threat_classification)
+        .uniqBy()
+        .value();
+      this.blacklistClasses =
+        chain(filterName === 'blacklistClass' ? this.dataSource.data : this.filteredIpsListResult.data)
+        .map(item => item.blacklist_class)
+        .uniqBy()
+        .value();
+      this.networkTypes =
+        chain(filterName === 'networkType' ? this.dataSource.data : this.filteredIpsListResult.data)
+        .map(item => filterName === 'networkType' ? item.network_type : item.network_type.split(', '))
+        .flatten()
+        .uniqBy()
+        .filter(item => this.knownNetworkTypes.indexOf(item) > -1)
+        .value();
+
+      this.selectedThreatClassification = this.threatClassifications.length === 1 ? this.threatClassifications[0] : '';
+      this.selectedBlacklistClass = this.blacklistClasses.length === 1 ? this.blacklistClasses[0] : '';
+      this.selectedNetworkType = this.networkTypes.length === 1 ? this.networkTypes[0] : '';
+
+      this.selectedIpsListFilters = {
+        threatClassification: this.threatClassifications.length === 1 ? this.selectedIpsListFilters.threatClassification : '',
+        blacklistClass: this.blacklistClasses.length === 1 ? this.selectedIpsListFilters.blacklistClass : '',
+        networkType: this.networkTypes.length === 1 ? this.selectedIpsListFilters.networkType : '',
+      };
     }
   }
 
