@@ -12,7 +12,7 @@ import saveAs from 'file-saver';
 import * as moment from 'moment';
 import { UserService } from '../services/user.service';
 
-import { map, filter, flatten, uniqBy, findIndex } from 'lodash';
+import { map, filter, flatten, uniqBy, findIndex, chain } from 'lodash';
 
 import { Address4, Address6 } from 'ip-address';
 
@@ -382,49 +382,23 @@ export class IpQueryComponent implements OnInit {
             : filter(item.network_type, (item) => this.knownNetworkTypes.indexOf(item) > -1).join(', ')
       }));
 
-      if (filterName === 'threatClassification') {
-        this.threatClassifications = map(
-          uniqBy(this.ipsService.dataSource.data, 'threat_classification'),
-          (item) => item.threat_classification
-        );
-        this.blacklistClasses = map(
-          uniqBy(this.filteredResult.data, 'blacklist_class'),
-          (item) => item.blacklist_class
-        );
-        this.networkTypes = filter(
-          uniqBy(flatten(this.filteredResult.data.map(item => item.network_type.split(', ')))),
-          (item) => this.knownNetworkTypes.indexOf(item) > -1
-        );
-      }
-      if (filterName === 'blacklistClass') {
-        this.threatClassifications = map(
-          uniqBy(this.filteredResult.data, 'threat_classification'),
-          (item) => item.threat_classification
-        );
-        this.blacklistClasses = map(
-          uniqBy(this.ipsService.dataSource.data, 'blacklist_class'),
-          (item) => item.blacklist_class
-        );
-        this.networkTypes = filter(
-          uniqBy(flatten(this.filteredResult.data.map(item => item.network_type.split(', ')))),
-          (item) => this.knownNetworkTypes.indexOf(item) > -1
-        );
-      }
-      if (filterName === 'networkType') {
-        this.threatClassifications = map(
-          uniqBy(this.filteredResult.data, 'threat_classification'),
-          (item) => item.threat_classification
-        );
-        this.blacklistClasses = map(
-          uniqBy(this.filteredResult.data, 'blacklist_class'),
-          (item) => item.blacklist_class
-        );
-
-        this.networkTypes = filter(
-          uniqBy(flatten(map(this.ipsService.dataSource.data, 'network_type'))),
-          (item) => this.knownNetworkTypes.indexOf(item) > -1
-        );
-      }
+      this.threatClassifications =
+        chain(filterName === 'threatClassification' ? this.ipsService.dataSource.data : this.filteredResult.data)
+        .map(item => item.threat_classification)
+        .uniqBy()
+        .value();
+      this.blacklistClasses =
+        chain(filterName === 'blacklistClass' ? this.ipsService.dataSource.data : this.filteredResult.data)
+        .map(item => item.blacklist_class)
+        .uniqBy()
+        .value();
+      this.networkTypes =
+        chain(filterName === 'networkType' ? this.ipsService.dataSource.data : this.filteredResult.data)
+        .map(item => filterName === 'networkType' ? item.network_type : item.network_type.split(', '))
+        .flatten()
+        .uniqBy()
+        .filter(item => this.knownNetworkTypes.indexOf(item) > -1)
+        .value();
 
       this.selectedThreatClassification = this.threatClassifications.length === 1 ? this.threatClassifications[0] : '';
       this.selectedBlacklistClass = this.blacklistClasses.length === 1 ? this.blacklistClasses[0] : '';
@@ -456,19 +430,25 @@ export class IpQueryComponent implements OnInit {
 
         this.ipsService.getIpsDetail(cleanIpsList).then(
           results => {
+            this.threatClassifications =
+              chain(results.ipsDetail)
+              .map(item => item.threat_classification)
+              .uniqBy()
+              .value();
 
-            this.threatClassifications = map(
-              uniqBy(results.ipsDetail, 'threat_classification'),
-              (item) => item.threat_classification
-            );
-            this.blacklistClasses = map(
-              uniqBy(results.ipsDetail, 'blacklist_class'),
-              (item) => item.blacklist_class
-            );
-            this.networkTypes = filter(
-              uniqBy(flatten(map(results.ipsDetail, 'network_type'))),
-              (item) => this.knownNetworkTypes.indexOf(item) > -1
-            );
+            this.blacklistClasses =
+              chain(results.ipsDetail)
+              .map(item => item.blacklist_class)
+              .uniqBy()
+              .value();
+
+            this.networkTypes =
+              chain(results.ipsDetail)
+              .map(item => item.network_type)
+              .flatten()
+              .uniqBy()
+              .filter(item => this.knownNetworkTypes.indexOf(item) > -1)
+              .value();
 
             this.ipsService.dataSource.data = results.ipsDetail;
             this.filteredResult.data = map(results.ipsDetail, (item) => ({
@@ -479,6 +459,7 @@ export class IpQueryComponent implements OnInit {
                   : filter(item.network_type, (item) => this.knownNetworkTypes.indexOf(item) > -1).join(', ')
             }));
             this.ipsService.dataSource.sort = this.sort;
+
             results.ipsDetail.forEach(element => {
               if (element.threat_classification === 'High') {
                 this.ipsService.highRiskCircle.count++;
