@@ -211,13 +211,7 @@ export class IpQueryComponent implements OnInit {
       (result) => {
         if (result && result.ips) {
           result.ips.forEach(ip => {
-            this.ipsService.getIpsDetail([ip])
-              .then(result => {
-                this.ipsList.push({
-                  label: ip,
-                  threatLevel: result.ipsDetail[0].threat_classification
-                });
-              });
+            this.ipsList.push({ label: ip, threatLevel: '' });
           });
         }
         this.submitQuery(this.ipsList);
@@ -323,13 +317,7 @@ export class IpQueryComponent implements OnInit {
       if (this.ipsList.length < this.ipQueryLimit) {
         const trimmedValue = value.trim();
         if (_.findIndex(this.ipsList, function(o) { return o.label === trimmedValue; }) === -1) {
-          this.ipsService.getIpsDetail([value.trim()])
-            .then(result => {
-              this.ipsList.push({
-                label: value.trim(),
-                threatLevel: result.ipsDetail[0].threat_classification
-              });
-            });
+          this.ipsList.push({ label: value.trim(), threatLevel: '' });
         }
       }
     }
@@ -359,13 +347,7 @@ export class IpQueryComponent implements OnInit {
           if (this.ipsList.length < this.ipQueryLimit) {
             const trimmedValue = value.trim();
             if (_.findIndex(this.ipsList, function(o) { return o.label === trimmedValue; }) === -1) {
-              this.ipsService.getIpsDetail([value.trim()])
-                .then(result => {
-                  this.ipsList.push({
-                    label: value.trim(),
-                    threatLevel: result.ipsDetail[0].threat_classification
-                  });
-                });
+              this.ipsList.push({ label: value.trim(), threatLevel: '' });
             }
           }
         }
