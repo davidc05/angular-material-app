@@ -12,7 +12,7 @@ import saveAs from 'file-saver';
 import * as moment from 'moment';
 import { UserService } from '../services/user.service';
 
-import * as _ from 'lodash';
+import { map, filter, flatten, uniqBy, findIndex } from 'lodash';
 
 import { Address4, Address6 } from 'ip-address';
 
@@ -313,7 +313,7 @@ export class IpQueryComponent implements OnInit {
     if ((value || '').trim()) {
       if (this.ipsList.length < this.ipQueryLimit) {
         const trimmedValue = value.trim();
-        if (_.findIndex(this.ipsList, function(o) { return o.label === trimmedValue; }) === -1) {
+        if (findIndex(this.ipsList, function(o) { return o.label === trimmedValue; }) === -1) {
           this.ipsList.push({ label: value.trim() });
         }
       }
@@ -327,7 +327,7 @@ export class IpQueryComponent implements OnInit {
 
   // Removes chips to the textbox
   remove(ip): void {
-    const index = _.findIndex(this.ipsList, function(o) { return o.label === ip; });
+    const index = findIndex(this.ipsList, function(o) { return o.label === ip; });
     if (index >= 0) {
       this.ipsList.splice(index, 1);
     }
@@ -343,7 +343,7 @@ export class IpQueryComponent implements OnInit {
         if ((value || '').trim()) {
           if (this.ipsList.length < this.ipQueryLimit) {
             const trimmedValue = value.trim();
-            if (_.findIndex(this.ipsList, function(o) { return o.label === trimmedValue; }) === -1) {
+            if (findIndex(this.ipsList, function(o) { return o.label === trimmedValue; }) === -1) {
               this.ipsList.push({ label: value.trim() });
             }
           }
@@ -356,7 +356,6 @@ export class IpQueryComponent implements OnInit {
   }
 
   filterValueChange(filterName, value) {
-
     this.selectedFilters = {
       ...this.selectedFilters,
       [filterName]: value
@@ -378,10 +377,63 @@ export class IpQueryComponent implements OnInit {
         : item.network_type.indexOf(this.selectedFilters.networkType) > -1)
       .map(item => ({
         ...item,
-        network_type: !_.filter(item.network_type, (item) => this.knownNetworkTypes.indexOf(item) > -1).join(', ').length
+        network_type: !filter(item.network_type, (item) => this.knownNetworkTypes.indexOf(item) > -1).join(', ').length
             ? 'No Entry'
-            : _.filter(item.network_type, (item) => this.knownNetworkTypes.indexOf(item) > -1).join(', ')
+            : filter(item.network_type, (item) => this.knownNetworkTypes.indexOf(item) > -1).join(', ')
       }));
+
+      if (filterName === 'threatClassification') {
+        this.threatClassifications = map(
+          uniqBy(this.ipsService.dataSource.data, 'threat_classification'),
+          (item) => item.threat_classification
+        );
+        this.blacklistClasses = map(
+          uniqBy(this.filteredResult.data, 'blacklist_class'),
+          (item) => item.blacklist_class
+        );
+        this.networkTypes = filter(
+          uniqBy(flatten(this.filteredResult.data.map(item => item.network_type.split(', ')))),
+          (item) => this.knownNetworkTypes.indexOf(item) > -1
+        );
+      }
+      if (filterName === 'blacklistClass') {
+        this.threatClassifications = map(
+          uniqBy(this.filteredResult.data, 'threat_classification'),
+          (item) => item.threat_classification
+        );
+        this.blacklistClasses = map(
+          uniqBy(this.ipsService.dataSource.data, 'blacklist_class'),
+          (item) => item.blacklist_class
+        );
+        this.networkTypes = filter(
+          uniqBy(flatten(this.filteredResult.data.map(item => item.network_type.split(', ')))),
+          (item) => this.knownNetworkTypes.indexOf(item) > -1
+        );
+      }
+      if (filterName === 'networkType') {
+        this.threatClassifications = map(
+          uniqBy(this.filteredResult.data, 'threat_classification'),
+          (item) => item.threat_classification
+        );
+        this.blacklistClasses = map(
+          uniqBy(this.filteredResult.data, 'blacklist_class'),
+          (item) => item.blacklist_class
+        );
+
+        this.networkTypes = filter(
+          uniqBy(flatten(map(this.ipsService.dataSource.data, 'network_type'))),
+          (item) => this.knownNetworkTypes.indexOf(item) > -1
+        );
+      }
+
+      this.selectedThreatClassification = this.threatClassifications.length === 1 ? this.threatClassifications[0] : '';
+      this.selectedBlacklistClass = this.blacklistClasses.length === 1 ? this.blacklistClasses[0] : '';
+      this.selectedNetworkType = this.networkTypes.length === 1 ? this.networkTypes[0] : '';
+      this.selectedFilters = {
+        threatClassification: this.threatClassifications.length === 1 ? this.selectedFilters.threatClassification : '',
+        blacklistClass: this.blacklistClasses.length === 1 ? this.selectedFilters.blacklistClass : '',
+        networkType: this.networkTypes.length === 1 ? this.selectedFilters.networkType : '',
+      };
   }
 
   submitQuery = (ipsList): void => {
@@ -405,26 +457,26 @@ export class IpQueryComponent implements OnInit {
         this.ipsService.getIpsDetail(cleanIpsList).then(
           results => {
 
-            this.threatClassifications = _.map(
-              _.uniqBy(results.ipsDetail, 'threat_classification'),
+            this.threatClassifications = map(
+              uniqBy(results.ipsDetail, 'threat_classification'),
               (item) => item.threat_classification
             );
-            this.blacklistClasses = _.map(
-              _.uniqBy(results.ipsDetail, 'blacklist_class'),
+            this.blacklistClasses = map(
+              uniqBy(results.ipsDetail, 'blacklist_class'),
               (item) => item.blacklist_class
             );
-            this.networkTypes = _.filter(
-              _.uniqBy(_.flatten(_.map(results.ipsDetail, 'network_type'))),
+            this.networkTypes = filter(
+              uniqBy(flatten(map(results.ipsDetail, 'network_type'))),
               (item) => this.knownNetworkTypes.indexOf(item) > -1
             );
 
             this.ipsService.dataSource.data = results.ipsDetail;
-            this.filteredResult.data = _.map(results.ipsDetail, (item) => ({
+            this.filteredResult.data = map(results.ipsDetail, (item) => ({
               ...item,
               threat_profile: `${item.threat_potential_score_pct} (${item.threat_classification})`,
-              network_type: !_.filter(item.network_type, (item) => this.knownNetworkTypes.indexOf(item) > -1).join(', ').length
+              network_type: !filter(item.network_type, (item) => this.knownNetworkTypes.indexOf(item) > -1).join(', ').length
                   ? 'No Entry'
-                  : _.filter(item.network_type, (item) => this.knownNetworkTypes.indexOf(item) > -1).join(', ')
+                  : filter(item.network_type, (item) => this.knownNetworkTypes.indexOf(item) > -1).join(', ')
             }));
             this.ipsService.dataSource.sort = this.sort;
             results.ipsDetail.forEach(element => {
