@@ -316,7 +316,7 @@ export class IpQueryComponent implements OnInit {
     if ((value || '').trim()) {
       if (this.ipsList.length < this.ipQueryLimit) {
         const trimmedValue = value.trim();
-        if (_.findIndex(this.ipsList, function(o) { return o.label === trimmedValue; }) === -1) {
+        if (findIndex(this.ipsList, function(o) { return o.label === trimmedValue; }) === -1) {
           this.ipsList.push({ label: value.trim(), threatLevel: '' });
         }
       }
@@ -346,7 +346,7 @@ export class IpQueryComponent implements OnInit {
         if ((value || '').trim()) {
           if (this.ipsList.length < this.ipQueryLimit) {
             const trimmedValue = value.trim();
-            if (_.findIndex(this.ipsList, function(o) { return o.label === trimmedValue; }) === -1) {
+            if (findIndex(this.ipsList, function(o) { return o.label === trimmedValue; }) === -1) {
               this.ipsList.push({ label: value.trim(), threatLevel: '' });
             }
           }
@@ -425,6 +425,7 @@ export class IpQueryComponent implements OnInit {
     this.ipsService.highRiskCircle.count = 0;
     this.ipsService.mediumRiskCircle.count = 0;
     this.ipsService.lowRiskCircle.count = 0;
+
     this.ipsList = ipsList;
 
     if (ipsList.length !== 0) {
