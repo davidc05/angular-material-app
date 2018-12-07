@@ -56,6 +56,8 @@ export class IpRangesComponent implements OnInit {
   queryParam;
   isLoading = false;
 
+  threatProfileOrder = ['High', 'Medium', 'Nuisance', 'Low'];
+
   networkTypes;
   networkNames;
   networkGroups;
@@ -228,29 +230,33 @@ export class IpRangesComponent implements OnInit {
   }
 
   initIpRangesFilter(data) {
-    this.networkNames = uniqBy(map(data, 'network_name'));
-    this.networkTypes = uniqBy(map(data, 'network_type'));
-    this.networkGroups = uniqBy(map(data, 'network_group'));
+    this.networkNames = uniqBy(map(data, 'network_name')).sort();
+    this.networkTypes = uniqBy(map(data, 'network_type')).sort();
+    this.networkGroups = uniqBy(map(data, 'network_group')).sort();
     this.filteredIpRangesResult.data = data;
   }
 
   initIpsListFilter(data) {
-    this.threatClassifications = chain(data)
+    this.threatClassifications = this.sortThreatProfileOptions(
+      chain(data)
       .map(item => item.threat_classification)
       .uniqBy()
-      .value();
+      .value()
+    );
 
     this.blacklistClasses = chain(data)
       .map(item => item.blacklist_class)
       .uniqBy()
-      .value();
+      .value()
+      .sort();
 
     this.networkTypes = chain(data)
       .map(item => item.network_type)
       .flatten()
       .uniqBy()
       .filter(item => this.knownNetworkTypes.indexOf(item) > -1)
-      .value();
+      .value()
+      .sort();
 
     this.filteredIpsListResult.data = map(data, (item) => ({
       ...item,
@@ -285,17 +291,20 @@ export class IpRangesComponent implements OnInit {
         chain(filterName === 'networkName' ? this.dataSource.data : this.filteredIpRangesResult.data)
         .map(item => item.network_name)
         .uniqBy()
-        .value();
+        .value()
+        .sort();
       this.networkTypes =
         chain(filterName === 'networkType' ? this.dataSource.data : this.filteredIpRangesResult.data)
         .map(item => item.network_type)
         .uniqBy()
-        .value();
+        .value()
+        .sort();
       this.networkGroups =
         chain(filterName === 'networkGroup' ? this.dataSource.data : this.filteredIpRangesResult.data)
         .map(item => item.network_group)
         .uniqBy()
-        .value();
+        .value()
+        .sort();
 
       this.selectedNetworkName = this.networkNames.length === 1 ? this.networkNames[0] : '';
       this.selectedNetworkType = this.networkTypes.length === 1 ? this.networkTypes[0] : '';
@@ -334,22 +343,26 @@ export class IpRangesComponent implements OnInit {
         }));
 
       this.threatClassifications =
-        chain(filterName === 'threatClassification' ? this.dataSource.data : this.filteredIpsListResult.data)
-        .map(item => item.threat_classification)
-        .uniqBy()
-        .value();
+        this.sortThreatProfileOptions(
+          chain(filterName === 'threatClassification' ? this.dataSource.data : this.filteredIpsListResult.data)
+          .map(item => item.threat_classification)
+          .uniqBy()
+          .value()
+        )
       this.blacklistClasses =
         chain(filterName === 'blacklistClass' ? this.dataSource.data : this.filteredIpsListResult.data)
         .map(item => item.blacklist_class)
         .uniqBy()
-        .value();
+        .value()
+        .sort();
       this.networkTypes =
         chain(filterName === 'networkType' ? this.dataSource.data : this.filteredIpsListResult.data)
         .map(item => filterName === 'networkType' ? item.network_type : item.network_type.split(', '))
         .flatten()
         .uniqBy()
         .filter(item => this.knownNetworkTypes.indexOf(item) > -1)
-        .value();
+        .value()
+        .sort();
 
       this.selectedThreatClassification = this.threatClassifications.length === 1 ? this.threatClassifications[0] : '';
       this.selectedBlacklistClass = this.blacklistClasses.length === 1 ? this.blacklistClasses[0] : '';
@@ -361,6 +374,24 @@ export class IpRangesComponent implements OnInit {
         networkType: this.networkTypes.length === 1 ? this.selectedIpsListFilters.networkType : '',
       };
     }
+  }
+
+  sortThreatProfileOptions(options) {
+    const result = options
+      .map(item => ({
+        index: this.threatProfileOrder.indexOf(item),
+        option: item
+      }))
+      .sort((a, b) => {
+        if (a.index < b.index) {
+          return -1;
+        } else {
+          return 1;
+        }
+      })
+      .map(item => item.option);
+
+    return result;
   }
 
   backButton(){
