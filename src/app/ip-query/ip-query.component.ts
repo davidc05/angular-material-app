@@ -66,6 +66,8 @@ export class IpQueryComponent implements OnInit {
   blacklistClasses;
   networkTypes;
 
+  threatProfileOrder = ['High', 'Medium', 'Nuisance', 'Low'];
+
   selectedThreatClassification = 'All';
   selectedBlacklistClass = 'All';
   selectedNetworkType = 'All';
@@ -376,10 +378,12 @@ export class IpQueryComponent implements OnInit {
       }));
 
       this.threatClassifications =
-        chain(filterName === 'threatClassification' ? this.ipsService.dataSource.data : this.filteredResult.data)
-        .map(item => item.threat_classification)
-        .uniqBy()
-        .value();
+        this.sortThreatProfileOptions(
+          chain(filterName === 'threatClassification' ? this.ipsService.dataSource.data : this.filteredResult.data)
+          .map(item => item.threat_classification)
+          .uniqBy()
+          .value()
+        );
       this.blacklistClasses =
         chain(filterName === 'blacklistClass' ? this.ipsService.dataSource.data : this.filteredResult.data)
         .map(item => item.blacklist_class)
@@ -424,10 +428,12 @@ export class IpQueryComponent implements OnInit {
         this.ipsService.getIpsDetail(cleanIpsList).then(
           results => {
             this.threatClassifications =
-              chain(results.ipsDetail)
-              .map(item => item.threat_classification)
-              .uniqBy()
-              .value();
+              this.sortThreatProfileOptions(
+                chain(results.ipsDetail)
+                .map(item => item.threat_classification)
+                .uniqBy()
+                .value()
+              );
 
             this.blacklistClasses =
               chain(results.ipsDetail)
@@ -519,6 +525,23 @@ export class IpQueryComponent implements OnInit {
     md: 3,
     sm: 3,
     xs: 1
+  }
+
+  sortThreatProfileOptions(options) {
+    const result = options
+      .map(item => ({
+        index: this.threatProfileOrder.indexOf(item),
+        option: item
+      }))
+      .sort((a, b) => {
+        if (a.index < b.index) {
+          return -1;
+        } else {
+          return 1;
+        }
+      })
+      .map(item => item.option);
+     return result;
   }
 
   ngAfterContentInit(): void {
