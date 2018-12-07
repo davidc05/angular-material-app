@@ -230,9 +230,9 @@ export class IpRangesComponent implements OnInit {
   }
 
   initIpRangesFilter(data) {
-    this.networkNames = uniqBy(map(data, 'network_name')).sort();
-    this.networkTypes = uniqBy(map(data, 'network_type')).sort();
-    this.networkGroups = uniqBy(map(data, 'network_group')).sort();
+    this.networkNames = uniqBy(map(data, 'network_name')).sort(this.sortCaseInsensitive);
+    this.networkTypes = uniqBy(map(data, 'network_type')).sort(this.sortCaseInsensitive);
+    this.networkGroups = uniqBy(map(data, 'network_group')).sort(this.sortCaseInsensitive);
     this.filteredIpRangesResult.data = data;
   }
 
@@ -248,7 +248,7 @@ export class IpRangesComponent implements OnInit {
       .map(item => item.blacklist_class)
       .uniqBy()
       .value()
-      .sort();
+      .sort(this.sortCaseInsensitive);
 
     this.networkTypes = chain(data)
       .map(item => item.network_type)
@@ -256,7 +256,7 @@ export class IpRangesComponent implements OnInit {
       .uniqBy()
       .filter(item => this.knownNetworkTypes.indexOf(item) > -1)
       .value()
-      .sort();
+      .sort(this.sortCaseInsensitive);
 
     this.filteredIpsListResult.data = map(data, (item) => ({
       ...item,
@@ -292,19 +292,19 @@ export class IpRangesComponent implements OnInit {
         .map(item => item.network_name)
         .uniqBy()
         .value()
-        .sort();
+        .sort(this.sortCaseInsensitive);
       this.networkTypes =
         chain(filterName === 'networkType' ? this.dataSource.data : this.filteredIpRangesResult.data)
         .map(item => item.network_type)
         .uniqBy()
         .value()
-        .sort();
+        .sort(this.sortCaseInsensitive);
       this.networkGroups =
         chain(filterName === 'networkGroup' ? this.dataSource.data : this.filteredIpRangesResult.data)
         .map(item => item.network_group)
         .uniqBy()
         .value()
-        .sort();
+        .sort(this.sortCaseInsensitive);
 
       this.selectedNetworkName = this.networkNames.length === 1 ? this.networkNames[0] : '';
       this.selectedNetworkType = this.networkTypes.length === 1 ? this.networkTypes[0] : '';
@@ -392,6 +392,10 @@ export class IpRangesComponent implements OnInit {
       .map(item => item.option);
 
     return result;
+  }
+
+  sortCaseInsensitive(a, b) {
+    return a.toLowerCase().localeCompare(b.toLowerCase());
   }
 
   backButton(){
