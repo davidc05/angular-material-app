@@ -73,21 +73,21 @@
       <label class="horizontal-center">Threat Profle: </label>
       <mat-form-field>
           <mat-select class="horizontal-center" (selectionChange)="filterValueChange('threatClassification', selectedThreatClassification)"  [(value)]="selectedThreatClassification">
-              <mat-option value="">All</mat-option>
+              <mat-option value="All">All</mat-option>
               <mat-option *ngFor="let classification of threatClassifications" [value]="classification">{{classification}}</mat-option>
           </mat-select>
       </mat-form-field>
       <label class="horizontal-center">Blacklist Class: </label>
       <mat-form-field>
           <mat-select class="horizontal-center" (selectionChange)="filterValueChange('blacklistClass', selectedBlacklistClass)" [(value)]="selectedBlacklistClass">
-              <mat-option value="">All</mat-option>
+              <mat-option value="All">All</mat-option>
               <mat-option *ngFor="let class of blacklistClasses" [value]="class">{{class}}</mat-option>
           </mat-select>
       </mat-form-field>
       <label class="horizontal-center">Network Type: </label>
       <mat-form-field>
           <mat-select class="horizontal-center" (selectionChange)="filterValueChange('networkType', selectedNetworkType)" [(value)]="selectedNetworkType">
-              <mat-option value="">All</mat-option>
+              <mat-option value="All">All</mat-option>
               <mat-option *ngFor="let type of networkTypes" [value]="type">{{type}}</mat-option>
           </mat-select>
       </mat-form-field>
