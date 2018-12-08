@@ -167,8 +167,11 @@ footer{
 
 /* Results Filters */
 .results-filters .mat-form-field-infix{
-    width: 100px;
+    width: 133px;
     border-top-width: 0.2em;
+}
+.export-component-box .mat-form-field-infix{
+    width: 70px;
 }
 
 

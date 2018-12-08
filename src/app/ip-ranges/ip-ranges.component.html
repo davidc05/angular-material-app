@@ -8,29 +8,35 @@
     <h2>{{title}} Drill-In</h2>
     <h3>{{queryParam}}</h3>
 
-    <label class="horizontal-center" *ngIf="currentRoute !== 'network-name'">Network Name: </label>
-    <mat-form-field *ngIf="currentRoute !== 'network-name'">
-      <mat-select class="horizontal-center" (selectionChange)="filterValueChange('networkName', selectedNetworkName)"  [(value)]="selectedNetworkName">
-        <mat-option value="">All</mat-option>
-        <mat-option *ngFor="let name of networkNames" [value]="name">{{name}}</mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <label class="horizontal-center" *ngIf="currentRoute !== 'network-type'">Network Type: </label>
-    <mat-form-field *ngIf="currentRoute !== 'network-type'">
-      <mat-select class="horizontal-center" (selectionChange)="filterValueChange('nameworkType', selectedNetworkType)" [(value)]="selectedNetworkType">
-        <mat-option value="">All</mat-option>
-        <mat-option *ngFor="let type of networkTypes" [value]="type">{{type}}</mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <label class="horizontal-center" *ngIf="currentRoute !== 'network-group'">Network Group: </label>
-    <mat-form-field *ngIf="currentRoute !== 'network-group'">
-      <mat-select class="horizontal-center" (selectionChange)="filterValueChange('networkGroup', selectedNetworkGroup)" [(value)]="selectedNetworkGroup">
-        <mat-option value="">All</mat-option>
-        <mat-option *ngFor="let group of networkGroups" [value]="group">{{group}}</mat-option>
-      </mat-select>
-    </mat-form-field>
+    <div class="filters">
+      <div class="filter">
+        <label class="horizontal-center" *ngIf="currentRoute !== 'network-name'">Network Name: </label>
+        <mat-form-field *ngIf="currentRoute !== 'network-name'">
+          <mat-select class="horizontal-center" (selectionChange)="filterValueChange('networkName', selectedNetworkName)"  [(value)]="selectedNetworkName">
+            <mat-option value="">All</mat-option>
+            <mat-option *ngFor="let name of networkNames" [value]="name">{{name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="filter">
+        <label class="horizontal-center" *ngIf="currentRoute !== 'network-type'">Network Type: </label>
+        <mat-form-field *ngIf="currentRoute !== 'network-type'">
+          <mat-select class="horizontal-center" (selectionChange)="filterValueChange('nameworkType', selectedNetworkType)" [(value)]="selectedNetworkType">
+            <mat-option value="">All</mat-option>
+            <mat-option *ngFor="let type of networkTypes" [value]="type">{{type}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="filter">
+        <label class="horizontal-center" *ngIf="currentRoute !== 'network-group'">Network Group: </label>
+        <mat-form-field *ngIf="currentRoute !== 'network-group'">
+          <mat-select class="horizontal-center" (selectionChange)="filterValueChange('networkGroup', selectedNetworkGroup)" [(value)]="selectedNetworkGroup">
+            <mat-option value="">All</mat-option>
+            <mat-option *ngFor="let group of networkGroups" [value]="group">{{group}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
 
     <table mat-table [dataSource]="filteredIpRangesResult" matSort *ngIf="filteredIpRangesResult && filteredIpRangesResult.length !== 0" class="mat-elevation-z8 results-table">
 
