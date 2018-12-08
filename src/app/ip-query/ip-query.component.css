@@ -44,19 +44,10 @@ label.horizontal-center {
     margin-right: 15px;
     font-weight: bold;
 }
-.results-filter {
-    float: left;
-    max-width: 25%;
-    padding-right: 3%;
-}
 .export-upgrade-message{
     font-size: 75%;
     text-align: right;
     cursor: pointer;
-}
-.export-component-box {
-    float: right;
-    padding-right: 0;
 }
 .export-component-box .mat-form-field{
     margin-right: 15px;
@@ -66,6 +57,27 @@ label.horizontal-center {
     visibility: collapse;
 
 }
+@media screen and (min-width: 600px){
+    .results-filter {
+        float: left;
+        padding-right: 3%;
+    }
+}
+@media screen and (min-width: 1200px){
+    .results-filter {
+        max-width: 25%;
+        padding-right: 3%;
+    }
+    .results-filter.blacklist-class {
+        padding-left: 0;
+    }
+    .export-component-box {
+        float: right;
+        width: auto;
+        padding-right: 0;
+    }
+}
+
 
 
 
