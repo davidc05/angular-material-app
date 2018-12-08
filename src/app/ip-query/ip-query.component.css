@@ -38,25 +38,28 @@
   margin-right: 8px;
 }
 
-.horizontal-center {
+label.horizontal-center {
     margin-top: auto;
     margin-bottom: auto;
+    margin-right: 15px;
+    font-weight: bold;
 }
-
+.results-filter {
+    float: left;
+    max-width: 25%;
+    padding-right: 3%;
+}
 .export-upgrade-message{
     font-size: 75%;
     text-align: right;
     cursor: pointer;
 }
-
 .export-component-box {
     float: right;
+    padding-right: 0;
 }
-.export-component-box label,
 .export-component-box .mat-form-field{
     margin-right: 15px;
-}
-.export-component-box .mat-form-field{
     max-width: 100px;
 }
 .hide {

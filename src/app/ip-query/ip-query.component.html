@@ -70,41 +70,49 @@
     </section>
 
     <section [hidden]="ipsService.dataSource.data.length === 0">
-      <label class="horizontal-center">Threat Profle: </label>
-      <mat-form-field>
-          <mat-select class="horizontal-center" (selectionChange)="filterValueChange('threatClassification', selectedThreatClassification)"  [(value)]="selectedThreatClassification">
-              <mat-option value="All">All</mat-option>
-              <mat-option *ngFor="let classification of threatClassifications" [value]="classification">{{classification}}</mat-option>
-          </mat-select>
-      </mat-form-field>
-      <label class="horizontal-center">Blacklist Class: </label>
-      <mat-form-field>
-          <mat-select class="horizontal-center" (selectionChange)="filterValueChange('blacklistClass', selectedBlacklistClass)" [(value)]="selectedBlacklistClass">
-              <mat-option value="All">All</mat-option>
-              <mat-option *ngFor="let class of blacklistClasses" [value]="class">{{class}}</mat-option>
-          </mat-select>
-      </mat-form-field>
-      <label class="horizontal-center">Network Type: </label>
-      <mat-form-field>
-          <mat-select class="horizontal-center" (selectionChange)="filterValueChange('networkType', selectedNetworkType)" [(value)]="selectedNetworkType">
-              <mat-option value="All">All</mat-option>
-              <mat-option *ngFor="let type of networkTypes" [value]="type">{{type}}</mat-option>
-          </mat-select>
-      </mat-form-field>
-        <div class="export-component-box">
-            <div class="export-upgrade-message" *ngIf="userService.user.subscriptionPlan !== 'large'">
-                <a (click)="onClickBuyApp()">Upgrade to export!</a>
+        <div class="results-filters">
+            <div class="results-filter threat-profile">
+                <label class="horizontal-center">Threat Profile: </label>
+                <mat-form-field>
+                  <mat-select class="horizontal-center" (selectionChange)="filterValueChange('threatClassification', selectedThreatClassification)"  [(value)]="selectedThreatClassification">
+                      <mat-option value="All">All</mat-option>
+                      <mat-option *ngFor="let classification of threatClassifications" [value]="classification">{{classification}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
             </div>
-            <label class="horizontal-center">Export as: </label>
-            <mat-form-field>
-                <mat-select class="horizontal-center" [(value)]="exportType" [disabled]="userService.user.subscriptionPlan !== 'large'">
-                    <mat-option value="csv">CSV</mat-option>
-                    <mat-option value="json">JSON</mat-option>
-                </mat-select>
-            </mat-form-field>
-            <button mat-mini-fab color="primary" (click)="export()" [disabled]="userService.user.subscriptionPlan !== 'large'">
-                <mat-icon aria-label="download icon">cloud_download</mat-icon>
-            </button>
+            <div class="results-filter blacklist-class">
+                <label class="horizontal-center">Blacklist Class: </label>
+                <mat-form-field>
+                  <mat-select class="horizontal-center" (selectionChange)="filterValueChange('blacklistClass', selectedBlacklistClass)" [(value)]="selectedBlacklistClass">
+                      <mat-option value="All">All</mat-option>
+                      <mat-option *ngFor="let class of blacklistClasses" [value]="class">{{class}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="results-filter network-type">
+                <label class="horizontal-center">Network Type: </label>
+                <mat-form-field>
+                  <mat-select class="horizontal-center" (selectionChange)="filterValueChange('networkType', selectedNetworkType)" [(value)]="selectedNetworkType">
+                      <mat-option value="All">All</mat-option>
+                      <mat-option *ngFor="let type of networkTypes" [value]="type">{{type}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="results-filter export-component-box">
+                <div class="export-upgrade-message" *ngIf="userService.user.subscriptionPlan !== 'large'">
+                    <a (click)="onClickBuyApp()">Upgrade to export!</a>
+                </div>
+                <label class="horizontal-center">Export as: </label>
+                <mat-form-field>
+                    <mat-select class="horizontal-center" [(value)]="exportType" [disabled]="userService.user.subscriptionPlan !== 'large'">
+                        <mat-option value="csv">CSV</mat-option>
+                        <mat-option value="json">JSON</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <button mat-mini-fab color="primary" (click)="export()" [disabled]="userService.user.subscriptionPlan !== 'large'">
+                    <mat-icon aria-label="download icon">cloud_download</mat-icon>
+                </button>
+            </div>
         </div>
         <div class="table-wrapper">
             <!-- Using [hidden] here because the table needs to be rendered to be initialized -->
