@@ -12,3 +12,15 @@ section.loading {
 .breadcrumb{
 	padding: 20px 0;
 }
+
+/* Filters */
+label.horizontal-center {
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-right: 15px;
+    font-weight: bold;
+}
+.filter {
+    float: left;
+    padding-right: 3%;
+}

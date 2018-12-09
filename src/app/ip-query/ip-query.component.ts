@@ -1,7 +1,7 @@
 import { COMMA, ENTER, SPACE } from '@angular/cdk/keycodes';
 import { Component, ChangeDetectorRef, OnInit, AfterContentInit, ViewChild, Inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { MatGridList, MatChipInputEvent } from '@angular/material';
+import { MatGridList, MatChipInputEvent, MatTableDataSource } from '@angular/material';
 import { ObservableMedia, MediaChange } from '@angular/flex-layout';
 import { IpsService } from '../services/ips.service';
 import { WatchlistService } from '../services/watchlist.service';
@@ -12,7 +12,7 @@ import saveAs from 'file-saver';
 import * as moment from 'moment';
 import { UserService } from '../services/user.service';
 
-import * as _ from 'lodash';
+import { map, filter, flatten, uniqBy, findIndex, chain } from 'lodash';
 
 import { Address4, Address6 } from 'ip-address';
 
@@ -48,7 +48,7 @@ export class IpQueryComponent implements OnInit {
   removable = true;
   addOnBlur = true;
   readonly separatorKeysCodes: number[] = [ENTER, COMMA, SPACE];
-  displayedColumns: string[] = ['ipaddress', 'threat_potential_score_pct', 'threat_classification', 'blacklist_class'];
+  displayedColumns: string[] = ['ipaddress', 'threat_profile', 'blacklist_class', 'network_type'];
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild('grid') grid: MatGridList;
 
@@ -61,6 +61,40 @@ export class IpQueryComponent implements OnInit {
   isFormInvalid: boolean;
 
   exportType = 'csv';
+
+  threatClassifications;
+  blacklistClasses;
+  networkTypes;
+
+  threatProfileOrder = ['High', 'Medium', 'Nuisance', 'Low'];
+
+  selectedThreatClassification = 'All';
+  selectedBlacklistClass = 'All';
+  selectedNetworkType = 'All';
+
+  knownNetworkTypes = [
+    'Cryptocurrency Networks',
+    'Broadband Networks',
+    'Content Delivery Networks',
+    'Government Networks',
+    'Social Networking Networks',
+    'Academic Networks',
+    'File Sharing Networks',
+    'Financial Networks',
+    'Internet Authorities Networks',
+    'Search Engine Networks',
+    'Software Download Networks',
+    'Worldwide Networks',
+    'Entertainment Networks',
+    'Cloud Services Platform',
+    'Internet Security Networks',
+    'Healthcare Networks',
+    'TOR Anonymity Networks',
+    'Private Networks',
+    'No Entry'
+  ];
+
+  filteredResult = new MatTableDataSource([]);
 
   constructor(
     public ipsService: IpsService,
@@ -77,6 +111,7 @@ export class IpQueryComponent implements OnInit {
     // this.route.data.subscribe(routeData => {
     //   this.user = routeData['user'];
     // })
+    this.filteredResult.sort = this.sort;
     this.user = this.userService.user;
     if (this.userService.user.subscriptionPlanObject && this.userService.user.subscriptionPlanObject.ipQueryLimit) {
       this.ipQueryLimit = this.userService.user.subscriptionPlanObject.ipQueryLimit;
@@ -274,7 +309,7 @@ export class IpQueryComponent implements OnInit {
     if ((value || '').trim()) {
       if (this.ipsList.length < this.ipQueryLimit) {
         const trimmedValue = value.trim();
-        if (_.findIndex(this.ipsList, function(o) { return o.label === trimmedValue; }) === -1) {
+        if (findIndex(this.ipsList, function(o) { return o.label === trimmedValue; }) === -1) {
           this.ipsList.push({ label: value.trim() });
         }
       }
@@ -288,7 +323,7 @@ export class IpQueryComponent implements OnInit {
 
   // Removes chips to the textbox
   remove(ip): void {
-    const index = _.findIndex(this.ipsList, function(o) { return o.label === ip; });
+    const index = findIndex(this.ipsList, function(o) { return o.label === ip; });
     if (index >= 0) {
       this.ipsList.splice(index, 1);
     }
@@ -304,7 +339,7 @@ export class IpQueryComponent implements OnInit {
         if ((value || '').trim()) {
           if (this.ipsList.length < this.ipQueryLimit) {
             const trimmedValue = value.trim();
-            if (_.findIndex(this.ipsList, function(o) { return o.label === trimmedValue; }) === -1) {
+            if (findIndex(this.ipsList, function(o) { return o.label === trimmedValue; }) === -1) {
               this.ipsList.push({ label: value.trim() });
             }
           }
@@ -316,11 +351,75 @@ export class IpQueryComponent implements OnInit {
     window.open('https://musubu.io/app-pricing/', '_blank');
   }
 
+  // handle search result filter option change event
+  filterValueChange(filterName, value) {
+    this.selectedThreatClassification = filterName === 'threatClassification' ? value : 'All';
+    this.selectedBlacklistClass = filterName === 'blacklistClass' ? value : 'All';
+    this.selectedNetworkType = filterName === 'networkType' ? value : 'All';
+
+    this.filteredResult.data = this.ipsService.dataSource.data
+      .map(item => !item.network_type.length ? { ...item, network_type: ['No Entry'] } : item)
+      .filter(item => this.selectedThreatClassification === 'All'
+        ? true
+        : item.threat_classification === this.selectedThreatClassification)
+      .map(item => ({
+        ...item,
+        threat_profile: `${item.threat_potential_score_pct} (${item.threat_classification})`,
+      }))
+      .filter(item => this.selectedBlacklistClass === 'All'
+        ? true
+        : item.blacklist_class === this.selectedBlacklistClass)
+      .filter(item => this.selectedNetworkType === 'All'
+        ? true
+        : item.network_type.indexOf(this.selectedNetworkType) > -1)
+      .map(item => ({
+        ...item,
+        network_type: filter(item.network_type, (item) => this.knownNetworkTypes.indexOf(item) > -1).join(', ')
+      }));
+
+      this.threatClassifications =
+        this.sortThreatProfileOptions(
+          chain(filterName === 'threatClassification' ? this.ipsService.dataSource.data : this.filteredResult.data)
+          .map(item => item.threat_classification)
+          .uniqBy()
+          .value()
+        );
+      this.blacklistClasses =
+        chain(filterName === 'blacklistClass' ? this.ipsService.dataSource.data : this.filteredResult.data)
+        .map(item => item.blacklist_class)
+        .uniqBy()
+        .value()
+        .sort();
+      this.networkTypes =
+        chain(filterName === 'networkType'
+          ? this.ipsService.dataSource.data.map(item => !item.network_type.length ? { ...item, network_type: ['No Entry'] } : item)
+          : this.filteredResult.data)
+        .map(item => {
+          return filterName === 'networkType' ? item.network_type : item.network_type.split(', ')
+        })
+        .flatten()
+        .uniqBy()
+        .filter(item => this.knownNetworkTypes.indexOf(item) > -1)
+        .value()
+        .sort();
+
+      this.selectedThreatClassification = filterName === 'threatClassification'
+        ? value
+        : this.threatClassifications.length > 1 ? 'All' : this.threatClassifications[0];
+      this.selectedBlacklistClass = filterName === 'blacklistClass'
+        ? value
+        : this.blacklistClasses.length > 1 ? 'All' : this.blacklistClasses[0];
+      this.selectedNetworkType = filterName === 'networkType'
+        ? value
+        :this.networkTypes.length > 1 ? 'All' : this.networkTypes[0];
+  }
+
   submitQuery = (ipsList): void => {
     this.ipsService.highRiskCircle.count = 0;
     this.ipsService.mediumRiskCircle.count = 0;
     this.ipsService.lowRiskCircle.count = 0;
     this.ipsList = ipsList;
+
     if (ipsList.length !== 0) {
       this.validateIpListDeferred(ipsList)
       .then((cleanIpsList) => {
@@ -328,8 +427,47 @@ export class IpQueryComponent implements OnInit {
 
         this.ipsService.getIpsDetail(cleanIpsList).then(
           results => {
+            this.threatClassifications =
+              this.sortThreatProfileOptions(
+                chain(results.ipsDetail)
+                .map(item => item.threat_classification)
+                .uniqBy()
+                .value()
+              );
+
+            this.blacklistClasses =
+              chain(results.ipsDetail)
+              .map(item => item.blacklist_class)
+              .uniqBy()
+              .value()
+              .sort();
+
+            this.networkTypes =
+              chain(results.ipsDetail.map(item => !item.network_type.length ? { ...item, network_type: ['No Entry'] } : item))
+              .map(item => item.network_type)
+              .flatten()
+              .uniqBy()
+              .filter(item => this.knownNetworkTypes.indexOf(item) > -1)
+              .value()
+              .sort();
+
             this.ipsService.dataSource.data = results.ipsDetail;
+            this.filteredResult.data = results.ipsDetail
+              .map(item => !item.network_type.length ? {...item, network_type: ['No Entry']} : item)
+              .map(item => ({
+                ...item,
+                threat_profile: `${item.threat_potential_score_pct} (${item.threat_classification})`,
+                network_type: filter(item.network_type, (item) => this.knownNetworkTypes.indexOf(item) > -1).join(', ')
+              }));
+
+            if (results.ipsDetail.length === 1) {
+              this.selectedThreatClassification = this.threatClassifications[0];
+              this.selectedBlacklistClass = this.blacklistClasses[0];
+              this.selectedNetworkType = this.networkTypes[0];
+            }
+
             this.ipsService.dataSource.sort = this.sort;
+
             results.ipsDetail.forEach(element => {
               if (element.threat_classification === 'High') {
                 this.ipsService.highRiskCircle.count++;
@@ -387,6 +525,23 @@ export class IpQueryComponent implements OnInit {
     md: 3,
     sm: 3,
     xs: 1
+  }
+
+  sortThreatProfileOptions(options) {
+    const result = options
+      .map(item => ({
+        index: this.threatProfileOrder.indexOf(item),
+        option: item
+      }))
+      .sort((a, b) => {
+        if (a.index < b.index) {
+          return -1;
+        } else {
+          return 1;
+        }
+      })
+      .map(item => item.option);
+     return result;
   }
 
   ngAfterContentInit(): void {
@@ -467,6 +622,5 @@ export class ImportDialogComponent {
         };
         reader.readAsText(file);
     }
-}
-
+  }
 }

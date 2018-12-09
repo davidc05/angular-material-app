@@ -38,31 +38,46 @@
   margin-right: 8px;
 }
 
-.horizontal-center {
+label.horizontal-center {
     margin-top: auto;
     margin-bottom: auto;
+    margin-right: 15px;
+    font-weight: bold;
 }
-
 .export-upgrade-message{
     font-size: 75%;
     text-align: right;
     cursor: pointer;
 }
-
-.export-component-box {
-    float: right;
-}
-.export-component-box label,
 .export-component-box .mat-form-field{
     margin-right: 15px;
-}
-.export-component-box .mat-form-field{
     max-width: 100px;
 }
 .hide {
     visibility: collapse;
 
 }
+@media screen and (min-width: 600px){
+    .results-filter {
+        float: left;
+        padding-right: 3%;
+    }
+}
+@media screen and (min-width: 1200px){
+    .results-filter {
+        max-width: 25%;
+        padding-right: 3%;
+    }
+    .results-filter.blacklist-class {
+        padding-left: 0;
+    }
+    .export-component-box {
+        float: right;
+        width: auto;
+        padding-right: 0;
+    }
+}
+
 
 
 

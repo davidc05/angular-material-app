@@ -165,6 +165,18 @@ footer{
 }
 
 
+/* Results Filters */
+.mat-form-field-infix{
+    border-top-width: 0.2em;
+}
+.results-filters .mat-form-field-infix{
+    width: 133px;
+}
+.export-component-box .mat-form-field-infix{
+    width: 70px;
+}
+
+
 /* results table */
 tr.mat-header-row{
 	background-color: #028b08;
