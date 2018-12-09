@@ -20,26 +20,25 @@
     font-weight: bold;
     font-family: 'Open Sans',Helvetica,Arial,Lucida,sans-serif;
 }
-.mat-chip.search{
-    padding: 4px 4px 4px 12px;
-    border-width: 3px;
-    border-style: solid;
-}
 .mat-chip.High {
-  background-color: #FDC6CA;
-  border-color: #DC3445;
+    padding: 4px 4px 4px 12px;
+    background-color: #FDC6CA;
+    border: 3px solid #DC3445;
 }
 .mat-chip.Medium {
-  background-color: #FFE9A9;
-  border-color: #FFC105;
+    padding: 4px 4px 4px 12px;
+    background-color: #FFE9A9;
+    border: 3px solid #FFC105;
 }
 .mat-chip.Low {
-  background-color: #B8ECC3;
-  border-color: #27A745;
+    padding: 4px 4px 4px 12px;
+    background-color: #B8ECC3;
+    border: 3px solid #27A745;
 }
 .mat-chip.Nuisance {
-  background-color: #E0E0E0;
-  border-color: #686868;
+    padding: 4px 4px 4px 12px;
+    background-color: #E0E0E0;
+    border: 3px solid #686868;
 }
 
 
@@ -143,8 +142,6 @@ label.horizontal-center {
 }
 
 
-
-
 /* Import Dialog*/
 
 .code-sample-box {
@@ -176,21 +173,6 @@ label.horizontal-center {
     font-size: 14px;
 }
 
-.search.High {
-  background-color: #dc3545;
-}
-
-.search.Medium {
-  background-color: #ffc107;
-}
-
-.search.Low {
-  background-color: #28a745;
-}
-
-.search.Nuisance {
-  background-color: #686868;
-}
 
 
 @media screen and (max-width: 700px){
