@@ -7,6 +7,7 @@ import { IpsService } from '../services/ips.service';
 import { WatchlistService } from '../services/watchlist.service';
 import { MatSort, MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { TagsService } from '../services/tags.service';
+import { AuthService } from '../services/auth.service';
 
 import saveAs from 'file-saver';
 import * as moment from 'moment';
@@ -56,6 +57,7 @@ export class IpQueryComponent implements OnInit {
   ipQueryLimit = 50;
   ipsList: Ip[] = [];
 
+  subscriptionPlan;
   user;
   queryName;
   description;
@@ -104,19 +106,32 @@ export class IpQueryComponent implements OnInit {
     private tagsService: TagsService,
     public userService: UserService,
     private route: ActivatedRoute,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private authService: AuthService,
   ) { }
 
   ngOnInit() {
-    // Init user
-    // this.route.data.subscribe(routeData => {
-    //   this.user = routeData['user'];
-    // })
     this.filteredResult.sort = this.sort;
-    this.user = this.userService.user;
-    if (this.userService.user.subscriptionPlanObject && this.userService.user.subscriptionPlanObject.ipQueryLimit) {
-      this.ipQueryLimit = this.userService.user.subscriptionPlanObject.ipQueryLimit;
-    }
+    this.user = JSON.parse(localStorage.getItem("profile"));
+    let self = this;
+
+    self.authService.lock.on("authenticated", function(authResult) {
+      self.authService.lock.getUserInfo(authResult.accessToken, function(error, profile) {
+        if (error) {
+          return;
+        }
+        self.userService.getUserByEmail(profile.email)
+          .then(result => {
+            self.subscriptionPlan = result[0].subscriptionPlan
+          });
+        if (self.userService.user.subscriptionPlanObject && self.userService.user.subscriptionPlanObject.ipQueryLimit) {
+          self.ipQueryLimit = self.userService.user.subscriptionPlanObject.ipQueryLimit;
+        }
+      });
+    });
+
+
+
     this.ipsList = [];
 
     this.route.data.subscribe(routeData => {
@@ -186,22 +201,38 @@ export class IpQueryComponent implements OnInit {
 
   isImportDisabled(): boolean {
     let result = true;
+    let self = this;
 
-    if (this.userService.user.subscriptionPlanObject
-      && this.userService.user.subscriptionPlanObject.name !== 'free'
-      && this.ipsList.length === 0) { // user has a sub and hasnt typed in ips
-      result = false;
-    }
+    self.authService.lock.on("authenticated", function(authResult) {
+      self.authService.lock.getUserInfo(authResult.accessToken, function(error, profile) {
+        if (error) {
+          return;
+        }
+        if (self.userService.user.subscriptionPlanObject
+          && self.userService.user.subscriptionPlanObject.name !== 'free'
+          && self.ipsList.length === 0) {
+          result = false;
+        }
+      });
+    });
 
     return result;
   }
   upgradeToImport(): boolean {
     let result = true;
+    let self = this;
 
-    if (this.userService.user.subscriptionPlanObject
-      && this.userService.user.subscriptionPlanObject.name !== 'free') {
-      result = false;
-    }
+    self.authService.lock.on("authenticated", function(authResult) {
+      self.authService.lock.getUserInfo(authResult.accessToken, function(error, profile) {
+        if (error) {
+          return;
+        }
+        if (self.userService.user.subscriptionPlanObject
+          && self.userService.user.subscriptionPlanObject.name !== 'free') {
+          result = false;
+        }
+      });
+    });
 
     return result;
   }

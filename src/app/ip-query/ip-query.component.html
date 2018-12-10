@@ -99,17 +99,17 @@
                 </mat-form-field>
             </div>
             <div class="results-filter export-component-box">
-                <div class="export-upgrade-message" *ngIf="userService.user.subscriptionPlan !== 'large'">
+                <div class="export-upgrade-message" *ngIf="subscriptionPlan !== 'large'">
                     <a (click)="onClickBuyApp()">Upgrade to export!</a>
                 </div>
                 <label class="horizontal-center">Export as: </label>
                 <mat-form-field>
-                    <mat-select class="horizontal-center" [(value)]="exportType" [disabled]="userService.user.subscriptionPlan !== 'large'">
+                    <mat-select class="horizontal-center" [(value)]="exportType" [disabled]="subscriptionPlan !== 'large'">
                         <mat-option value="csv">CSV</mat-option>
                         <mat-option value="json">JSON</mat-option>
                     </mat-select>
                 </mat-form-field>
-                <button mat-mini-fab color="primary" (click)="export()" [disabled]="userService.user.subscriptionPlan !== 'large'">
+                <button mat-mini-fab color="primary" (click)="export()" [disabled]="subscriptionPlan !== 'large'">
                     <mat-icon aria-label="download icon">cloud_download</mat-icon>
                 </button>
             </div>
