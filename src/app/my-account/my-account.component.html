@@ -1,3 +1,23 @@
-<p>
-  my-account works!
-</p>
+<div class="my-account">
+  <section class="user-profile">
+    <mat-card class="example-card">
+      <mat-card-header>
+        <div mat-card-avatar><img class="profile-picture" [src]="user.picture" /></div>
+        <mat-card-title>{{ user.given_name }} {{ user.family_name }}</mat-card-title>
+        <mat-card-subtitle>{{ user.nickname }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p>
+          {{ user.email }}
+        </p>
+      </mat-card-content>
+    </mat-card>
+  </section>
+  <section class="subscription">
+    <mat-card>
+      Subscription Plan: <p>{{ subscriptionPlan }}</p>
+    </mat-card>
+  </section>
+  <section class="integration">
+  </section>
+</div>
