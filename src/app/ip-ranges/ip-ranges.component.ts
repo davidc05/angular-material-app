@@ -100,11 +100,8 @@ export class IpRangesComponent implements OnInit {
   ];
 
   ngOnInit() {
-    this.router.events.subscribe((event: NavigationEnd) => {
-      if(event instanceof NavigationEnd) {
-        window.scrollTo(0, 0);
-      }
-    });
+    window.scrollTo(0, 0);
+
     this.route.data.subscribe(routeData => {
       this.currentRoute = routeData.ipRanges.currentRoute;
       this.queryParam = routeData.ipRanges.queryParam;
