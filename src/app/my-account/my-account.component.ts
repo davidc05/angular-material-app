@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-my-account',
@@ -7,9 +8,16 @@ import { Component, OnInit } from '@angular/core';
 })
 export class MyAccountComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    public userService: UserService,
+  ) { }
+
+  user;
+  subscriptionPlan;
 
   ngOnInit() {
+    this.user = JSON.parse(localStorage.getItem("profile"));
+    this.subscriptionPlan = !this.userService.user
+      ? '' : this.userService.user.subscriptionPlan;
   }
-
 }
