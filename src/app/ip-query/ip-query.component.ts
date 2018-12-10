@@ -371,9 +371,9 @@ export class IpQueryComponent implements OnInit {
 
   // handle search result filter option change event
   filterValueChange(filterName, value) {
-    this.selectedThreatClassification = filterName === 'threatClassification' ? value : 'All';
-    this.selectedBlacklistClass = filterName === 'blacklistClass' ? value : 'All';
-    this.selectedNetworkType = filterName === 'networkType' ? value : 'All';
+    this.selectedThreatClassification = filterName === 'threatClassification' ? value : this.selectedThreatClassification;
+    this.selectedBlacklistClass = filterName === 'blacklistClass' ? value : this.selectedBlacklistClass;
+    this.selectedNetworkType = filterName === 'networkType' ? value : this.selectedNetworkType;
 
     this.filteredResult.data = this.ipsService.dataSource.data
       .map(item => !item.network_type.length ? { ...item, network_type: ['No Entry'] } : item)
