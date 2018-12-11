@@ -39,10 +39,10 @@
                     <button mat-flat-button (click)="openDialog()" [disabled]="ipsList.length === 0" class="button-bottom-spacing">
                         <mat-icon>save</mat-icon> Save
                     </button>
-                    <button mat-flat-button (click)="openImportDialog()" [disabled]="isImportDisabled()" class="button-bottom-spacing">
+                    <button mat-flat-button (click)="openImportDialog()" [disabled]="isImportDisabled" class="button-bottom-spacing">
                         <mat-icon>description</mat-icon> Import
                     </button>
-                    <p *ngIf="upgradeToImport()"><a (click)="onClickBuyApp()">Upgrade to import!</a></p>
+                    <p *ngIf="upgradeToImport"><a (click)="onClickBuyApp()">Upgrade to import!</a></p>
                 </div>
             </mat-expansion-panel>
         </mat-accordion>

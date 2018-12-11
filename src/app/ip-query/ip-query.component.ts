@@ -75,6 +75,9 @@ export class IpQueryComponent implements OnInit {
   selectedBlacklistClass = 'All';
   selectedNetworkType = 'All';
 
+  isImportDisabled = true;
+  upgradeToImport = true;
+
   knownNetworkTypes = [
     'Cryptocurrency Networks',
     'Broadband Networks',
@@ -111,27 +114,6 @@ export class IpQueryComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.filteredResult.sort = this.sort;
-    this.user = JSON.parse(localStorage.getItem("profile"));
-    let self = this;
-
-    self.authService.lock.on("authenticated", function(authResult) {
-      self.authService.lock.getUserInfo(authResult.accessToken, function(error, profile) {
-        if (error) {
-          return;
-        }
-        self.userService.getUserByEmail(profile.email)
-          .then(result => {
-            self.subscriptionPlan = result[0].subscriptionPlan
-          });
-        if (self.userService.user.subscriptionPlanObject && self.userService.user.subscriptionPlanObject.ipQueryLimit) {
-          self.ipQueryLimit = self.userService.user.subscriptionPlanObject.ipQueryLimit;
-        }
-      });
-    });
-
-
-
     this.ipsList = [];
 
     this.route.data.subscribe(routeData => {
@@ -152,6 +134,45 @@ export class IpQueryComponent implements OnInit {
         }
       }
     });
+
+    this.filteredResult.sort = this.sort;
+    this.user = JSON.parse(localStorage.getItem("profile"));
+    var isAuthenticated = this.authService.isAuthenticated();
+    let self = this;
+
+    if (isAuthenticated) {
+      this.userService.getUserByEmail(this.user.email)
+        .then(result => {
+          this.subscriptionPlan = result[0].subscriptionPlan;
+        });
+
+      if (this.userService.user.subscriptionPlanObject
+        && this.userService.user.subscriptionPlanObject.name !== 'free') {
+        this.isImportDisabled = !(this.ipsList.length === 0);
+        this.upgradeToImport = false;
+      }
+    } else {
+      self.authService.lock.on("authenticated", function(authResult) {
+        self.authService.lock.getUserInfo(authResult.accessToken, function(error, profile) {
+          if (error) {
+            return;
+          }
+          self.userService.getUserByEmail(profile.email)
+            .then(result => {
+              self.subscriptionPlan = result[0].subscriptionPlan
+            });
+          if (self.userService.user.subscriptionPlanObject && self.userService.user.subscriptionPlanObject.ipQueryLimit) {
+            self.ipQueryLimit = self.userService.user.subscriptionPlanObject.ipQueryLimit;
+          }
+
+          if (self.userService.user.subscriptionPlanObject
+            && self.userService.user.subscriptionPlanObject.name !== 'free') {
+            self.isImportDisabled = !(self.ipsList.length === 0);
+            self.upgradeToImport = false;
+          }
+        });
+      });
+    }
 
     this.queryName = '';
     this.description = '';
@@ -197,44 +218,6 @@ export class IpQueryComponent implements OnInit {
 
       }
     );
-  }
-
-  isImportDisabled(): boolean {
-    let result = true;
-    let self = this;
-
-    self.authService.lock.on("authenticated", function(authResult) {
-      self.authService.lock.getUserInfo(authResult.accessToken, function(error, profile) {
-        if (error) {
-          return;
-        }
-        if (self.userService.user.subscriptionPlanObject
-          && self.userService.user.subscriptionPlanObject.name !== 'free'
-          && self.ipsList.length === 0) {
-          result = false;
-        }
-      });
-    });
-
-    return result;
-  }
-  upgradeToImport(): boolean {
-    let result = true;
-    let self = this;
-
-    self.authService.lock.on("authenticated", function(authResult) {
-      self.authService.lock.getUserInfo(authResult.accessToken, function(error, profile) {
-        if (error) {
-          return;
-        }
-        if (self.userService.user.subscriptionPlanObject
-          && self.userService.user.subscriptionPlanObject.name !== 'free') {
-          result = false;
-        }
-      });
-    });
-
-    return result;
   }
 
   getAndRunTagSearch(tagId) {
