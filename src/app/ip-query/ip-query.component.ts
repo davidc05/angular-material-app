@@ -114,7 +114,14 @@ export class IpQueryComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.ipsList = [];
+    if (!!this.ipsService.dataSource.data.length) {
+      this.ipsList = this.ipsService.dataSource.data.map(item => ({
+        label: item.ipaddress,
+        threatLevel: ''
+      }));
+      this.submitQuery(this.ipsList);
+    }
+
 
     this.route.data.subscribe(routeData => {
 
