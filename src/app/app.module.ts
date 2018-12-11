@@ -64,6 +64,7 @@ import { AgmSnazzyInfoWindowModule } from '@agm/snazzy-info-window';
 import { GmapComponent, SaveListDialog } from './gmap/gmap.component';
 import { GmapResolver } from './gmap/gmap.resolver';
 import { MyAccountComponent } from './my-account/my-account.component';
+import { ProfileComponent } from './profile/profile.component';
 
 @NgModule({
   declarations: [
@@ -87,7 +88,8 @@ import { MyAccountComponent } from './my-account/my-account.component';
     AdminComponent,
     GmapComponent,
     SaveListDialog,
-    MyAccountComponent
+    MyAccountComponent,
+    ProfileComponent
   ],
   imports: [
     RouterModule.forRoot(routes,
