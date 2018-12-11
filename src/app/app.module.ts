@@ -63,7 +63,6 @@ import { AgmCoreModule } from '@agm/core';
 import { AgmSnazzyInfoWindowModule } from '@agm/snazzy-info-window';
 import { GmapComponent, SaveListDialog } from './gmap/gmap.component';
 import { GmapResolver } from './gmap/gmap.resolver';
-import { MyAccountComponent } from './my-account/my-account.component';
 import { ProfileComponent } from './profile/profile.component';
 import { SubscriptionLevelComponent } from './subscription-level/subscription-level.component';
 import { IntegrationsComponent } from './integrations/integrations.component';
@@ -90,7 +89,6 @@ import { IntegrationsComponent } from './integrations/integrations.component';
     AdminComponent,
     GmapComponent,
     SaveListDialog,
-    MyAccountComponent,
     ProfileComponent,
     SubscriptionLevelComponent,
     IntegrationsComponent
