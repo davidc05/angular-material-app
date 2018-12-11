@@ -14,7 +14,7 @@
                 <form class="ip-query">
                     <mat-form-field class="search-width">
                         <mat-chip-list #chipList>
-                            <mat-chip *ngFor="let ip of ipsList" [removable]="removable" (removed)="remove(ip.label)" color="{{ ip.isInvalid ? 'warn' : ''}}">
+                            <mat-chip *ngFor="let ip of ipsList" [removable]="removable" class="search" [ngClass]="ip.threatLevel" (removed)="remove(ip.label)" color="{{ ip.isInvalid ? 'warn' : ''}}">
                                 {{ip.label}}
                                 <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
                             </mat-chip>
@@ -39,10 +39,10 @@
                     <button mat-flat-button (click)="openDialog()" [disabled]="ipsList.length === 0" class="button-bottom-spacing">
                         <mat-icon>save</mat-icon> Save
                     </button>
-                    <button mat-flat-button (click)="openImportDialog()" [disabled]="isImportDisabled()" class="button-bottom-spacing">
+                    <button mat-flat-button (click)="openImportDialog()" [disabled]="!(subscriptionPlan !== 'free')" class="button-bottom-spacing">
                         <mat-icon>description</mat-icon> Import
                     </button>
-                    <p *ngIf="upgradeToImport()"><a (click)="onClickBuyApp()">Upgrade to import!</a></p>
+                    <p *ngIf="!(subscriptionPlan !== 'free')"><a (click)="onClickBuyApp()">Upgrade to import!</a></p>
                 </div>
             </mat-expansion-panel>
         </mat-accordion>
@@ -99,17 +99,17 @@
                 </mat-form-field>
             </div>
             <div class="results-filter export-component-box">
-                <div class="export-upgrade-message" *ngIf="userService.user.subscriptionPlan !== 'large'">
+                <div class="export-upgrade-message" *ngIf="subscriptionPlan !== 'large'">
                     <a (click)="onClickBuyApp()">Upgrade to export!</a>
                 </div>
                 <label class="horizontal-center">Export as: </label>
                 <mat-form-field>
-                    <mat-select class="horizontal-center" [(value)]="exportType" [disabled]="userService.user.subscriptionPlan !== 'large'">
+                    <mat-select class="horizontal-center" [(value)]="exportType" [disabled]="subscriptionPlan !== 'large'">
                         <mat-option value="csv">CSV</mat-option>
                         <mat-option value="json">JSON</mat-option>
                     </mat-select>
                 </mat-form-field>
-                <button mat-mini-fab color="primary" (click)="export()" [disabled]="userService.user.subscriptionPlan !== 'large'">
+                <button mat-mini-fab color="primary" (click)="export()" [disabled]="subscriptionPlan !== 'large'">
                     <mat-icon aria-label="download icon">cloud_download</mat-icon>
                 </button>
             </div>
