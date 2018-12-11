@@ -13,12 +13,10 @@ export class ProfileComponent implements OnInit {
   ) { }
 
   user;
-
   userEmail;
 
   ngOnInit() {
     this.user = JSON.parse(localStorage.getItem("profile"));
-    console.log('=========', this.user)
     this.userEmail = this.user.email;
   }
 }

@@ -17,6 +17,7 @@ import { IpRangesComponent } from './ip-ranges/ip-ranges.component';
 import { IpRangesResolver } from './ip-ranges/ip-ranges.resolver';
 import { MyAccountComponent } from './my-account/my-account.component';
 import { ProfileComponent } from './profile/profile.component';
+import { SubscriptionLevelComponent } from './subscription-level/subscription-level.component';
 
 export const routes: Routes = [
 	{
@@ -148,6 +149,13 @@ export const routes: Routes = [
 	{
 		path: 'profile',
 		component: ProfileComponent,
+		resolve: {
+
+		}
+	},
+	{
+		path: 'subscription-level',
+		component: SubscriptionLevelComponent,
 		resolve: {
 
 		}
