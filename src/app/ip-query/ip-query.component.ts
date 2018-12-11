@@ -199,17 +199,15 @@ export class IpQueryComponent implements OnInit {
     this.watchlistService.getUserSearchById(watchlistId).then(
       (result) => {
         if (result && result.ips) {
-          result.ips.forEach(ip => {
-            this.ipsService.getIpsDetail([ip])
-              .then(result => {
-                this.ipsList.push({
-                  label: ip,
-                  threatLevel: result.ipsDetail[0].threat_classification
-                });
-              });
-          });
+          this.ipsService.getIpsDetail(result.ips)
+            .then(result => {
+              this.ipsList = result.ipsDetail.map(item => ({
+                label: item.ipaddress,
+                threatLevel: item.threat_classification
+              }));
+              this.submitQuery(this.ipsList)
+            })
         }
-        this.submitQuery(this.ipsList);
       },
       (err) => {
 
