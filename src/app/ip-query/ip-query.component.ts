@@ -145,6 +145,9 @@ export class IpQueryComponent implements OnInit {
         .then(result => {
           this.subscriptionPlan = result[0].subscriptionPlan;
         });
+      if (!!this.userService.user && this.userService.user.subscriptionPlanObject && this.userService.user.subscriptionPlanObject.ipQueryLimit) {
+        this.ipQueryLimit = this.userService.user.subscriptionPlanObject.ipQueryLimit;
+      }
     } else {
       self.authService.lock.on("authenticated", function(authResult) {
         self.authService.lock.getUserInfo(authResult.accessToken, function(error, profile) {
