@@ -423,13 +423,58 @@ export class IpQueryComponent implements OnInit {
 
       this.selectedThreatClassification = filterName === 'threatClassification'
         ? value
-        : this.threatClassifications.length > 1 ? 'All' : this.threatClassifications[0];
+        : this.threatClassifications.length > 1 ? 'All' : this.selectedThreatClassification;
       this.selectedBlacklistClass = filterName === 'blacklistClass'
         ? value
-        : this.blacklistClasses.length > 1 ? 'All' : this.blacklistClasses[0];
+        : this.blacklistClasses.length > 1 ? 'All' : this.selectedBlacklistClass;
       this.selectedNetworkType = filterName === 'networkType'
         ? value
-        :this.networkTypes.length > 1 ? 'All' : this.networkTypes[0];
+        : this.networkTypes.length > 1 ? 'All' : this.selectedNetworkType;
+
+      if (!this.threatClassifications.length) {
+        this.threatClassifications.push(this.selectedThreatClassification);
+      }
+      if (!this.blacklistClasses.length) {
+        this.blacklistClasses.push(this.selectedBlacklistClass);
+      }
+      if (!this.networkTypes.length) {
+        this.networkTypes.push(this.selectedNetworkType);
+      }
+  }
+
+  resetFilters() {
+    this.selectedThreatClassification = 'All';
+    this.selectedBlacklistClass = 'All';
+    this.selectedNetworkType = 'All';
+
+    this.filteredResult.data = this.ipsService.dataSource.data
+      .map(item => !item.network_type.length ? { ...item, network_type: ['No Entry'] } : item)
+      .map(item => ({
+        ...item,
+        threat_profile: `${item.threat_potential_score_pct} (${item.threat_classification})`,
+      }));
+
+    this.threatClassifications =
+      this.sortThreatProfileOptions(
+        chain(this.filteredResult.data)
+        .map(item => item.threat_classification)
+        .uniqBy()
+        .value()
+      );
+    this.blacklistClasses =
+      chain(this.filteredResult.data)
+      .map(item => item.blacklist_class)
+      .uniqBy()
+      .value()
+      .sort();
+    this.networkTypes =
+      chain(this.filteredResult.data)
+      .map(item => item.network_type)
+      .flatten()
+      .uniqBy()
+      .filter(item => this.knownNetworkTypes.indexOf(item) > -1)
+      .value()
+      .sort();
   }
 
   submitQuery = (ipsList): void => {

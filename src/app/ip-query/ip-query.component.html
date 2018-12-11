@@ -98,6 +98,9 @@
                   </mat-select>
                 </mat-form-field>
             </div>
+            <button mat-flat-button (click)="resetFilters()" class="button-bottom-spacing">
+                Reset
+            </button>
             <div class="results-filter export-component-box">
                 <div class="export-upgrade-message" *ngIf="subscriptionPlan !== 'large'">
                     <a (click)="onClickBuyApp()">Upgrade to export!</a>
