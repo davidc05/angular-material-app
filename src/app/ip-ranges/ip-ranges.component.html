@@ -13,7 +13,7 @@
         <label class="horizontal-center" *ngIf="currentRoute !== 'network-name'">Network Name: </label>
         <mat-form-field *ngIf="currentRoute !== 'network-name'">
           <mat-select class="horizontal-center" (selectionChange)="filterValueChange('networkName', selectedNetworkName)"  [(value)]="selectedNetworkName">
-            <mat-option value="">All</mat-option>
+            <mat-option value="All">All</mat-option>
             <mat-option *ngFor="let name of networkNames" [value]="name">{{name}}</mat-option>
           </mat-select>
         </mat-form-field>
@@ -22,7 +22,7 @@
         <label class="horizontal-center" *ngIf="currentRoute !== 'network-type'">Network Type: </label>
         <mat-form-field *ngIf="currentRoute !== 'network-type'">
           <mat-select class="horizontal-center" (selectionChange)="filterValueChange('nameworkType', selectedNetworkType)" [(value)]="selectedNetworkType">
-            <mat-option value="">All</mat-option>
+            <mat-option value="All">All</mat-option>
             <mat-option *ngFor="let type of networkTypes" [value]="type">{{type}}</mat-option>
           </mat-select>
         </mat-form-field>
@@ -31,11 +31,14 @@
         <label class="horizontal-center" *ngIf="currentRoute !== 'network-group'">Network Group: </label>
         <mat-form-field *ngIf="currentRoute !== 'network-group'">
           <mat-select class="horizontal-center" (selectionChange)="filterValueChange('networkGroup', selectedNetworkGroup)" [(value)]="selectedNetworkGroup">
-            <mat-option value="">All</mat-option>
+            <mat-option value="All">All</mat-option>
             <mat-option *ngFor="let group of networkGroups" [value]="group">{{group}}</mat-option>
           </mat-select>
         </mat-form-field>
       </div>
+      <button mat-flat-button (click)="resetFilters()" class="button-bottom-spacing">
+          Reset
+      </button>
     </div>
 
     <table mat-table [dataSource]="filteredIpRangesResult" matSort *ngIf="filteredIpRangesResult && filteredIpRangesResult.length !== 0" class="mat-elevation-z8 results-table">
@@ -94,30 +97,38 @@
     <h2>{{title}} Drill-In</h2>
     <h3>{{queryParam}}</h3>
 
-    <label class="horizontal-center">Threat Profile: </label>
-    <mat-form-field>
-        <mat-select class="horizontal-center" (selectionChange)="filterValueChange('threatClassification', selectedThreatClassification)"  [(value)]="selectedThreatClassification">
-            <mat-option value="">All</mat-option>
-            <mat-option *ngFor="let classification of threatClassifications" [value]="classification">{{classification}}</mat-option>
-        </mat-select>
-    </mat-form-field>
-
-    <label class="horizontal-center">Blacklist Class: </label>
-    <mat-form-field>
-        <mat-select class="horizontal-center" (selectionChange)="filterValueChange('blacklistClass', selectedBlacklistClass)" [(value)]="selectedBlacklistClass">
-            <mat-option value="">All</mat-option>
-            <mat-option *ngFor="let class of blacklistClasses" [value]="class">{{class}}</mat-option>
-        </mat-select>
-    </mat-form-field>
-
-    <label class="horizontal-center">Network Type: </label>
-    <mat-form-field>
-        <mat-select class="horizontal-center" (selectionChange)="filterValueChange('networkType', selectedNetworkType)" [(value)]="selectedNetworkType">
-            <mat-option value="">All</mat-option>
-            <mat-option *ngFor="let type of networkTypes" [value]="type">{{type}}</mat-option>
-        </mat-select>
-    </mat-form-field>
-
+    <div class="filters">
+      <div class="filter">
+        <label class="horizontal-center">Threat Profile: </label>
+        <mat-form-field>
+            <mat-select class="horizontal-center" (selectionChange)="filterValueChange('threatClassification', selectedThreatClassification)"  [(value)]="selectedThreatClassification">
+                <mat-option value="All">All</mat-option>
+                <mat-option *ngFor="let classification of threatClassifications" [value]="classification">{{classification}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="filter">
+        <label class="horizontal-center">Blacklist Class: </label>
+        <mat-form-field>
+            <mat-select class="horizontal-center" (selectionChange)="filterValueChange('blacklistClass', selectedBlacklistClass)" [(value)]="selectedBlacklistClass">
+                <mat-option value="All">All</mat-option>
+                <mat-option *ngFor="let class of blacklistClasses" [value]="class">{{class}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="filter">
+        <label class="horizontal-center">Network Type: </label>
+        <mat-form-field>
+            <mat-select class="horizontal-center" (selectionChange)="filterValueChange('networkType', selectedNetworkType)" [(value)]="selectedNetworkType">
+                <mat-option value="All">All</mat-option>
+                <mat-option *ngFor="let type of networkTypes" [value]="type">{{type}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+      </div>
+      <button mat-flat-button (click)="resetFilters()" class="button-bottom-spacing">
+          Reset
+      </button>
+    </div>
     <table mat-table [dataSource]="filteredIpsListResult" matSort *ngIf="filteredIpsListResult && filteredIpsListResult.length !== 0" class="mat-elevation-z8 results-table">
       <ng-container matColumnDef="ipaddress">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> IP Address </th>
