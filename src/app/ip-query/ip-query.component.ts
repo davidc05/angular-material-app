@@ -145,12 +145,6 @@ export class IpQueryComponent implements OnInit {
         .then(result => {
           this.subscriptionPlan = result[0].subscriptionPlan;
         });
-
-      if (this.userService.user.subscriptionPlanObject
-        && this.userService.user.subscriptionPlanObject.name !== 'free') {
-        this.isImportDisabled = !(this.ipsList.length === 0);
-        this.upgradeToImport = false;
-      }
     } else {
       self.authService.lock.on("authenticated", function(authResult) {
         self.authService.lock.getUserInfo(authResult.accessToken, function(error, profile) {
