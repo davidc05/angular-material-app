@@ -65,6 +65,7 @@ import { GmapComponent, SaveListDialog } from './gmap/gmap.component';
 import { GmapResolver } from './gmap/gmap.resolver';
 import { MyAccountComponent } from './my-account/my-account.component';
 import { ProfileComponent } from './profile/profile.component';
+import { SubscriptionLevelComponent } from './subscription-level/subscription-level.component';
 
 @NgModule({
   declarations: [
@@ -89,7 +90,8 @@ import { ProfileComponent } from './profile/profile.component';
     GmapComponent,
     SaveListDialog,
     MyAccountComponent,
-    ProfileComponent
+    ProfileComponent,
+    SubscriptionLevelComponent
   ],
   imports: [
     RouterModule.forRoot(routes,
