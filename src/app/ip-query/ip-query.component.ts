@@ -13,7 +13,7 @@ import saveAs from 'file-saver';
 import * as moment from 'moment';
 import { UserService } from '../services/user.service';
 
-import { map, filter, flatten, uniqBy, findIndex, chain } from 'lodash';
+import { map, filter, flatten, uniqBy, findIndex, chain, chunk } from 'lodash';
 
 import { Address4, Address6 } from 'ip-address';
 
@@ -482,6 +482,15 @@ export class IpQueryComponent implements OnInit {
       .sort();
   }
 
+  async processArray (array) {
+    let results = [];
+    for (let i = 0; i < array.length; i++) {
+        let r = await this.ipsService.getIpsDetail(array[i]);
+        results.push(r);
+    }
+    return results;    // will be resolved value of promise
+  }
+
   submitQuery = (ipsList): void => {
     this.ipsService.highRiskCircle.count = 0;
     this.ipsService.mediumRiskCircle.count = 0;
@@ -489,67 +498,74 @@ export class IpQueryComponent implements OnInit {
 
     this.ipsList = ipsList;
 
+    let self = this;
+
     if (ipsList.length !== 0) {
       this.validateIpListDeferred(ipsList)
-      .then((cleanIpsList) => {
+      .then(async (cleanIpsList) => {
         this.isFormInvalid = false;
+        let ipsChunk = chunk(cleanIpsList, 20);
 
-        this.ipsService.getIpsDetail(cleanIpsList).then(
-          results => {
-            this.threatClassifications =
-              this.sortThreatProfileOptions(
-                chain(results.ipsDetail)
+        this.processArray(ipsChunk).then(function(result) {
+            const ipsDetail = flatten(result.map(item => item.ipsDetail))
+
+            self.threatClassifications =
+              self.sortThreatProfileOptions(
+                  chain(ipsDetail)
                 .map(item => item.threat_classification)
                 .uniqBy()
                 .value()
               );
 
-            this.blacklistClasses =
-              chain(results.ipsDetail)
+            self.blacklistClasses =
+              chain(ipsDetail)
               .map(item => item.blacklist_class)
               .uniqBy()
               .value()
               .sort();
 
-            this.networkTypes =
-              chain(results.ipsDetail.map(item => !item.network_type.length ? { ...item, network_type: ['No Entry'] } : item))
+            self.networkTypes =
+              chain(ipsDetail.map(item => !item.network_type.length ? { ...item, network_type: ['No Entry'] } : item))
               .map(item => item.network_type)
               .flatten()
               .uniqBy()
-              .filter(item => this.knownNetworkTypes.indexOf(item) > -1)
+              .filter(item => self.knownNetworkTypes.indexOf(item) > -1)
               .value()
               .sort();
 
-            this.ipsService.dataSource.data = results.ipsDetail;
-            this.filteredResult.data = results.ipsDetail
+            self.ipsService.dataSource.data = ipsDetail;
+            self.filteredResult.data = ipsDetail
               .map(item => !item.network_type.length ? {...item, network_type: ['No Entry']} : item)
               .map(item => ({
                 ...item,
                 threat_profile: `${item.threat_potential_score_pct} (${item.threat_classification})`,
-                network_type: filter(item.network_type, (item) => this.knownNetworkTypes.indexOf(item) > -1).join(', ')
+                network_type: filter(item.network_type, (item) => self.knownNetworkTypes.indexOf(item) > -1).join(', ')
               }));
 
-            if (results.ipsDetail.length === 1) {
-              this.selectedThreatClassification = this.threatClassifications[0];
-              this.selectedBlacklistClass = this.blacklistClasses[0];
-              this.selectedNetworkType = this.networkTypes[0];
+            if (ipsDetail.length === 1) {
+              self.selectedThreatClassification = self.threatClassifications[0];
+              self.selectedBlacklistClass = self.blacklistClasses[0];
+              self.selectedNetworkType = self.networkTypes[0];
             }
 
-            this.ipsService.dataSource.sort = this.sort;
+            self.ipsService.dataSource.sort = self.sort;
 
-            results.ipsDetail.forEach(element => {
+            ipsDetail.forEach(element => {
               if (element.threat_classification === 'High') {
-                this.ipsService.highRiskCircle.count++;
+                self.ipsService.highRiskCircle.count++;
               }
               if (element.threat_classification === 'Medium') {
-                this.ipsService.mediumRiskCircle.count++;
+                self.ipsService.mediumRiskCircle.count++;
               }
               if (element.threat_classification === 'Low') {
-                this.ipsService.lowRiskCircle.count++;
+                self.ipsService.lowRiskCircle.count++;
               }
             });
-          }
-        );
+
+        }, function(reason) {
+            // rejection happened
+        });
+
       }, (invalidList) => {
         this.isFormInvalid = true;
         this.ipsService.dataSource.data = [];
