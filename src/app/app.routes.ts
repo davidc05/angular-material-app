@@ -15,9 +15,7 @@ import { AdminComponent } from './admin/admin.component';
 import { AdminResolver } from './admin/admin.resolver';
 import { IpRangesComponent } from './ip-ranges/ip-ranges.component';
 import { IpRangesResolver } from './ip-ranges/ip-ranges.resolver';
-import { ProfileComponent } from './profile/profile.component';
-import { SubscriptionLevelComponent } from './subscription-level/subscription-level.component';
-import { IntegrationsComponent } from './integrations/integrations.component';
+import { MyAccountComponent } from './my-account/my-account.component';
 
 export const routes: Routes = [
 	{
@@ -140,24 +138,9 @@ export const routes: Routes = [
 		}
 	},
 	{
-		path: 'profile',
-		component: ProfileComponent,
+		path: 'my-account',
+		component: MyAccountComponent,
 		resolve: {
-
 		}
 	},
-	{
-		path: 'subscription-level',
-		component: SubscriptionLevelComponent,
-		resolve: {
-
-		}
-	},
-	{
-		path: 'integrations',
-		component: IntegrationsComponent,
-		resolve: {
-
-		}
-	}
 ];
