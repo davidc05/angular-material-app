@@ -119,7 +119,9 @@ export class IpQueryComponent implements OnInit {
       queryData = routeData['queryData'];
     });
 
-    if (!!this.ipsService.dataSource.data.length) {
+    if (!!this.ipsService.dataSource.data.length
+      && (queryData !== 'watchlist' || queryData !== 'tags')
+    ) {
       this.ipsList = this.ipsService.dataSource.data.map(item => ({
         label: item.ipaddress,
         threatLevel: queryData && queryData.queryType === 'watchlist' ? item.threat_classification : ''
@@ -517,9 +519,6 @@ export class IpQueryComponent implements OnInit {
   }
 
   submitQuery = (ipsList): void => {
-    this.ipsService.highRiskCircle.count = 0;
-    this.ipsService.mediumRiskCircle.count = 0;
-    this.ipsService.lowRiskCircle.count = 0;
 
     this.ipsList = ipsList;
 
@@ -545,6 +544,10 @@ export class IpQueryComponent implements OnInit {
   }
 
   handleIpsDetail = (ipsDetail): any => {
+    this.ipsService.highRiskCircle.count = 0;
+    this.ipsService.mediumRiskCircle.count = 0;
+    this.ipsService.lowRiskCircle.count = 0;
+
     this.threatClassifications =
       this.sortThreatProfileOptions(
         chain(ipsDetail)
