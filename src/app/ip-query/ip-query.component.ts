@@ -114,33 +114,34 @@ export class IpQueryComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    console.log(this.ipsService.dataSource.data)
+    let queryData: any = '';
+    this.route.data.subscribe(routeData => {
+      queryData = routeData['queryData'];
+    });
+
     if (!!this.ipsService.dataSource.data.length) {
       this.ipsList = this.ipsService.dataSource.data.map(item => ({
         label: item.ipaddress,
-        threatLevel: ''
+        threatLevel: queryData && queryData.queryType === 'watchlist' ? item.threat_classification : ''
       }));
-      this.submitQuery(this.ipsList);
+      this.handleIpsDetail(this.ipsService.dataSource.data);
     }
 
-
-    this.route.data.subscribe(routeData => {
-
-      const queryData = routeData['queryData'];
-      if (queryData && queryData.queryId && queryData.queryId.length !== 0) {
-        this.ipsList = [];
-        this.ipsService.dataSource.data = [];
-        switch (queryData.queryType) {
-          case 'watchlist':
-            this.getAndRunUserSearch(queryData.queryId);
-            break;
-          case 'tag':
-            this.getAndRunTagSearch(queryData.queryId);
-            break;
-          default:
-            break;
-        }
+    if (queryData && queryData.queryId && queryData.queryId.length !== 0) {
+      this.ipsList = [];
+      this.ipsService.dataSource.data = [];
+      switch (queryData.queryType) {
+        case 'watchlist':
+          this.getAndRunUserSearch(queryData.queryId);
+          break;
+        case 'tag':
+          this.getAndRunTagSearch(queryData.queryId);
+          break;
+        default:
+          break;
       }
-    });
+    }
 
     this.filteredResult.sort = this.sort;
     this.user = JSON.parse(localStorage.getItem("profile"));
@@ -206,14 +207,39 @@ export class IpQueryComponent implements OnInit {
     this.watchlistService.getUserSearchById(watchlistId).then(
       (result) => {
         if (result && result.ips) {
-          this.ipsService.getIpsDetail(result.ips)
-            .then(result => {
-              this.ipsList = result.ipsDetail.map(item => ({
-                label: item.ipaddress,
-                threatLevel: item.threat_classification
-              }));
-              this.submitQuery(this.ipsList)
-            })
+          this.ipsList = result.ips.map(ip => ({ label: ip, threatLevel: '' }));
+
+          this.ipsService.highRiskCircle.count = 0;
+          this.ipsService.mediumRiskCircle.count = 0;
+          this.ipsService.lowRiskCircle.count = 0;
+
+          let self = this;
+
+          if (this.ipsList.length !== 0) {
+            this.validateIpListDeferred(this.ipsList)
+              .then(async (cleanIpsList) => {
+                this.isFormInvalid = false;
+                let ipsChunk = chunk(cleanIpsList, 20);
+
+                this.processArray(ipsChunk).then((result) => {
+                    const ipsDetail = flatten(result.map(item => item.ipsDetail));
+
+                    self.ipsList = ipsDetail.map(ip => ({
+                      label: ip.ipaddress,
+                      threatLevel: ip.threat_classification
+                    }));
+
+                    this.handleIpsDetail(ipsDetail);
+
+                }, (reason) => {
+                    // rejection happened
+                });
+
+              }, (invalidList) => {
+                this.isFormInvalid = true;
+                this.ipsService.dataSource.data = [];
+              });
+          }
         }
       },
       (err) => {
@@ -498,79 +524,80 @@ export class IpQueryComponent implements OnInit {
 
     this.ipsList = ipsList;
 
-    let self = this;
-
     if (ipsList.length !== 0) {
       this.validateIpListDeferred(ipsList)
-      .then(async (cleanIpsList) => {
-        this.isFormInvalid = false;
-        let ipsChunk = chunk(cleanIpsList, 20);
+        .then(async (cleanIpsList) => {
+          this.isFormInvalid = false;
+          let ipsChunk = chunk(cleanIpsList, 20);
 
-        this.processArray(ipsChunk).then(function(result) {
-            const ipsDetail = flatten(result.map(item => item.ipsDetail))
+          this.processArray(ipsChunk).then((result) => {
+              const ipsDetail = flatten(result.map(item => item.ipsDetail))
+              this.handleIpsDetail(ipsDetail);
 
-            self.threatClassifications =
-              self.sortThreatProfileOptions(
-                  chain(ipsDetail)
-                .map(item => item.threat_classification)
-                .uniqBy()
-                .value()
-              );
+          }, (reason) => {
+              // rejection happened
+          });
 
-            self.blacklistClasses =
-              chain(ipsDetail)
-              .map(item => item.blacklist_class)
-              .uniqBy()
-              .value()
-              .sort();
-
-            self.networkTypes =
-              chain(ipsDetail.map(item => !item.network_type.length ? { ...item, network_type: ['No Entry'] } : item))
-              .map(item => item.network_type)
-              .flatten()
-              .uniqBy()
-              .filter(item => self.knownNetworkTypes.indexOf(item) > -1)
-              .value()
-              .sort();
-
-            self.ipsService.dataSource.data = ipsDetail;
-            self.filteredResult.data = ipsDetail
-              .map(item => !item.network_type.length ? {...item, network_type: ['No Entry']} : item)
-              .map(item => ({
-                ...item,
-                threat_profile: `${item.threat_potential_score_pct} (${item.threat_classification})`,
-                network_type: filter(item.network_type, (item) => self.knownNetworkTypes.indexOf(item) > -1).join(', ')
-              }));
-
-            if (ipsDetail.length === 1) {
-              self.selectedThreatClassification = self.threatClassifications[0];
-              self.selectedBlacklistClass = self.blacklistClasses[0];
-              self.selectedNetworkType = self.networkTypes[0];
-            }
-
-            self.ipsService.dataSource.sort = self.sort;
-
-            ipsDetail.forEach(element => {
-              if (element.threat_classification === 'High') {
-                self.ipsService.highRiskCircle.count++;
-              }
-              if (element.threat_classification === 'Medium') {
-                self.ipsService.mediumRiskCircle.count++;
-              }
-              if (element.threat_classification === 'Low') {
-                self.ipsService.lowRiskCircle.count++;
-              }
-            });
-
-        }, function(reason) {
-            // rejection happened
+        }, (invalidList) => {
+          this.isFormInvalid = true;
+          this.ipsService.dataSource.data = [];
         });
-
-      }, (invalidList) => {
-        this.isFormInvalid = true;
-        this.ipsService.dataSource.data = [];
-      });
     }
+  }
+
+  handleIpsDetail = (ipsDetail): any => {
+    this.threatClassifications =
+      this.sortThreatProfileOptions(
+        chain(ipsDetail)
+        .map(item => item.threat_classification)
+        .uniqBy()
+        .value()
+      );
+
+    this.blacklistClasses =
+      chain(ipsDetail)
+      .map(item => item.blacklist_class)
+      .uniqBy()
+      .value()
+      .sort();
+
+    this.networkTypes =
+      chain(ipsDetail.map(item => !item.network_type.length ? { ...item, network_type: ['No Entry'] } : item))
+      .map(item => item.network_type)
+      .flatten()
+      .uniqBy()
+      .filter(item => this.knownNetworkTypes.indexOf(item) > -1)
+      .value()
+      .sort();
+
+    this.ipsService.dataSource.data = ipsDetail;
+    this.filteredResult.data = ipsDetail
+      .map(item => !item.network_type.length ? {...item, network_type: ['No Entry']} : item)
+      .map(item => ({
+        ...item,
+        threat_profile: `${item.threat_potential_score_pct} (${item.threat_classification})`,
+        network_type: filter(item.network_type, (item) => this.knownNetworkTypes.indexOf(item) > -1).join(', ')
+      }));
+
+    if (ipsDetail.length === 1) {
+      this.selectedThreatClassification = this.threatClassifications[0];
+      this.selectedBlacklistClass = this.blacklistClasses[0];
+      this.selectedNetworkType = this.networkTypes[0];
+    }
+
+    this.ipsService.dataSource.sort = this.sort;
+
+    ipsDetail.forEach(element => {
+      if (element.threat_classification === 'High') {
+        this.ipsService.highRiskCircle.count++;
+      }
+      if (element.threat_classification === 'Medium') {
+        this.ipsService.mediumRiskCircle.count++;
+      }
+      if (element.threat_classification === 'Low') {
+        this.ipsService.lowRiskCircle.count++;
+      }
+    });
   }
 
   validateIpListDeferred = (ipsList): any => {
