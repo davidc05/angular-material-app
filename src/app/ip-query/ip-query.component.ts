@@ -102,6 +102,8 @@ export class IpQueryComponent implements OnInit {
 
   filteredResult = new MatTableDataSource([]);
 
+  isLoading = false;
+
   constructor(
     public ipsService: IpsService,
     private observableMedia: ObservableMedia,
@@ -205,6 +207,7 @@ export class IpQueryComponent implements OnInit {
   }
 
   getAndRunUserSearch(watchlistId) {
+    this.isLoading = true;
     this.watchlistService.getUserSearchById(watchlistId).then(
       (result) => {
         if (result && result.ips) {
@@ -231,9 +234,10 @@ export class IpQueryComponent implements OnInit {
                     }));
 
                     this.handleIpsDetail(ipsDetail);
-
+                    this.isLoading = false;
                 }, (reason) => {
                     // rejection happened
+                    this.isLoading = false;
                 });
 
               }, (invalidList) => {
@@ -519,10 +523,10 @@ export class IpQueryComponent implements OnInit {
   }
 
   submitQuery = (ipsList): void => {
-
     this.ipsList = ipsList;
 
     if (ipsList.length !== 0) {
+      this.isLoading = true;
       this.validateIpListDeferred(ipsList)
         .then(async (cleanIpsList) => {
           this.isFormInvalid = false;
@@ -531,14 +535,16 @@ export class IpQueryComponent implements OnInit {
           this.processArray(ipsChunk).then((result) => {
               const ipsDetail = flatten(result.map(item => item.ipsDetail))
               this.handleIpsDetail(ipsDetail);
-
+              this.isLoading = false;
           }, (reason) => {
               // rejection happened
+              this.isLoading = false;
           });
 
         }, (invalidList) => {
           this.isFormInvalid = true;
           this.ipsService.dataSource.data = [];
+          this.isLoading = false;
         });
     }
   }
