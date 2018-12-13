@@ -17,10 +17,15 @@ section.loading {
 label.horizontal-center {
     margin-top: auto;
     margin-bottom: auto;
-    margin-right: 15px;
-    font-weight: bold;
+    margin-right: 10px;
+    font-weight: 700;
+    font-size: 16px;
 }
 .filter {
     float: left;
     padding-right: 3%;
+}
+.filter-clear-btn {
+	float: left;
+    margin-top: 14px;
 }

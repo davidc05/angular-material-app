@@ -97,6 +97,12 @@
                       <mat-option *ngFor="let type of networkTypes" [value]="type">{{type}}</mat-option>
                   </mat-select>
                 </mat-form-field>
+
+                <span class="filter-clear-btn">
+                    <button mat-mini-fab color="primary" (click)="resetFilters()">
+                        <mat-icon aria-label="reset">clear_all</mat-icon>
+                    </button>
+                </span>
             </div>
             <div class="results-filter export-component-box">
                 <div class="export-upgrade-message" *ngIf="subscriptionPlan !== 'large'">
@@ -110,7 +116,7 @@
                     </mat-select>
                 </mat-form-field>
                 <button mat-mini-fab color="primary" (click)="export()" [disabled]="subscriptionPlan !== 'large'">
-                    <mat-icon aria-label="download icon">cloud_download</mat-icon>
+                    <mat-icon aria-label="download">cloud_download</mat-icon>
                 </button>
             </div>
         </div>

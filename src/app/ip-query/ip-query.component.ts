@@ -13,7 +13,7 @@ import saveAs from 'file-saver';
 import * as moment from 'moment';
 import { UserService } from '../services/user.service';
 
-import { map, filter, flatten, uniqBy, findIndex, chain } from 'lodash';
+import { map, filter, flatten, uniqBy, findIndex, chain, chunk } from 'lodash';
 
 import { Address4, Address6 } from 'ip-address';
 
@@ -114,26 +114,35 @@ export class IpQueryComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.ipsList = [];
-
+    let queryData: any = '';
     this.route.data.subscribe(routeData => {
-
-      const queryData = routeData['queryData'];
-      if (queryData && queryData.queryId && queryData.queryId.length !== 0) {
-        this.ipsList = [];
-        this.ipsService.dataSource.data = [];
-        switch (queryData.queryType) {
-          case 'watchlist':
-            this.getAndRunUserSearch(queryData.queryId);
-            break;
-          case 'tag':
-            this.getAndRunTagSearch(queryData.queryId);
-            break;
-          default:
-            break;
-        }
-      }
+      queryData = routeData['queryData'];
     });
+
+    if (!!this.ipsService.dataSource.data.length
+      && (queryData !== 'watchlist' || queryData !== 'tags')
+    ) {
+      this.ipsList = this.ipsService.dataSource.data.map(item => ({
+        label: item.ipaddress,
+        threatLevel: queryData && queryData.queryType === 'watchlist' ? item.threat_classification : ''
+      }));
+      this.handleIpsDetail(this.ipsService.dataSource.data);
+    }
+
+    if (queryData && queryData.queryId && queryData.queryId.length !== 0) {
+      this.ipsList = [];
+      this.ipsService.dataSource.data = [];
+      switch (queryData.queryType) {
+        case 'watchlist':
+          this.getAndRunUserSearch(queryData.queryId);
+          break;
+        case 'tag':
+          this.getAndRunTagSearch(queryData.queryId);
+          break;
+        default:
+          break;
+      }
+    }
 
     this.filteredResult.sort = this.sort;
     this.user = JSON.parse(localStorage.getItem("profile"));
@@ -145,6 +154,9 @@ export class IpQueryComponent implements OnInit {
         .then(result => {
           this.subscriptionPlan = result[0].subscriptionPlan;
         });
+      if (!!this.userService.user && this.userService.user.subscriptionPlanObject && this.userService.user.subscriptionPlanObject.ipQueryLimit) {
+        this.ipQueryLimit = this.userService.user.subscriptionPlanObject.ipQueryLimit;
+      }
     } else {
       self.authService.lock.on("authenticated", function(authResult) {
         self.authService.lock.getUserInfo(authResult.accessToken, function(error, profile) {
@@ -196,17 +208,40 @@ export class IpQueryComponent implements OnInit {
     this.watchlistService.getUserSearchById(watchlistId).then(
       (result) => {
         if (result && result.ips) {
-          result.ips.forEach(ip => {
-            this.ipsService.getIpsDetail([ip])
-              .then(result => {
-                this.ipsList.push({
-                  label: ip,
-                  threatLevel: result.ipsDetail[0].threat_classification
+          this.ipsList = result.ips.map(ip => ({ label: ip, threatLevel: '' }));
+
+          this.ipsService.highRiskCircle.count = 0;
+          this.ipsService.mediumRiskCircle.count = 0;
+          this.ipsService.lowRiskCircle.count = 0;
+
+          let self = this;
+
+          if (this.ipsList.length !== 0) {
+            this.validateIpListDeferred(this.ipsList)
+              .then(async (cleanIpsList) => {
+                this.isFormInvalid = false;
+                let ipsChunk = chunk(cleanIpsList, 20);
+
+                this.processArray(ipsChunk).then((result) => {
+                    const ipsDetail = flatten(result.map(item => item.ipsDetail));
+
+                    self.ipsList = ipsDetail.map(ip => ({
+                      label: ip.ipaddress,
+                      threatLevel: ip.threat_classification
+                    }));
+
+                    this.handleIpsDetail(ipsDetail);
+
+                }, (reason) => {
+                    // rejection happened
                 });
+
+              }, (invalidList) => {
+                this.isFormInvalid = true;
+                this.ipsService.dataSource.data = [];
               });
-          });
+          }
         }
-        this.submitQuery(this.ipsList);
       },
       (err) => {
 
@@ -368,9 +403,9 @@ export class IpQueryComponent implements OnInit {
 
   // handle search result filter option change event
   filterValueChange(filterName, value) {
-    this.selectedThreatClassification = filterName === 'threatClassification' ? value : 'All';
-    this.selectedBlacklistClass = filterName === 'blacklistClass' ? value : 'All';
-    this.selectedNetworkType = filterName === 'networkType' ? value : 'All';
+    this.selectedThreatClassification = filterName === 'threatClassification' ? value : this.selectedThreatClassification;
+    this.selectedBlacklistClass = filterName === 'blacklistClass' ? value : this.selectedBlacklistClass;
+    this.selectedNetworkType = filterName === 'networkType' ? value : this.selectedNetworkType;
 
     this.filteredResult.data = this.ipsService.dataSource.data
       .map(item => !item.network_type.length ? { ...item, network_type: ['No Entry'] } : item)
@@ -420,88 +455,151 @@ export class IpQueryComponent implements OnInit {
 
       this.selectedThreatClassification = filterName === 'threatClassification'
         ? value
-        : this.threatClassifications.length > 1 ? 'All' : this.threatClassifications[0];
+        : this.threatClassifications.length > 1 ? 'All' : this.selectedThreatClassification;
       this.selectedBlacklistClass = filterName === 'blacklistClass'
         ? value
-        : this.blacklistClasses.length > 1 ? 'All' : this.blacklistClasses[0];
+        : this.blacklistClasses.length > 1 ? 'All' : this.selectedBlacklistClass;
       this.selectedNetworkType = filterName === 'networkType'
         ? value
-        :this.networkTypes.length > 1 ? 'All' : this.networkTypes[0];
+        : this.networkTypes.length > 1 ? 'All' : this.selectedNetworkType;
+
+      if (!this.threatClassifications.length) {
+        this.threatClassifications.push(this.selectedThreatClassification);
+      }
+      if (!this.blacklistClasses.length) {
+        this.blacklistClasses.push(this.selectedBlacklistClass);
+      }
+      if (!this.networkTypes.length) {
+        this.networkTypes.push(this.selectedNetworkType);
+      }
+  }
+
+  resetFilters() {
+    this.selectedThreatClassification = 'All';
+    this.selectedBlacklistClass = 'All';
+    this.selectedNetworkType = 'All';
+
+    this.filteredResult.data = this.ipsService.dataSource.data
+      .map(item => !item.network_type.length ? { ...item, network_type: ['No Entry'] } : item)
+      .map(item => ({
+        ...item,
+        threat_profile: `${item.threat_potential_score_pct} (${item.threat_classification})`,
+      }));
+
+    this.threatClassifications =
+      this.sortThreatProfileOptions(
+        chain(this.filteredResult.data)
+        .map(item => item.threat_classification)
+        .uniqBy()
+        .value()
+      );
+    this.blacklistClasses =
+      chain(this.filteredResult.data)
+      .map(item => item.blacklist_class)
+      .uniqBy()
+      .value()
+      .sort();
+    this.networkTypes =
+      chain(this.filteredResult.data)
+      .map(item => item.network_type)
+      .flatten()
+      .uniqBy()
+      .filter(item => this.knownNetworkTypes.indexOf(item) > -1)
+      .value()
+      .sort();
+  }
+
+  async processArray (array) {
+    let results = [];
+    for (let i = 0; i < array.length; i++) {
+        let r = await this.ipsService.getIpsDetail(array[i]);
+        results.push(r);
+    }
+    return results;    // will be resolved value of promise
   }
 
   submitQuery = (ipsList): void => {
-    this.ipsService.highRiskCircle.count = 0;
-    this.ipsService.mediumRiskCircle.count = 0;
-    this.ipsService.lowRiskCircle.count = 0;
 
     this.ipsList = ipsList;
 
     if (ipsList.length !== 0) {
       this.validateIpListDeferred(ipsList)
-      .then((cleanIpsList) => {
-        this.isFormInvalid = false;
+        .then(async (cleanIpsList) => {
+          this.isFormInvalid = false;
+          let ipsChunk = chunk(cleanIpsList, 20);
 
-        this.ipsService.getIpsDetail(cleanIpsList).then(
-          results => {
-            this.threatClassifications =
-              this.sortThreatProfileOptions(
-                chain(results.ipsDetail)
-                .map(item => item.threat_classification)
-                .uniqBy()
-                .value()
-              );
+          this.processArray(ipsChunk).then((result) => {
+              const ipsDetail = flatten(result.map(item => item.ipsDetail))
+              this.handleIpsDetail(ipsDetail);
 
-            this.blacklistClasses =
-              chain(results.ipsDetail)
-              .map(item => item.blacklist_class)
-              .uniqBy()
-              .value()
-              .sort();
+          }, (reason) => {
+              // rejection happened
+          });
 
-            this.networkTypes =
-              chain(results.ipsDetail.map(item => !item.network_type.length ? { ...item, network_type: ['No Entry'] } : item))
-              .map(item => item.network_type)
-              .flatten()
-              .uniqBy()
-              .filter(item => this.knownNetworkTypes.indexOf(item) > -1)
-              .value()
-              .sort();
-
-            this.ipsService.dataSource.data = results.ipsDetail;
-            this.filteredResult.data = results.ipsDetail
-              .map(item => !item.network_type.length ? {...item, network_type: ['No Entry']} : item)
-              .map(item => ({
-                ...item,
-                threat_profile: `${item.threat_potential_score_pct} (${item.threat_classification})`,
-                network_type: filter(item.network_type, (item) => this.knownNetworkTypes.indexOf(item) > -1).join(', ')
-              }));
-
-            if (results.ipsDetail.length === 1) {
-              this.selectedThreatClassification = this.threatClassifications[0];
-              this.selectedBlacklistClass = this.blacklistClasses[0];
-              this.selectedNetworkType = this.networkTypes[0];
-            }
-
-            this.ipsService.dataSource.sort = this.sort;
-
-            results.ipsDetail.forEach(element => {
-              if (element.threat_classification === 'High') {
-                this.ipsService.highRiskCircle.count++;
-              }
-              if (element.threat_classification === 'Medium') {
-                this.ipsService.mediumRiskCircle.count++;
-              }
-              if (element.threat_classification === 'Low') {
-                this.ipsService.lowRiskCircle.count++;
-              }
-            });
-          }
-        );
-      }, (invalidList) => {
-        this.isFormInvalid = true;
-        this.ipsService.dataSource.data = [];
-      });
+        }, (invalidList) => {
+          this.isFormInvalid = true;
+          this.ipsService.dataSource.data = [];
+        });
     }
+  }
+
+  handleIpsDetail = (ipsDetail): any => {
+    this.ipsService.highRiskCircle.count = 0;
+    this.ipsService.mediumRiskCircle.count = 0;
+    this.ipsService.lowRiskCircle.count = 0;
+
+    this.threatClassifications =
+      this.sortThreatProfileOptions(
+        chain(ipsDetail)
+        .map(item => item.threat_classification)
+        .uniqBy()
+        .value()
+      );
+
+    this.blacklistClasses =
+      chain(ipsDetail)
+      .map(item => item.blacklist_class)
+      .uniqBy()
+      .value()
+      .sort();
+
+    this.networkTypes =
+      chain(ipsDetail.map(item => !item.network_type.length ? { ...item, network_type: ['No Entry'] } : item))
+      .map(item => item.network_type)
+      .flatten()
+      .uniqBy()
+      .filter(item => this.knownNetworkTypes.indexOf(item) > -1)
+      .value()
+      .sort();
+
+    this.ipsService.dataSource.data = ipsDetail;
+    this.filteredResult.data = ipsDetail
+      .map(item => !item.network_type.length ? {...item, network_type: ['No Entry']} : item)
+      .map(item => ({
+        ...item,
+        threat_profile: `${item.threat_potential_score_pct} (${item.threat_classification})`,
+        network_type: filter(item.network_type, (item) => this.knownNetworkTypes.indexOf(item) > -1).join(', ')
+      }));
+
+    if (ipsDetail.length === 1) {
+      this.selectedThreatClassification = this.threatClassifications[0];
+      this.selectedBlacklistClass = this.blacklistClasses[0];
+      this.selectedNetworkType = this.networkTypes[0];
+    }
+
+    this.ipsService.dataSource.sort = this.sort;
+
+    ipsDetail.forEach(element => {
+      if (element.threat_classification === 'High') {
+        this.ipsService.highRiskCircle.count++;
+      }
+      if (element.threat_classification === 'Medium') {
+        this.ipsService.mediumRiskCircle.count++;
+      }
+      if (element.threat_classification === 'Low') {
+        this.ipsService.lowRiskCircle.count++;
+      }
+    });
   }
 
   validateIpListDeferred = (ipsList): any => {
