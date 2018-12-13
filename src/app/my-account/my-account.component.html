@@ -1,0 +1,21 @@
+<div class="content-container">
+  <mat-tab-group>
+    <mat-tab label="Profile">
+      <h2>User email: {{ userEmail }}</h2>
+    </mat-tab>
+    <mat-tab label="Subscription Level">
+      <h2>Current subscription plan: {{ subscriptionPlan }}</h2>
+      <br />
+      <button mat-line mat-mini-fab class="mat-elevation-z0 fab-upgrade" color="primary" (click)="onClickBuyApp()" matTooltip="Upgrade to Large Plan" *ngIf="subscriptionPlan !== 'large'">
+        <mat-icon aria-label="download icon">add_shopping_cart</mat-icon>
+      </button>
+    </mat-tab>
+    <mat-tab label="Integrations">
+      <h3>Splunk</h3>
+      <p class="coming-soon-text">Coming Soon!</p>
+    </mat-tab>
+    <mat-tab label="Support">
+      <a href="https://support.musubu.io/" target="_blank">Support</a>
+    </mat-tab>
+  </mat-tab-group>
+</div>

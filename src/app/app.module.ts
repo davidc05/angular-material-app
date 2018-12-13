@@ -37,7 +37,8 @@ import {
   MatProgressSpinnerModule,
   MatPaginatorModule,
   MatSlideToggleModule,
-  MatExpansionModule
+  MatExpansionModule,
+  MatTabsModule
 } from '@angular/material';
 import { IpDetailComponent } from './ip-detail/ip-detail.component';
 import { IpDetailResolver } from './ip-detail/ip-detail.resolver';
@@ -63,9 +64,7 @@ import { AgmCoreModule } from '@agm/core';
 import { AgmSnazzyInfoWindowModule } from '@agm/snazzy-info-window';
 import { GmapComponent, SaveListDialog } from './gmap/gmap.component';
 import { GmapResolver } from './gmap/gmap.resolver';
-import { ProfileComponent } from './profile/profile.component';
-import { SubscriptionLevelComponent } from './subscription-level/subscription-level.component';
-import { IntegrationsComponent } from './integrations/integrations.component';
+import { MyAccountComponent } from './my-account/my-account.component';
 
 @NgModule({
   declarations: [
@@ -89,9 +88,7 @@ import { IntegrationsComponent } from './integrations/integrations.component';
     AdminComponent,
     GmapComponent,
     SaveListDialog,
-    ProfileComponent,
-    SubscriptionLevelComponent,
-    IntegrationsComponent
+    MyAccountComponent
   ],
   imports: [
     RouterModule.forRoot(routes,
@@ -133,6 +130,7 @@ import { IntegrationsComponent } from './integrations/integrations.component';
     MatPaginatorModule,
     MatSlideToggleModule,
     MatExpansionModule,
+    MatTabsModule,
     NgxLoadingModule.forRoot({}),
     NgCircleProgressModule.forRoot({
       // set defaults here

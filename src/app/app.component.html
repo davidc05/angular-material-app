@@ -22,6 +22,11 @@
                     Buy API
                 </button>
             </span>
+            <span class="button-row">
+              <button mat-icon-button matTooltip="My Account" *ngIf="router.url !== '/login'" [routerLink]="['/my-account']">
+                  <mat-icon>account_circle</mat-icon>
+              </button>
+            </span>
             <span class="button-row" *ngIf="router.url !== '/login'">
                 <button mat-icon-button matTooltip="Logout" (click)="logout()">
                     <mat-icon>logout</mat-icon>
@@ -48,17 +53,6 @@
                 <span class="nav-item">
                     <a href="https://musubu.supportbee.com/1487-ip-data-api-cyber-threat-info/3024-getting-started/8940-using-musubuapp" target="_blank">Getting Started</a>
                 </span>
-                <span class="nav-item my-account">
-                  <button mat-list-item mat-button [matMenuTriggerFor]="menu">My Account</button>
-                  <mat-menu #menu="matMenu">
-                    <button mat-menu-item [routerLink]="['/profile/']">Profile</button>
-                    <button mat-menu-item [routerLink]="['/subscription-level/']">Subscription Level</button>
-                    <button mat-menu-item [routerLink]="['/integrations/']">Integrations</button>
-                    <button mat-menu-item (click)="logout()">
-                        Logout <mat-icon>logout</mat-icon>
-                    </button>
-                  </mat-menu>
-                </span>
             </div>
         </mat-toolbar-row>
     </mat-toolbar>
@@ -71,18 +65,6 @@
                 <a mat-list-item [routerLink]="['/trends/']">Trends</a>
                 <a mat-list-item [routerLink]="['/map/']">Map</a>
                 <a mat-list-item href="https://musubu.supportbee.com/1487-ip-data-api-cyber-threat-info/3024-getting-started/8940-using-musubuapp" target="_blank">Getting Started</a>
-                <span>
-                  <button mat-list-item mat-button [matMenuTriggerFor]="menu">My Account</button>
-                  <mat-menu #menu="matMenu">
-                    <button mat-menu-item [routerLink]="['/my-account/']">Profile</button>
-                    <button mat-menu-item>Subscription Level</button>
-                    <button mat-menu-item>Integrations</button>
-                    <button mat-menu-item (click)="logout()">
-                        Logout <mat-icon>logout</mat-icon>
-                    </button>
-                  </mat-menu>
-                </span>
-
                 <span class="button-row">
                     <button mat-flat-button class="button-bottom-spacing" (click)="onClickBuyApp()">
                         Buy App
