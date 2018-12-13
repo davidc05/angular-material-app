@@ -114,7 +114,6 @@ export class IpQueryComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log(this.ipsService.dataSource.data)
     let queryData: any = '';
     this.route.data.subscribe(routeData => {
       queryData = routeData['queryData'];
