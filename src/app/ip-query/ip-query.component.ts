@@ -62,6 +62,7 @@ export class IpQueryComponent implements OnInit {
   queryName;
   description;
   isFormInvalid: boolean;
+  isExceedLimit: boolean;
 
   exportType = 'csv';
 
@@ -364,6 +365,8 @@ export class IpQueryComponent implements OnInit {
         if (findIndex(this.ipsList, function(o) { return o.label === trimmedValue; }) === -1) {
           this.ipsList.push({ label: value.trim(), threatLevel: '' });
         }
+      } else {
+        this.isExceedLimit = true;
       }
     }
 
@@ -378,6 +381,9 @@ export class IpQueryComponent implements OnInit {
     const index = findIndex(this.ipsList, function(o) { return o.label === ip; });
     if (index >= 0) {
       this.ipsList.splice(index, 1);
+    }
+    if (this.ipsList.length < this.ipQueryLimit) {
+      this.isExceedLimit = false;
     }
   }
 
@@ -394,6 +400,8 @@ export class IpQueryComponent implements OnInit {
             if (findIndex(this.ipsList, function(o) { return o.label === trimmedValue; }) === -1) {
               this.ipsList.push({ label: value.trim(), threatLevel: '' });
             }
+          } else {
+            this.isExceedLimit = true;
           }
         }
       });
@@ -528,6 +536,7 @@ export class IpQueryComponent implements OnInit {
       this.validateIpListDeferred(ipsList)
         .then(async (cleanIpsList) => {
           this.isFormInvalid = false;
+          this.isExceedLimit = false;
           let ipsChunk = chunk(cleanIpsList, 20);
 
           this.processArray(ipsChunk).then((result) => {
