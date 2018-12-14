@@ -1,5 +1,5 @@
 import { COMMA, ENTER, SPACE } from '@angular/cdk/keycodes';
-import { Component, ChangeDetectorRef, OnInit, AfterContentInit, ViewChild, Inject } from '@angular/core';
+import { Component, OnInit, ViewChild, Inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatGridList, MatChipInputEvent, MatTableDataSource } from '@angular/material';
 import { ObservableMedia, MediaChange } from '@angular/flex-layout';
@@ -121,9 +121,7 @@ export class IpQueryComponent implements OnInit {
       queryData = routeData['queryData'];
     });
 
-    if (!!this.ipsService.dataSource.data.length
-      && (queryData !== 'watchlist' || queryData !== 'tags')
-    ) {
+    if (!!this.ipsService.dataSource.data.length && queryData !== 'watchlist' && queryData !== 'tags') {
       this.ipsList = this.ipsService.dataSource.data.map(item => ({
         label: item.ipaddress,
         threatLevel: queryData && queryData.queryType === 'watchlist' ? item.threat_classification : ''
@@ -711,6 +709,7 @@ export class ImportDialogComponent {
 
   fileChange(event) {
     const fileList: FileList = event.target.files;
+    this.data.ipsList = [];
     if (fileList.length > 0) {
         this.fileChanged = false;
         const file: File = fileList[0];
