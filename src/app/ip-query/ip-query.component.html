@@ -26,7 +26,7 @@
                                 One or more entries are invalid IP Addresses.
                             </mat-error>
                             <mat-error *ngIf="isExceedLimit">
-                              You have reached your plan limit of {{ipQueryLimit}} IPs per search. You can upgrade your plan to increase this limit.
+                                You have reached your plan limit of {{ipQueryLimit}} IPs per search. Upgrade your plan to increase this limit. <a href="https://musubu.io/app-pricing/" target="_blank">View Pricing</a>.
                             </mat-error>
                         </mat-hint>
                         <mat-hint align="end">{{ipsList.length}} / {{ipQueryLimit}}</mat-hint>
