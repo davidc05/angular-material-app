@@ -235,6 +235,10 @@ tr.mat-header-row{
 	min-width: 150px;
 }
 
+/* my account button dropdown style */
+.musubu-app #cdk-overlay-1 {
+	margin-top: 42px;
+}
 
 @media screen and (max-width: 1200px){
 	.content-container{
