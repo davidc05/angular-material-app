@@ -7,3 +7,4 @@ export * from './IpRange';
 export * from './SubscriptionPlan';
 export * from './BaseModels';
 export * from './FireLoopRef';
+export * from './Note';
