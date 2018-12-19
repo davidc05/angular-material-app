@@ -7,3 +7,4 @@ export * from './IpRange';
 export * from './SubscriptionPlan';
 export * from './SDKModels';
 export * from './logger.service';
+export * from './Note';

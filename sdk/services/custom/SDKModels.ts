@@ -4,6 +4,7 @@ import { IpDetail } from '../../models/IpDetail';
 import { User } from '../../models/User';
 import { Watchlist } from '../../models/Watchlist';
 import { Tag } from '../../models/Tag';
+import { Note } from '../../models/Note';
 import { IpRange } from '../../models/IpRange';
 import { SubscriptionPlan } from '../../models/SubscriptionPlan';
 
@@ -17,9 +18,10 @@ export class SDKModels {
     User: User,
     Watchlist: Watchlist,
     Tag: Tag,
+    Note: Note,
     IpRange: IpRange,
     SubscriptionPlan: SubscriptionPlan,
-    
+
   };
 
   public get(modelName: string): any {
