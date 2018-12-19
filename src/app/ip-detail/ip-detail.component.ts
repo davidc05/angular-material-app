@@ -10,6 +10,7 @@ import { map, startWith, switchMap, debounceTime } from 'rxjs/operators';
 import { Observable, from } from 'rxjs';
 import { UserService } from '../services/user.service';
 import { NoteService } from '../services/note.service';
+import * as moment from 'moment';
 
 export interface IpDetail {
     ipaddress: string,
@@ -52,6 +53,7 @@ export class IpDetailComponent implements OnInit {
 
   tagsFormControl = new FormControl();
   @ViewChild('tagInput') tagInput: ElementRef<HTMLInputElement>;
+  user;
   subscriptionPlan;
   last;
   ipDetail: IpDetail;
@@ -122,6 +124,7 @@ export class IpDetailComponent implements OnInit {
   circleRadius;
 
   userNote: string = '';
+  userNotesList = [];
 
   setCircleData() {
     this.circleRadius = 100;
@@ -205,6 +208,13 @@ export class IpDetailComponent implements OnInit {
         this.getIpTags();
       }
     })
+    this.noteService.getUserNotesByIp(this.ipDetail.ipaddress).toPromise().then(res => {
+      this.userNotesList = res.map(item => ({
+        ...item,
+        date: moment(item.createdOn).format('MMMM DD, YYYY'),
+        time: moment(item.createdOn).format('h:mm A')
+      })).reverse();
+    });
 
     //Automcomplete
     // this.filteredOptions = this.tagsFormControl.valueChanges
@@ -369,10 +379,18 @@ export class IpDetailComponent implements OnInit {
   }
 
 
-  submitNote() {
-    this.noteService.createNote(this.userNote, this.userService.user.email, this.ipDetail.ipaddress);
-    this.noteService.getUserNotesByIp(this.ipDetail.ipaddress).toPromise().then(res => {
-    });
+  async submitNote() {
+    this.user = JSON.parse(localStorage.getItem("profile"));
+    if (this.userNote !== '') {
+      await this.noteService.createNote(this.userNote, this.user.email, this.user.name, this.user.picture, this.ipDetail.ipaddress);
+      await this.noteService.getUserNotesByIp(this.ipDetail.ipaddress).toPromise().then(res => {
+        this.userNotesList = res.map(item => ({
+          ...item,
+          date: moment(item.createdOn).format('MMMM DD, YYYY'),
+          time: moment(item.createdOn).format('h:mm A')
+        })).reverse();
+      });
+    }
   }
 
 }
