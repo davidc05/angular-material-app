@@ -6,6 +6,11 @@
     margin-bottom: 10px;
 }
 
+/* loading spinner */
+content-container .loading {
+  position: relative;
+  padding: 0;
+}
 
 /* Search Box */
 

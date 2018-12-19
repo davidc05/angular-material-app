@@ -27,12 +27,19 @@
       Upload File
       <input type="file" (change)="fileChange($event)" placeholder="Upload File" accept=".json,.csv">
     </label>
-    <p *ngIf="fileChanged" class="file-contents-description">Your file contains {{ data.ipsList.length }} IP Addresses.</p>
+    <div *ngIf="fileChanged" class="file-contents-description">
+      Your file contains {{ data.ipsList.length }} IP Addresses.
+      <div *ngIf="data.ipsList.length > data.ipQueryLimit">
+        <h4>Warning</h4>
+        <p>You have reached your plan limit of {{ data.ipQueryLimit }} IPs per search. Upgrade your plan to increase this limit.</p>
+        <button mat-flat-button color="primary" onClick="window.open('https://musubu.io/app-pricing/')">View Pricing</button>
+      </div>
+    </div>
   </div>
 </div>
 <div mat-dialog-actions align="end">
   <div class="button-row">
     <button mat-flat-button color="basic" (click)="onNoClick()">Cancel</button>
-    <button mat-flat-button color="primary" [mat-dialog-close]="data" cdkFocusInitial [disabled]="data.ipsList.length === 0">Import</button>
+    <button mat-flat-button color="primary" [mat-dialog-close]="data" cdkFocusInitial [disabled]="data.ipsList.length > data.ipQueryLimit">Import</button>
   </div>
 </div>

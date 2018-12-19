@@ -1,5 +1,5 @@
 import { COMMA, ENTER, SPACE } from '@angular/cdk/keycodes';
-import { Component, ChangeDetectorRef, OnInit, AfterContentInit, ViewChild, Inject } from '@angular/core';
+import { Component, OnInit, ViewChild, Inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatGridList, MatChipInputEvent, MatTableDataSource } from '@angular/material';
 import { ObservableMedia, MediaChange } from '@angular/flex-layout';
@@ -62,6 +62,7 @@ export class IpQueryComponent implements OnInit {
   queryName;
   description;
   isFormInvalid: boolean;
+  isExceedLimit: boolean;
 
   exportType = 'csv';
 
@@ -102,6 +103,8 @@ export class IpQueryComponent implements OnInit {
 
   filteredResult = new MatTableDataSource([]);
 
+  isLoading = false;
+
   constructor(
     public ipsService: IpsService,
     private observableMedia: ObservableMedia,
@@ -119,9 +122,7 @@ export class IpQueryComponent implements OnInit {
       queryData = routeData['queryData'];
     });
 
-    if (!!this.ipsService.dataSource.data.length
-      && (queryData !== 'watchlist' || queryData !== 'tags')
-    ) {
+    if (!!this.ipsService.dataSource.data.length && queryData !== 'watchlist' && queryData !== 'tags') {
       this.ipsList = this.ipsService.dataSource.data.map(item => ({
         label: item.ipaddress,
         threatLevel: queryData && queryData.queryType === 'watchlist' ? item.threat_classification : ''
@@ -205,6 +206,7 @@ export class IpQueryComponent implements OnInit {
   }
 
   getAndRunUserSearch(watchlistId) {
+    this.isLoading = true;
     this.watchlistService.getUserSearchById(watchlistId).then(
       (result) => {
         if (result && result.ips) {
@@ -231,9 +233,10 @@ export class IpQueryComponent implements OnInit {
                     }));
 
                     this.handleIpsDetail(ipsDetail);
-
+                    this.isLoading = false;
                 }, (reason) => {
                     // rejection happened
+                    this.isLoading = false;
                 });
 
               }, (invalidList) => {
@@ -362,6 +365,8 @@ export class IpQueryComponent implements OnInit {
         if (findIndex(this.ipsList, function(o) { return o.label === trimmedValue; }) === -1) {
           this.ipsList.push({ label: value.trim(), threatLevel: '' });
         }
+      } else {
+        this.isExceedLimit = true;
       }
     }
 
@@ -376,6 +381,9 @@ export class IpQueryComponent implements OnInit {
     const index = findIndex(this.ipsList, function(o) { return o.label === ip; });
     if (index >= 0) {
       this.ipsList.splice(index, 1);
+    }
+    if (this.ipsList.length < this.ipQueryLimit) {
+      this.isExceedLimit = false;
     }
   }
 
@@ -392,6 +400,8 @@ export class IpQueryComponent implements OnInit {
             if (findIndex(this.ipsList, function(o) { return o.label === trimmedValue; }) === -1) {
               this.ipsList.push({ label: value.trim(), threatLevel: '' });
             }
+          } else {
+            this.isExceedLimit = true;
           }
         }
       });
@@ -519,26 +529,29 @@ export class IpQueryComponent implements OnInit {
   }
 
   submitQuery = (ipsList): void => {
-
     this.ipsList = ipsList;
 
     if (ipsList.length !== 0) {
+      this.isLoading = true;
       this.validateIpListDeferred(ipsList)
         .then(async (cleanIpsList) => {
           this.isFormInvalid = false;
+          this.isExceedLimit = false;
           let ipsChunk = chunk(cleanIpsList, 20);
 
           this.processArray(ipsChunk).then((result) => {
               const ipsDetail = flatten(result.map(item => item.ipsDetail))
               this.handleIpsDetail(ipsDetail);
-
+              this.isLoading = false;
           }, (reason) => {
               // rejection happened
+              this.isLoading = false;
           });
 
         }, (invalidList) => {
           this.isFormInvalid = true;
           this.ipsService.dataSource.data = [];
+          this.isLoading = false;
         });
     }
   }
@@ -705,6 +718,7 @@ export class ImportDialogComponent {
 
   fileChange(event) {
     const fileList: FileList = event.target.files;
+    this.data.ipsList = [];
     if (fileList.length > 0) {
         this.fileChanged = false;
         const file: File = fileList[0];
