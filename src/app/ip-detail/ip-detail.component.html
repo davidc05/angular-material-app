@@ -44,6 +44,16 @@
 						<mat-hint align="end">{{tags.length}} / {{tagsLimit}}</mat-hint>
 					</mat-form-field>
 				</mat-card>
+				<mat-card class="note-card">
+					<mat-card-title>Write a Note</mat-card-title>
+					<mat-form-field class="note-input">
+						<textarea matInput placeholder="Write an internal note here" [(ngModel)]="userNote"></textarea>
+						<mat-hint align="end">{{userNote.length}} / 1000</mat-hint>
+					</mat-form-field>
+					<button mat-line mat-flat-button color="primary" (click)="submitNote()" matTooltip="Add a note">
+						Add note
+					</button>
+				</mat-card>
 			</div>
 		</div>
 	</section>

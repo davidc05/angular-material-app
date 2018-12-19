@@ -9,6 +9,7 @@ import { FormControl } from '@angular/forms';
 import { map, startWith, switchMap, debounceTime } from 'rxjs/operators';
 import { Observable, from } from 'rxjs';
 import { UserService } from '../services/user.service';
+import { NoteService } from '../services/note.service';
 
 export interface IpDetail {
     ipaddress: string,
@@ -45,7 +46,8 @@ export class IpDetailComponent implements OnInit {
     private _location: Location,
     private observableMedia: ObservableMedia,
     private tagsService: TagsService,
-    private userService: UserService
+    private userService: UserService,
+    private noteService: NoteService,
   ) { }
 
   tagsFormControl = new FormControl();
@@ -118,6 +120,8 @@ export class IpDetailComponent implements OnInit {
   circleBackgroundColor;
   circleOuterStrokeColor;
   circleRadius;
+
+  userNote: string = '';
 
   setCircleData() {
     this.circleRadius = 100;
@@ -362,6 +366,13 @@ export class IpDetailComponent implements OnInit {
 
   backButton(){
     this._location.back();
+  }
+
+
+  submitNote() {
+    this.noteService.createNote(this.userNote, this.userService.user.email, this.ipDetail.ipaddress);
+    this.noteService.getUserNotesByIp(this.ipDetail.ipaddress).toPromise().then(res => {
+    });
   }
 
 }

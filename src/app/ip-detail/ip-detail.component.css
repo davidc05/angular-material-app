@@ -18,6 +18,10 @@ div, .content-container{
 	width: 100%;
 }
 
+.note-input {
+	width: 100%;
+}
+
 .card-grid .mat-card{
 	margin: 0 0.5% 40px;
 }
