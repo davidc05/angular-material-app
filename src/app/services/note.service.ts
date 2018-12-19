@@ -10,11 +10,14 @@ export class NoteService {
     private noteApi: NoteApi
   ) { }
 
-  createNote(text, userEmail, ip){
+  createNote(text, userEmail, userName, avatar, ip){
       let data = new Note();
       data.text = text;
       data.userEmail = userEmail;
+      data.userName = userName;
+      data.avatar = avatar;
       data.ip = ip;
+
 
       return this.noteApi.create<Note>(data)
         .toPromise();

@@ -4,6 +4,8 @@ declare var Object: any;
 export interface NoteInterface {
   "text": string;
   "userEmail": string;
+  "userName": string;
+  "avatar": string;
   "ip"?: string;
   "createdOn": Date;
   "id"?: any;
@@ -12,6 +14,8 @@ export interface NoteInterface {
 export class Note implements NoteInterface {
   "text": string;
   "userEmail": string;
+  "userName": string;
+  "avatar": string;
   "ip": string;
   "createdOn": Date;
   "id": any;
@@ -54,6 +58,14 @@ export class Note implements NoteInterface {
         },
         "userEmail": {
           name: 'userEmail',
+          type: 'string'
+        },
+        "userName": {
+          name: 'userName',
+          type: 'string'
+        },
+        "avatar": {
+          name: 'avatar',
           type: 'string'
         },
         "ip": {
