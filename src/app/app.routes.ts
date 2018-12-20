@@ -15,6 +15,8 @@ import { AdminComponent } from './admin/admin.component';
 import { AdminResolver } from './admin/admin.resolver';
 import { IpRangesComponent } from './ip-ranges/ip-ranges.component';
 import { IpRangesResolver } from './ip-ranges/ip-ranges.resolver';
+import { MyAccountComponent } from './my-account/my-account.component';
+import { MyAccountResolver } from './my-account/my-account.resolver';
 
 export const routes: Routes = [
 	{
@@ -135,5 +137,12 @@ export const routes: Routes = [
 			isAuthenticated: LoginResolver,
 			data: IpDetailResolver
 		}
-	}
+	},
+	{
+		path: 'my-account/:tabId',
+		component: MyAccountComponent,
+		resolve: {
+			tabId: MyAccountResolver
+		}
+	},
 ];

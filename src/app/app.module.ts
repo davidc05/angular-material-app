@@ -37,7 +37,8 @@ import {
   MatProgressSpinnerModule,
   MatPaginatorModule,
   MatSlideToggleModule,
-  MatExpansionModule
+  MatExpansionModule,
+  MatTabsModule
 } from '@angular/material';
 import { IpDetailComponent } from './ip-detail/ip-detail.component';
 import { IpDetailResolver } from './ip-detail/ip-detail.resolver';
@@ -63,6 +64,8 @@ import { AgmCoreModule } from '@agm/core';
 import { AgmSnazzyInfoWindowModule } from '@agm/snazzy-info-window';
 import { GmapComponent, SaveListDialog } from './gmap/gmap.component';
 import { GmapResolver } from './gmap/gmap.resolver';
+import { MyAccountComponent } from './my-account/my-account.component';
+import { MyAccountResolver } from './my-account/my-account.resolver';
 
 @NgModule({
   declarations: [
@@ -85,7 +88,8 @@ import { GmapResolver } from './gmap/gmap.resolver';
     CreateUserDialog,
     AdminComponent,
     GmapComponent,
-    SaveListDialog
+    SaveListDialog,
+    MyAccountComponent
   ],
   imports: [
     RouterModule.forRoot(routes,
@@ -127,6 +131,7 @@ import { GmapResolver } from './gmap/gmap.resolver';
     MatPaginatorModule,
     MatSlideToggleModule,
     MatExpansionModule,
+    MatTabsModule,
     NgxLoadingModule.forRoot({}),
     NgCircleProgressModule.forRoot({
       // set defaults here
@@ -171,7 +176,8 @@ import { GmapResolver } from './gmap/gmap.resolver';
     AdminResolver,
     MatDialog,
     IpRangesResolver,
-    GmapResolver
+    GmapResolver,
+    MyAccountResolver
   ],
   entryComponents: [
     ImportDialogComponent,

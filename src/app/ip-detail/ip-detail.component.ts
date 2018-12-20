@@ -11,25 +11,25 @@ import { Observable, from } from 'rxjs';
 import { UserService } from '../services/user.service';
 
 export interface IpDetail {
-    ipaddress: string,
-    ipint: number,
-    threat_potential_score_pct: number,
-    threat_classification: string,
-    blacklist_class: string,
-    blacklist_class_cnt: number,
-    blacklist_network_neighbor_cnt: number,
-    blacklist_observations: number,
-    country: string,
-    stateprov: string,
-    district: string,
-    city: string,
-    zipcode: string,
-    timezone_offset: number,
-    timezone_name: string,
-    ispname: string,
-    network_type: string,
-    network_group: string,
-    network_name: string
+  ipaddress: string,
+  ipint: number,
+  threat_potential_score_pct: number,
+  threat_classification: string,
+  blacklist_class: string,
+  blacklist_class_cnt: number,
+  blacklist_network_neighbor_cnt: number,
+  blacklist_observations: number,
+  country: string,
+  stateprov: string,
+  district: string,
+  city: string,
+  zipcode: string,
+  timezone_offset: number,
+  timezone_name: string,
+  ispname: string,
+  network_type: string,
+  network_group: string,
+  network_name: string
 }
 
 @Component({

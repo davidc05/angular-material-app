@@ -22,11 +22,20 @@
                     Buy API
                 </button>
             </span>
-            <span class="button-row" *ngIf="router.url !== '/login'">
-                <button mat-icon-button matTooltip="Logout" (click)="logout()">
-                    <mat-icon>logout</mat-icon>
+            
+              <button mat-icon-button [matMenuTriggerFor]="menu" matTooltip="My Account" *ngIf="router.url !== '/login'">
+                  <mat-icon>account_circle</mat-icon>
+              </button>
+              <mat-menu #menu="matMenu">
+                <button mat-menu-item [routerLink]="['/my-account', 0]">Profile </button>
+                <button mat-menu-item [routerLink]="['/my-account', 1]">Subscription Level</button>
+                <button mat-menu-item [routerLink]="['/my-account', 2]">Integrations</button>
+                <button mat-menu-item [routerLink]="['/my-account', 3]">Support</button>
+                <button mat-menu-item (click)="logout()">
+                    Log out
                 </button>
-            </span>
+              </mat-menu>
+           
         </mat-toolbar-row>
         <mat-toolbar-row class="desktop-nav" *ngIf="router.url !== '/login'">
             <div>
