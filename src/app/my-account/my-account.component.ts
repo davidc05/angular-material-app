@@ -28,11 +28,12 @@ export class MyAccountComponent implements OnInit {
     this.user = JSON.parse(localStorage.getItem("profile"));
     this.userEmail = this.user.email;
 
-    this.subscriptionPlan = !this.userService.user
-      ? '' : this.userService.user.subscriptionPlan;
+    this.userService.getUserByEmail(this.user.email).then(res => {
+      this.subscriptionPlan = res[0].subscriptionPlan
+    })
   }
 
-  onClickBuyApp(){
+  onClickBuyApp() {
     window.open("https://musubu.io/app-pricing/", "_blank");
   }
 
