@@ -82,6 +82,7 @@ export class IpRangesComponent implements OnInit {
     'Healthcare Networks',
     'TOR Anonymity Networks',
     'Private Networks',
+    'No Entry'
   ];
 
   ngOnInit() {
@@ -152,7 +153,7 @@ export class IpRangesComponent implements OnInit {
     this.selectedBlacklistClass = 'All';
 
     return new Promise((resolve, reject) => {
-      switch(this.currentRoute) {
+      switch (this.currentRoute) {
         case 'network-name':
           this.ipsService.getIpRangesByNetworkName(this.queryParam, (e.pageIndex + 1).toString())
             .then(data => {
@@ -212,9 +213,9 @@ export class IpRangesComponent implements OnInit {
   initIpsListFilter(data) {
     this.threatClassifications = this.sortThreatProfileOptions(
       chain(data)
-      .map(item => item.threat_classification)
-      .uniqBy()
-      .value()
+        .map(item => item.threat_classification)
+        .uniqBy()
+        .value()
     );
 
     this.blacklistClasses = chain(data)
@@ -232,7 +233,7 @@ export class IpRangesComponent implements OnInit {
       .sort(this.sortCaseInsensitive);
 
     this.filteredIpsListResult.data = data
-      .map(item => !item.network_type.length ? {...item, network_type: ['No Entry']} : item)
+      .map(item => !item.network_type.length ? { ...item, network_type: ['No Entry'] } : item)
       .map(item => ({
         ...item,
         threat_profile: `${item.threat_potential_score_pct} (${item.threat_classification})`,
@@ -267,22 +268,22 @@ export class IpRangesComponent implements OnInit {
 
       this.networkNames =
         chain(filterName === 'networkName' ? this.dataSource.data : this.filteredIpRangesResult.data)
-        .map(item => item.network_name)
-        .uniqBy()
-        .value()
-        .sort(this.sortCaseInsensitive);
+          .map(item => item.network_name)
+          .uniqBy()
+          .value()
+          .sort(this.sortCaseInsensitive);
       this.networkTypes =
         chain(filterName === 'networkType' ? this.dataSource.data : this.filteredIpRangesResult.data)
-        .map(item => item.network_type)
-        .uniqBy()
-        .value()
-        .sort(this.sortCaseInsensitive);
+          .map(item => item.network_type)
+          .uniqBy()
+          .value()
+          .sort(this.sortCaseInsensitive);
       this.networkGroups =
         chain(filterName === 'networkGroup' ? this.dataSource.data : this.filteredIpRangesResult.data)
-        .map(item => item.network_group)
-        .uniqBy()
-        .value()
-        .sort(this.sortCaseInsensitive);
+          .map(item => item.network_group)
+          .uniqBy()
+          .value()
+          .sort(this.sortCaseInsensitive);
 
       this.selectedNetworkName = filterName === 'networkName'
         ? value
@@ -319,32 +320,32 @@ export class IpRangesComponent implements OnInit {
         .filter(item => this.selectedNetworkType === 'All'
           ? true
           : item.network_type.indexOf(this.selectedNetworkType) > -1)
-          .map(item => ({
-            ...item,
-            network_type: filter(item.network_type, (item) => this.knownNetworkTypes.indexOf(item) > -1).join(', ')
-          }));
+        .map(item => ({
+          ...item,
+          network_type: filter(item.network_type, (item) => this.knownNetworkTypes.indexOf(item) > -1).join(', ')
+        }));
 
       this.threatClassifications =
         this.sortThreatProfileOptions(
           chain(filterName === 'threatClassification' ? this.dataSource.data : this.filteredIpsListResult.data)
-          .map(item => item.threat_classification)
-          .uniqBy()
-          .value()
+            .map(item => item.threat_classification)
+            .uniqBy()
+            .value()
         )
       this.blacklistClasses =
         chain(filterName === 'blacklistClass' ? this.dataSource.data : this.filteredIpsListResult.data)
-        .map(item => item.blacklist_class)
-        .uniqBy()
-        .value()
-        .sort();
+          .map(item => item.blacklist_class)
+          .uniqBy()
+          .value()
+          .sort();
       this.networkTypes =
         chain(filterName === 'networkType' ? this.dataSource.data : this.filteredIpsListResult.data)
-        .map(item => filterName === 'networkType' ? item.network_type : item.network_type.split(', '))
-        .flatten()
-        .uniqBy()
-        .filter(item => this.knownNetworkTypes.indexOf(item) > -1)
-        .value()
-        .sort();
+          .map(item => filterName === 'networkType' ? item.network_type : item.network_type.split(', '))
+          .flatten()
+          .uniqBy()
+          .filter(item => this.knownNetworkTypes.indexOf(item) > -1)
+          .value()
+          .sort();
 
       this.selectedThreatClassification = filterName === 'threatClassification'
         ? value
@@ -379,45 +380,45 @@ export class IpRangesComponent implements OnInit {
       this.filteredIpRangesResult.data = this.dataSource.data;
       this.networkNames =
         chain(this.filteredIpRangesResult.data)
-        .map(item => item.network_name)
-        .uniqBy()
-        .value()
-        .sort(this.sortCaseInsensitive);
+          .map(item => item.network_name)
+          .uniqBy()
+          .value()
+          .sort(this.sortCaseInsensitive);
       this.networkTypes =
         chain(this.filteredIpRangesResult.data)
-        .map(item => item.network_type)
-        .uniqBy()
-        .value()
-        .sort(this.sortCaseInsensitive);
+          .map(item => item.network_type)
+          .uniqBy()
+          .value()
+          .sort(this.sortCaseInsensitive);
       this.networkGroups =
         chain(this.filteredIpRangesResult.data)
-        .map(item => item.network_group)
-        .uniqBy()
-        .value()
-        .sort(this.sortCaseInsensitive);
+          .map(item => item.network_group)
+          .uniqBy()
+          .value()
+          .sort(this.sortCaseInsensitive);
     } else {
       this.filteredIpsListResult.data = this.dataSource.data;
       this.threatClassifications =
         this.sortThreatProfileOptions(
           chain(this.dataSource.data)
-          .map(item => item.threat_classification)
-          .uniqBy()
-          .value()
+            .map(item => item.threat_classification)
+            .uniqBy()
+            .value()
         );
       this.blacklistClasses =
         chain(this.dataSource.data)
-        .map(item => item.blacklist_class)
-        .uniqBy()
-        .value()
-        .sort();
+          .map(item => item.blacklist_class)
+          .uniqBy()
+          .value()
+          .sort();
       this.networkTypes =
         chain(this.dataSource.data)
-        .map(item => item.network_type)
-        .flatten()
-        .uniqBy()
-        .filter(item => this.knownNetworkTypes.indexOf(item) > -1)
-        .value()
-        .sort();
+          .map(item => item.network_type)
+          .flatten()
+          .uniqBy()
+          .filter(item => this.knownNetworkTypes.indexOf(item) > -1)
+          .value()
+          .sort();
     }
   }
 
@@ -443,7 +444,7 @@ export class IpRangesComponent implements OnInit {
     return a.toLowerCase().localeCompare(b.toLowerCase());
   }
 
-  backButton(){
+  backButton() {
     this._location.back();
   }
 }

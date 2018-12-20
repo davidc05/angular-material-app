@@ -4,13 +4,14 @@
             <mat-tab-group mat-align-tabs="center" [selectedIndex]="selectedTab">
                 <mat-tab label="Profile">
                     <section>
-                        <p><strong>User email:</strong> {{ userEmail }}</p>
+                        <strong>User email:</strong> {{ userEmail }}
                     </section>
                 </mat-tab>
                 <mat-tab label="Subscription Level">
                     <section>
-                        <strong>Current subscription plan:</strong> {{ subscriptionPlan }} 
-                        <button mat-mini-fab class="mat-elevation-z0 fab-upgrade" color="primary" (click)="onClickBuyApp()" matTooltip="Upgrade Plan" *ngIf="subscriptionPlan !== 'large'">
+                        <strong>Current subscription plan:</strong> {{ subscriptionPlan }}
+                        <button mat-mini-fab class="mat-elevation-z0 fab-upgrade" color="primary" (click)="onClickBuyApp()"
+                            matTooltip="Upgrade Plan" *ngIf="subscriptionPlan !== 'large'">
                             <mat-icon aria-label="download icon">add_shopping_cart</mat-icon>
                         </button>
                     </section>
