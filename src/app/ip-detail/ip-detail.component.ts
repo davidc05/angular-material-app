@@ -13,25 +13,25 @@ import { NoteService } from '../services/note.service';
 import * as moment from 'moment';
 
 export interface IpDetail {
-    ipaddress: string,
-    ipint: number,
-    threat_potential_score_pct: number,
-    threat_classification: string,
-    blacklist_class: string,
-    blacklist_class_cnt: number,
-    blacklist_network_neighbor_cnt: number,
-    blacklist_observations: number,
-    country: string,
-    stateprov: string,
-    district: string,
-    city: string,
-    zipcode: string,
-    timezone_offset: number,
-    timezone_name: string,
-    ispname: string,
-    network_type: string,
-    network_group: string,
-    network_name: string
+  ipaddress: string,
+  ipint: number,
+  threat_potential_score_pct: number,
+  threat_classification: string,
+  blacklist_class: string,
+  blacklist_class_cnt: number,
+  blacklist_network_neighbor_cnt: number,
+  blacklist_observations: number,
+  country: string,
+  stateprov: string,
+  district: string,
+  city: string,
+  zipcode: string,
+  timezone_offset: number,
+  timezone_name: string,
+  ispname: string,
+  network_type: string,
+  network_group: string,
+  network_name: string
 }
 
 @Component({
@@ -128,7 +128,7 @@ export class IpDetailComponent implements OnInit {
 
   setCircleData() {
     this.circleRadius = 100;
-    switch(this.ipDetail.threat_classification){
+    switch (this.ipDetail.threat_classification) {
       case "High":
         this.circleTitle = ['High', 'Risk', ''];
         this.circleSubtitle = this.ipDetail.ipaddress;
@@ -189,20 +189,20 @@ export class IpDetailComponent implements OnInit {
       let data = routeData['data'];
       if (data) {
         this.ipDetail = data;
-        if(!this.ipDetail.zipcode || this.ipDetail.zipcode === ''){
+        if (!this.ipDetail.zipcode || this.ipDetail.zipcode === '') {
           this.ipDetail.zipcode = "N/A"
         }
         //Set circle data
         this.setCircleData();
-        this.ipThreatDetailFields.forEach( key =>{
+        this.ipThreatDetailFields.forEach(key => {
           this.ipThreatDetail[key] = data[key];
         });
-        this.ipGeoDetailFields.forEach( key =>{
+        this.ipGeoDetailFields.forEach(key => {
           this.ipGeoDetail[key] = data[key];
           this.latitude = data['latitude'];
           this.longitude = data['longitude'];
         });
-        this.ipISPDetailFields.forEach( key =>{
+        this.ipISPDetailFields.forEach(key => {
           this.ipISPDetail[key] = data[key];
         });
         this.getIpTags();
@@ -225,13 +225,13 @@ export class IpDetailComponent implements OnInit {
 
     this.tagsSuggestions = new Observable<string[]>();
     this.tagsSuggestions = this.tagsFormControl
-    .valueChanges
-    .pipe(
-      debounceTime(300),
-      switchMap(tag => {
-        return this.tagsService.findUserTagByName(this.userService.user.email, tag, this.tags);
-      })
-    )
+      .valueChanges
+      .pipe(
+        debounceTime(300),
+        switchMap(tag => {
+          return this.tagsService.findUserTagByName(this.userService.user.email, tag, this.tags);
+        })
+      )
 
     window.scrollTo(0, 0);
   }
@@ -246,11 +246,11 @@ export class IpDetailComponent implements OnInit {
     if (tag) { return tag.name; }
   }
 
-  getIpTags(){
+  getIpTags() {
     this.tagsService.getUserTagsByIp(this.ipDetail.ipaddress, this.userService.user.email).toPromise().then(
       result => {
         this.tagsFull = result;
-        this.tags = result.map(val =>{
+        this.tags = result.map(val => {
           return val.name;
         });
       },
@@ -279,31 +279,31 @@ export class IpDetailComponent implements OnInit {
     this.tagsFormControl.setValue(null);
   }
 
-  validateAndAddTag(value){
+  validateAndAddTag(value) {
     if ((value || '').trim()) {
-      if(this.tags.length < this.tagsLimit){
+      if (this.tags.length < this.tagsLimit) {
         var trimmedValue = value.trim()
-        if(!this.tags.includes(trimmedValue)){
+        if (!this.tags.includes(trimmedValue)) {
           this.tagsService.getUserTagByName(trimmedValue, this.userService.user.email).toPromise().then(
-            result =>{
-              if(result.length === 0){
+            result => {
+              if (result.length === 0) {
                 //create
                 this.tagsService.createTag(trimmedValue, this.userService.user.email, [this.ipDetail.ipaddress]).then(
-                  result =>{
+                  result => {
                     this.getIpTags();
                   },
-                  err =>{
+                  err => {
 
                   }
                 )
               }
-              else{
+              else {
                 let tag = result[0];
-                if(tag.ips.indexOf(trimmedValue) < 0){
+                if (tag.ips.indexOf(trimmedValue) < 0) {
                   //update
                   tag.ips.push(this.ipDetail.ipaddress);
                   this.tagsService.updateTag(tag).then(
-                    result =>{
+                    result => {
                       this.getIpTags();
                     },
                     err => {
@@ -344,37 +344,37 @@ export class IpDetailComponent implements OnInit {
   paste(event: ClipboardEvent): void {
     event.preventDefault();
     event.clipboardData
-    .getData('Text')
-    .split(/,|\n/)
-    .forEach(value => {
-      if ((value || '').trim()) {
-        if(this.tags.length < this.tagsLimit){
-          var trimmedValue = value.trim()
-          if(!this.tags.includes(trimmedValue)){
-            this.tags.push(value.trim());
+      .getData('Text')
+      .split(/,|\n/)
+      .forEach(value => {
+        if ((value || '').trim()) {
+          if (this.tags.length < this.tagsLimit) {
+            var trimmedValue = value.trim()
+            if (!this.tags.includes(trimmedValue)) {
+              this.tags.push(value.trim());
+            }
           }
         }
-      }
-    })
+      })
   }
 
-  onClickBuyApp(){
+  onClickBuyApp() {
     window.open("https://musubu.io/app-pricing/", "_blank");
   }
 
-  isArray(value){
+  isArray(value) {
     return Array.isArray(value);
   }
 
-  convertToSet(array){
+  convertToSet(array) {
     return new Set(array);
   }
 
-  getKeys(map){
+  getKeys(map) {
     return Object.keys(map);
   }
 
-  backButton(){
+  backButton() {
     this._location.back();
   }
 
