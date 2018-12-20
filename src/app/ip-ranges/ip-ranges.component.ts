@@ -82,6 +82,7 @@ export class IpRangesComponent implements OnInit {
     'Healthcare Networks',
     'TOR Anonymity Networks',
     'Private Networks',
+    'No Entry'
   ];
 
   ngOnInit() {
