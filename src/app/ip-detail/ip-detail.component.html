@@ -8,12 +8,8 @@
 		<h2>IP Specific Detail</h2>
 		<div class="col-wrapper clearfix">
 			<div class="cols lg-2 md-2 sm-1 risk-circle">
-				<app-ip-risk-circle
-					[title]="circleTitle"
-					[subtitle]="circleSubtitle"
-					[riskLevel]="circleRiskLevel"
-					[backgroundColor]="circleBackgroundColor"
-					[outerStrokeColor]="circleOuterStrokeColor">
+				<app-ip-risk-circle [title]="circleTitle" [subtitle]="circleSubtitle" [riskLevel]="circleRiskLevel"
+				 [backgroundColor]="circleBackgroundColor" [outerStrokeColor]="circleOuterStrokeColor">
 				</app-ip-risk-circle>
 			</div>
 			<div class="cols lg-2 md-2 sm-1">
@@ -21,20 +17,13 @@
 					<mat-card-title>Add Tags</mat-card-title>
 					<mat-form-field class="tags-input">
 						<mat-chip-list #chipList>
-							<mat-chip *ngFor="let tag of tags" [selectable]="selectable"
-									[removable]="removable" (removed)="remove(tag)">
+							<mat-chip *ngFor="let tag of tags" [selectable]="selectable" [removable]="removable" (removed)="remove(tag)">
 								{{tag}}
 								<mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
 							</mat-chip>
-							<input placeholder="Add tags to describe or group this IP with others."
-								#tagInput
-								[matChipInputFor]="chipList"
-								[matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-								[matChipInputAddOnBlur]="addOnBlur"
-								(matChipInputTokenEnd)="add($event)"
-								[formControl]="tagsFormControl"
-								[matAutocomplete]="auto"
-								(paste)="paste($event)">
+							<input placeholder="Add tags to describe or group this IP with others." #tagInput [matChipInputFor]="chipList"
+							 [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur" (matChipInputTokenEnd)="add($event)"
+							 [formControl]="tagsFormControl" [matAutocomplete]="auto" (paste)="paste($event)">
 						</mat-chip-list>
 						<mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
 							<mat-option *ngFor="let option of tagsSuggestions | async" [value]="option">
@@ -50,36 +39,40 @@
 	<section>
 		<div class="card-grid clearfix">
 			<mat-card class="card-grid-card first">
-			    <mat-card-title><mat-icon>warning</mat-icon> Threat</mat-card-title>
-			    <mat-list role="list">
-			        <mat-list-item role="listitem" *ngFor="let ipThreatDetailKey of getKeys(ipThreatDetail); last as last">
-			            <h3 mat-line>{{fieldNames[ipThreatDetailKey]}}</h3>
-			            <p mat-line *ngIf="ipThreatDetailKey !== 'threat_potential_score_pct' && ipThreatDetailKey !== 'threat_classification' && ipThreatDetailKey !== 'blacklist_class' && ipThreatDetailKey !== 'blacklist_network_neighbor_cnt'">{{ipThreatDetail[ipThreatDetailKey]}} </p>
+				<mat-card-title>
+					<mat-icon>warning</mat-icon> Threat
+				</mat-card-title>
+				<mat-list role="list">
+					<mat-list-item role="listitem" *ngFor="let ipThreatDetailKey of getKeys(ipThreatDetail); last as last">
+						<h3 mat-line>{{fieldNames[ipThreatDetailKey]}}</h3>
+						<p mat-line *ngIf="ipThreatDetailKey !== 'threat_potential_score_pct' && ipThreatDetailKey !== 'threat_classification' && ipThreatDetailKey !== 'blacklist_class' && ipThreatDetailKey !== 'blacklist_network_neighbor_cnt'">{{ipThreatDetail[ipThreatDetailKey]}}
+						</p>
 
-			            <!-- Threat Score -->
-			            <mat-chip-list mat-line *ngIf="ipThreatDetailKey == 'threat_potential_score_pct'">
-			            	<span *ngIf="ipThreatDetail[ipThreatDetailKey] >= 70">
-			            		<mat-chip class="threat-score high"> {{ipThreatDetail[ipThreatDetailKey]}} </mat-chip>
-			            	</span>
-			            	<span *ngIf="ipThreatDetail[ipThreatDetailKey] >= 40 && ipThreatDetail[ipThreatDetailKey] < 70">
-			            		<mat-chip class="threat-score medium"> {{ipThreatDetail[ipThreatDetailKey]}} </mat-chip>
-			            	</span>
-			            	<span *ngIf="ipThreatDetail[ipThreatDetailKey] >= 20 && ipThreatDetail[ipThreatDetailKey] < 40">
-			            		<mat-chip class="threat-score nuisance"> {{ipThreatDetail[ipThreatDetailKey]}} </mat-chip>
-			            	</span>
-			            	<span *ngIf="ipThreatDetail[ipThreatDetailKey] < 20">
-			            		<mat-chip class="threat-score low"> {{ipThreatDetail[ipThreatDetailKey]}} </mat-chip>
-			            	</span>
+						<!-- Threat Score -->
+						<mat-chip-list mat-line *ngIf="ipThreatDetailKey == 'threat_potential_score_pct'">
+							<span *ngIf="ipThreatDetail[ipThreatDetailKey] >= 70">
+								<mat-chip class="threat-score high"> {{ipThreatDetail[ipThreatDetailKey]}} </mat-chip>
+							</span>
+							<span *ngIf="ipThreatDetail[ipThreatDetailKey] >= 40 && ipThreatDetail[ipThreatDetailKey] < 70">
+								<mat-chip class="threat-score medium"> {{ipThreatDetail[ipThreatDetailKey]}} </mat-chip>
+							</span>
+							<span *ngIf="ipThreatDetail[ipThreatDetailKey] >= 20 && ipThreatDetail[ipThreatDetailKey] < 40">
+								<mat-chip class="threat-score nuisance"> {{ipThreatDetail[ipThreatDetailKey]}} </mat-chip>
+							</span>
+							<span *ngIf="ipThreatDetail[ipThreatDetailKey] < 20">
+								<mat-chip class="threat-score low"> {{ipThreatDetail[ipThreatDetailKey]}} </mat-chip>
+							</span>
 						</mat-chip-list>
 
 						<!-- Threat Classification -->
-			            <mat-chip-list mat-line *ngIf="ipThreatDetailKey == 'threat_classification'">
-			            	<mat-chip class="threat-class" id="{{ipThreatDetail[ipThreatDetailKey]}}"> {{ipThreatDetail[ipThreatDetailKey]}} </mat-chip>
+						<mat-chip-list mat-line *ngIf="ipThreatDetailKey == 'threat_classification'">
+							<mat-chip class="threat-class" id="{{ipThreatDetail[ipThreatDetailKey]}}"> {{ipThreatDetail[ipThreatDetailKey]}}
+							</mat-chip>
 						</mat-chip-list>
 
 						<!-- Blacklist Class -->
-			            <mat-chip-list mat-line *ngIf="ipThreatDetailKey == 'blacklist_class'">
-			            	<mat-chip id="{{ipThreatDetail[ipThreatDetailKey]}}"> {{ipThreatDetail[ipThreatDetailKey]}} </mat-chip>
+						<mat-chip-list mat-line *ngIf="ipThreatDetailKey == 'blacklist_class'">
+							<mat-chip id="{{ipThreatDetail[ipThreatDetailKey]}}"> {{ipThreatDetail[ipThreatDetailKey]}} </mat-chip>
 						</mat-chip-list>
 
 						<!-- Blacklist Network Neighbors -->
@@ -89,37 +82,43 @@
 							</mat-chip>
 							<span *ngIf="!ipThreatDetail[ipThreatDetailKey]">&nbsp;{{ipThreatDetail[ipThreatDetailKey]}} </span>
 						</mat-chip-list>
-						<button mat-line mat-mini-fab class="mat-elevation-z0 fab-upgrade" color="primary" (click)="onClickBuyApp()" matTooltip="Upgrade to see this data and drill-in on this field!" *ngIf="subscriptionPlan === 'free' && ipThreatDetailKey === 'blacklist_network_neighbor_cnt'">
+						<button mat-line mat-mini-fab class="mat-elevation-z0 fab-upgrade" color="primary" (click)="onClickBuyApp()"
+						 matTooltip="Upgrade to see this data and drill-in on this field!" *ngIf="subscriptionPlan === 'free' && ipThreatDetailKey === 'blacklist_network_neighbor_cnt'">
 							<mat-icon aria-label="download icon">add_shopping_cart</mat-icon>
 						</button>
 
-			          	<mat-divider [inset]="true" *ngIf="!last"></mat-divider>
-			        </mat-list-item>
-			    </mat-list>
+						<mat-divider [inset]="true" *ngIf="!last"></mat-divider>
+					</mat-list-item>
+				</mat-list>
 			</mat-card>
 			<mat-card class="card-grid-card middle">
-			    <mat-card-title><mat-icon>place</mat-icon> Geo-location</mat-card-title>
-			    <mat-list role="list">
-			        <mat-list-item role="listitem" *ngFor="let ipGeoDetailKey of getKeys(ipGeoDetail); last as last">
-			            <h3 mat-line>{{fieldNames[ipGeoDetailKey]}}</h3>
-			            <p mat-line> {{ipGeoDetail[ipGeoDetailKey]}} </p>
-			          	<mat-divider [inset]="true" *ngIf="!last"></mat-divider>
-			        </mat-list-item>
-			    </mat-list>
+				<mat-card-title>
+					<mat-icon>place</mat-icon> Geo-location
+				</mat-card-title>
+				<mat-list role="list">
+					<mat-list-item role="listitem" *ngFor="let ipGeoDetailKey of getKeys(ipGeoDetail); last as last">
+						<h3 mat-line>{{fieldNames[ipGeoDetailKey]}}</h3>
+						<p mat-line> {{ipGeoDetail[ipGeoDetailKey]}} </p>
+						<mat-divider [inset]="true" *ngIf="!last"></mat-divider>
+					</mat-list-item>
+				</mat-list>
 			</mat-card>
 			<mat-card class="card-grid-card last">
-			    <mat-card-title><mat-icon>network_check</mat-icon> ISP & Network Info</mat-card-title>
-			    <mat-list role="list">
-			        <mat-list-item role="listitem" *ngFor="let ipISPDetailKey of getKeys(ipISPDetail); last as last">
-			            <h3 mat-line>{{fieldNames[ipISPDetailKey]}}</h3>
+				<mat-card-title>
+					<mat-icon>network_check</mat-icon> ISP & Network Info
+				</mat-card-title>
+				<mat-list role="list">
+					<mat-list-item role="listitem" *ngFor="let ipISPDetailKey of getKeys(ipISPDetail); last as last">
+						<h3 mat-line>{{fieldNames[ipISPDetailKey]}}</h3>
 
-			            <!-- ISP Name -->
-			            <mat-chip-list mat-line *ngIf="!isArray(ipISPDetail[ipISPDetailKey]) && subscriptionPlan !== 'free'">
+						<!-- ISP Name -->
+						<mat-chip-list mat-line *ngIf="!isArray(ipISPDetail[ipISPDetailKey]) && subscriptionPlan !== 'free'">
 							<mat-chip>
 								<a [routerLink]="['/isp-name/', ipISPDetail[ipISPDetailKey]]"> {{ipISPDetail[ipISPDetailKey]}}</a>
 							</mat-chip>
 						</mat-chip-list>
-						<button mat-line mat-mini-fab class="mat-elevation-z0 fab-upgrade" color="primary" (click)="onClickBuyApp()" matTooltip="Upgrade to see this data and drill-in on this field!" *ngIf="['small', 'medium', 'large'].indexOf(subscriptionPlan) < 0 && ipISPDetailKey === 'ispname'">
+						<button mat-line mat-mini-fab class="mat-elevation-z0 fab-upgrade" color="primary" (click)="onClickBuyApp()"
+						 matTooltip="Upgrade to see this data and drill-in on this field!" *ngIf="['small', 'medium', 'large'].indexOf(subscriptionPlan) < 0 && ipISPDetailKey === 'ispname'">
 							<mat-icon aria-label="download icon">add_shopping_cart</mat-icon>
 						</button>
 
@@ -127,29 +126,38 @@
 						<mat-chip-list mat-line #chipList *ngIf="isArray(ipISPDetail[ipISPDetailKey]) && ['free', 'small'].indexOf(subscriptionPlan) < 0">
 							<div *ngIf="ipISPDetail[ipISPDetailKey].length === 0">&nbsp;No Entry</div>
 							<mat-chip *ngFor="let detail of convertToSet(ipISPDetail[ipISPDetailKey])" [selectable]="selectable">
-								<a *ngIf="ipISPDetailKey === 'ispname' && subscriptionPlan === 'large'" [routerLink]="['/isp-name/', detail]"> {{detail}} </a>
-								<div *ngIf="(ipISPDetailKey === 'network_name' || ipISPDetailKey === 'network_type' || ipISPDetailKey === 'network_group') && subscriptionPlan !== 'large'"> {{detail}} </div>
-								<a *ngIf="ipISPDetailKey === 'network_group' && subscriptionPlan === 'large'" [routerLink]="['/network-group/', detail]"> {{detail}} </a>
-								<a *ngIf="ipISPDetailKey === 'network_name' && subscriptionPlan === 'large'" [routerLink]="['/network-name/', detail]"> {{detail}} </a>
-								<a *ngIf="ipISPDetailKey === 'network_type' && subscriptionPlan === 'large'" [routerLink]="['/network-type/', detail]"> {{detail}} </a>
+								<a *ngIf="ipISPDetailKey === 'ispname' && subscriptionPlan === 'large'" [routerLink]="['/isp-name/', detail]">
+									{{detail}} </a>
+								<div *ngIf="(ipISPDetailKey === 'network_name' || ipISPDetailKey === 'network_type' || ipISPDetailKey === 'network_group') && subscriptionPlan !== 'large'">
+									{{detail}} </div>
+								<a *ngIf="ipISPDetailKey === 'network_group' && subscriptionPlan === 'large'" [routerLink]="['/network-group/', detail]">
+									{{detail}} </a>
+								<a *ngIf="ipISPDetailKey === 'network_name' && subscriptionPlan === 'large'" [routerLink]="['/network-name/', detail]">
+									{{detail}} </a>
+								<a *ngIf="ipISPDetailKey === 'network_type' && subscriptionPlan === 'large'" [routerLink]="['/network-type/', detail]">
+									{{detail}} </a>
 							</mat-chip>
 						</mat-chip-list>
 
-						<button mat-mini-fab class="mat-elevation-z0 fab-upgrade" color="primary" (click)="onClickBuyApp()" matTooltip="Upgrade to drill-in on this field!" *ngIf="['free', 'small', 'large'].indexOf(subscriptionPlan) < 0 && ipISPDetailKey !== 'ispname'">
+						<button mat-mini-fab class="mat-elevation-z0 fab-upgrade" color="primary" (click)="onClickBuyApp()" matTooltip="Upgrade to drill-in on this field!"
+						 *ngIf="['free', 'small', 'large'].indexOf(subscriptionPlan) < 0 && ipISPDetailKey !== 'ispname'">
 							<mat-icon aria-label="download icon">add_shopping_cart</mat-icon>
 						</button>
-						<button mat-line mat-mini-fab class="mat-elevation-z0 fab-upgrade" color="primary" (click)="onClickBuyApp()" matTooltip="Upgrade to see this data and drill-in on this field!" *ngIf="['medium', 'large'].indexOf(subscriptionPlan) < 0 && ipISPDetailKey !== 'ispname'">
+						<button mat-line mat-mini-fab class="mat-elevation-z0 fab-upgrade" color="primary" (click)="onClickBuyApp()"
+						 matTooltip="Upgrade to see this data and drill-in on this field!" *ngIf="['medium', 'large'].indexOf(subscriptionPlan) < 0 && ipISPDetailKey !== 'ispname'">
 							<mat-icon aria-label="download icon">add_shopping_cart</mat-icon>
 						</button>
-			          	<mat-divider [inset]="true" *ngIf="!last"></mat-divider>
-			        </mat-list-item>
-			    </mat-list>
+						<mat-divider [inset]="true" *ngIf="!last"></mat-divider>
+					</mat-list-item>
+				</mat-list>
 			</mat-card>
 		</div>
 	</section>
 	<section class="container" *ngIf="subscriptionPlan === 'large'">
 		<mat-card>
-			<mat-card-title><mat-icon>place</mat-icon> Address Mapping</mat-card-title>
+			<mat-card-title>
+				<mat-icon>place</mat-icon> Address Mapping
+			</mat-card-title>
 			<div class="col-wrapper">
 				<div class="cols gmap-detail">
 					<mat-list role="list">
@@ -178,15 +186,11 @@
 				<div class="cols gmap-content">
 					<agm-map [latitude]="+latitude" [longitude]="+longitude" [scrollwheel]="false">
 						<agm-marker [iconUrl]="iconUrl" [latitude]="+latitude" [longitude]="+longitude">
-							<agm-snazzy-info-window
-								[latitude]="+latitude"
-								[longitude]="+longitude"
-							 	[isOpen]="true"
-							>
-					      <ng-template>
-					        {{ipDetail.ipaddress}}
-					      </ng-template>
-					    </agm-snazzy-info-window>
+							<agm-snazzy-info-window [latitude]="+latitude" [longitude]="+longitude" [isOpen]="true">
+								<ng-template>
+									{{ipDetail.ipaddress}}
+								</ng-template>
+							</agm-snazzy-info-window>
 						</agm-marker>
 					</agm-map>
 				</div>
