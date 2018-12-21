@@ -208,13 +208,8 @@ export class IpDetailComponent implements OnInit {
                 this.getIpTags();
             }
         })
-        this.noteService.getUserNotesByIp(this.ipDetail.ipaddress).toPromise().then(res => {
-            this.userNotesList = this.groupByDate(res.map(item => ({
-                ...item,
-                date: moment(item.createdOn).format('MMMM DD, YYYY'),
-                time: moment(item.createdOn).format('h:mm A')
-            })).reverse());
-        });
+
+        this.getIPsNotes();
 
         //Automcomplete
         // this.filteredOptions = this.tagsFormControl.valueChanges
@@ -384,13 +379,7 @@ export class IpDetailComponent implements OnInit {
         this.user = JSON.parse(localStorage.getItem("profile"));
         if (this.userNote !== '') {
             await this.noteService.createNote(this.userNote, this.user.email, this.user.name, this.user.picture, this.ipDetail.ipaddress);
-            await this.noteService.getUserNotesByIp(this.ipDetail.ipaddress).toPromise().then(res => {
-                this.userNotesList = this.groupByDate(res.map(item => ({
-                    ...item,
-                    date: moment(item.createdOn).format('MMMM DD, YYYY'),
-                    time: moment(item.createdOn).format('h:mm A')
-                })).reverse());
-            });
+            await this.getIPsNotes();
         }
     }
 
@@ -409,4 +398,19 @@ export class IpDetailComponent implements OnInit {
         return Object.values(dates);
     }
 
+    deleteNote(id: any) {
+        this.noteService.deleteNote(id).then(res => {
+            this.getIPsNotes();
+        });
+    }
+
+    getIPsNotes() {
+        this.noteService.getUserNotesByIp(this.ipDetail.ipaddress).toPromise().then(res => {
+            this.userNotesList = this.groupByDate(res.map(item => ({
+                ...item,
+                date: moment(item.createdOn).format('MMMM DD, YYYY'),
+                time: moment(item.createdOn).format('h:mm A')
+            })).reverse());
+        });
+    }
 }

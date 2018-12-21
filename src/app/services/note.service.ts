@@ -31,4 +31,9 @@ export class NoteService {
     }
     return this.noteApi.find<Note>(filter);
   }
+
+    deleteNote(id) {
+        return this.noteApi.deleteById<Note>(id)
+            .toPromise();
+    }
 }
