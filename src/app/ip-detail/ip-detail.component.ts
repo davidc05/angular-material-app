@@ -1,16 +1,21 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { MatGridList, MatChipInputEvent, MatAutocompleteSelectedEvent } from '@angular/material';
+import { MatGridList, MatChipInputEvent, MatAutocompleteSelectedEvent, MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
 import { ObservableMedia, MediaChange } from '@angular/flex-layout';
 import { ENTER, COMMA, SPACE } from '@angular/cdk/keycodes';
 import { TagsService } from '../services/tags.service';
-import { FormControl } from '@angular/forms';
+import { FormControl, Validators } from '@angular/forms';
 import { map, startWith, switchMap, debounceTime } from 'rxjs/operators';
 import { Observable, from } from 'rxjs';
 import { UserService } from '../services/user.service';
 import { NoteService } from '../services/note.service';
 import * as moment from 'moment';
+
+export interface EditNoteDialogData {
+    dialogName: string;
+    userNote: any;
+}
 
 export interface IpDetail {
     ipaddress: string,
@@ -49,6 +54,7 @@ export class IpDetailComponent implements OnInit {
         private tagsService: TagsService,
         private userService: UserService,
         private noteService: NoteService,
+        public dialog: MatDialog,
     ) { }
 
     tagsFormControl = new FormControl();
@@ -413,4 +419,84 @@ export class IpDetailComponent implements OnInit {
             })).reverse());
         });
     }
+
+    createEditNoteDialog(userNote, type) {
+        const dialogRef = this.dialog.open(EditNoteDialog, {
+            width: '300px',
+            data: {
+                userNote: userNote,
+            }
+        });
+
+        dialogRef.keydownEvents().subscribe(result => {
+            if (result.key === "Enter") {
+                dialogRef.componentInstance.closeDialog();
+            }
+        }, err => {
+
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                if (type === "update") {
+                    this.noteService.updateNote(result.userNote).then(
+                        result => {
+                            this.getIPsNotes();
+                        },
+                        err => {
+
+                        }
+                    )
+                }
+            }
+        });
+    }
 }
+
+@Component({
+    selector: 'edit-note-dialog',
+    templateUrl: 'edit-note-dialog.html',
+    styleUrls: ['ip-detail.component.css']
+})
+
+export class EditNoteDialog {
+    userNoteInput = new FormControl(this.data.userNote.text,
+        {
+            updateOn: 'change',
+            validators: [Validators.required],
+        }
+    );
+    constructor(
+        public dialogRef: MatDialogRef<EditNoteDialog>,
+        @Inject(MAT_DIALOG_DATA) public data: EditNoteDialogData,
+    ) { }
+
+    ngOnInit() {
+    }
+
+    getNameErrorMessage() {
+        if (this.userNoteInput.hasError('required')) {
+            return 'You must enter a value.';
+        }
+        else if (this.userNoteInput.value.length === 1000) {
+            return `Note can't be longer than 1000 characters.`
+        }
+        return '';
+    }
+
+    closeDialog() {
+        if (!this.userNoteInput.invalid) {
+            this.data.userNote.text = this.userNoteInput.value;
+            this.dialogRef.close(this.data);
+        }
+        else {
+            this.userNoteInput.markAsTouched();
+            this.getNameErrorMessage();
+        }
+    }
+
+    onNoClick(): void {
+        this.dialogRef.close();
+    }
+}
+

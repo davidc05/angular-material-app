@@ -239,7 +239,7 @@
                             <strong>{{note.userName}} wrote a note:</strong>
                         </h4>
                         <p mat-line>{{note.text}}</p>
-                        <p mat-line>{{note.time}} &nbsp; &bull; &nbsp; <a>Edit</a> &nbsp; <a (click)="deleteNote(note.id)">Delete</a></p>
+                        <p mat-line>{{note.time}} &nbsp; &bull; &nbsp; <a (click)="createEditNoteDialog(note, 'update')">Edit</a> &nbsp; <a (click)="deleteNote(note.id)">Delete</a></p>
                     </mat-list-item>
                     <mat-divider [inset]="true" *ngIf="!last"></mat-divider>
                 </div>

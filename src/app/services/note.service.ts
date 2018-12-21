@@ -36,4 +36,9 @@ export class NoteService {
         return this.noteApi.deleteById<Note>(id)
             .toPromise();
     }
+
+    updateNote(data) {
+        return this.noteApi.updateAttributes<Note>(data.id, data)
+            .toPromise();
+    }
 }
