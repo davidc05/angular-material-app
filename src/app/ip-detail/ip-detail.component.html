@@ -134,18 +134,18 @@
                         <mat-chip-list mat-line #chipList *ngIf="isArray(ipISPDetail[ipISPDetailKey]) && ['free', 'small'].indexOf(subscriptionPlan) < 0">
                             <div *ngIf="ipISPDetail[ipISPDetailKey].length === 0">&nbsp;No Entry</div>
                             <mat-chip *ngFor="let detail of convertToSet(ipISPDetail[ipISPDetailKey])" [selectable]="selectable">
-                                <a *ngIf="ipISPDetailKey === 'ispname' && subscriptionPlan === 'large'" [routerLink]="['/isp-name/', detail]">
+                                <a *ngIf="ipISPDetailKey === 'ispname' && subscriptionPlan === 'large'" [routerLink]="['/isp-name/', encodeURI(detail)]">
                                     {{detail}} </a>
                                 <div *ngIf="(ipISPDetailKey === 'network_name' || ipISPDetailKey === 'network_type' || ipISPDetailKey === 'network_group') && subscriptionPlan !== 'large'">
                                     {{detail}} </div>
                                 <a *ngIf="ipISPDetailKey === 'network_group' && subscriptionPlan === 'large'"
-                                    [routerLink]="['/network-group/', detail]">
+                                    [routerLink]="['/network-group/', encodeURI(detail)]">
                                     {{detail}} </a>
                                 <a *ngIf="ipISPDetailKey === 'network_name' && subscriptionPlan === 'large'"
-                                    [routerLink]="['/network-name/', detail]">
+                                    [routerLink]="['/network-name/', encodeURI(detail)]">
                                     {{detail}} </a>
                                 <a *ngIf="ipISPDetailKey === 'network_type' && subscriptionPlan === 'large'"
-                                    [routerLink]="['/network-type/', detail]">
+                                    [routerLink]="['/network-type/', encodeURI(detail)]">
                                     {{detail}} </a>
                             </mat-chip>
                         </mat-chip-list>

@@ -13,7 +13,7 @@ export class IpRangesResolver implements Resolve<any> {
     resolve(route: ActivatedRouteSnapshot) {
         var currentRoute = route.url[0].path;
         if (currentRoute === 'network-name') {
-            let queryParam = route.paramMap.get('networkName');
+            let queryParam = decodeURI(route.paramMap.get('networkName'));
             let parser = new DOMParser();
             let encodedNetworkName = parser.parseFromString(queryParam, "text/html").documentElement.textContent;
             return new Promise((resolve, reject) => {
@@ -39,7 +39,7 @@ export class IpRangesResolver implements Resolve<any> {
             });
         }
         if (currentRoute === 'network-type') {
-            let queryParam = route.paramMap.get('networkType');
+            let queryParam = decodeURI(route.paramMap.get('networkType'));
             let parser = new DOMParser();
             let encodedNetworkType = parser.parseFromString(queryParam, "text/html").documentElement.textContent;
             return new Promise((resolve, reject) => {
@@ -66,7 +66,7 @@ export class IpRangesResolver implements Resolve<any> {
         }
 
         if (currentRoute === 'isp-name') {
-            let queryParam = route.paramMap.get('ispName');
+            let queryParam = decodeURI(route.paramMap.get('ispName'));
             let parser = new DOMParser();
             let encodedIspName = parser.parseFromString(queryParam, "text/html").documentElement.textContent;
             return new Promise((resolve, reject) => {
@@ -107,7 +107,7 @@ export class IpRangesResolver implements Resolve<any> {
         }
 
         if (currentRoute === 'network-group') {
-            let queryParam = route.paramMap.get('networkGroup');
+            let queryParam = decodeURI(route.paramMap.get('networkGroup'));
             let parser = new DOMParser();
             let encodedNetworkGroup = parser.parseFromString(queryParam, "text/html").documentElement.textContent;
             return new Promise((resolve, reject) => {

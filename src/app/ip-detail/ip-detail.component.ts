@@ -364,4 +364,8 @@ export class IpDetailComponent implements OnInit {
         this._location.back();
     }
 
+    encodeURI(value: any) {
+        return encodeURI(value);
+    }
+ 
 }
