@@ -101,7 +101,7 @@
     <h2>{{title}} Drill-In</h2>
     <h3>{{queryParam}}</h3>
 
-    <div class="filters">
+    <div class="filters" *ngIf="filteredIpsListResult.data.length !== 0">
       <div class="filter">
         <label class="horizontal-center">Threat Profile: </label>
         <mat-form-field>
@@ -139,7 +139,7 @@
       </span>
     </div>
 
-    <div class="table-wrapper">
+    <div class="table-wrapper" *ngIf="filteredIpsListResult.data.length !== 0">
       <table mat-table [dataSource]="filteredIpsListResult" matSort *ngIf="filteredIpsListResult && filteredIpsListResult.length !== 0"
         class="mat-elevation-z8 results-table">
         <ng-container matColumnDef="ipaddress">
@@ -171,9 +171,12 @@
         <tr mat-row *matRowDef="let row; columns: ipsListColumns;"></tr>
       </table>
     </div>
-    <mat-paginator #paginator [length]="itemsLength" [pageIndex]="pageIndex" [pageSize]="pageSize"
+    <mat-paginator #paginator [length]="itemsLength" [pageIndex]="pageIndex" [pageSize]="pageSize" *ngIf="filteredIpsListResult.data.length !== 0"
       [showFirstLastButtons]="true" (page)="pageEvent = getPageInfo($event)">
     </mat-paginator>
     <ngx-loading [show]="isLoading"></ngx-loading>
+    <section *ngIf="filteredIpsListResult.data.length === 0" style="text-align: center;">
+      <h3>No result</h3>
+    </section>
   </section>
 </div>
