@@ -74,16 +74,25 @@ export class IpRangesResolver implements Resolve<any> {
                     .then(
                         data => {
                             if (this.userService.user.subscriptionPlan !== 'free') {
-                                const ips = data.ipRanges.entries.map(item => item.ipaddress);
-                                let ipsData = this.ipsService.getIpsDetail(ips)
+                                if (!data.ipRanges.entries) {
+                                  return resolve({
+                                    ipsData: [],
+                                    result_count: data.ipRanges.result_count,
+                                    currentRoute: 'isp-name',
+                                    queryParam
+                                  })
+                                } else {
+                                  const ips = data.ipRanges.entries.map(item => item.ipaddress);
+                                  let ipsData = this.ipsService.getIpsDetail(ips)
                                     .then(response => {
-                                        return resolve({
-                                            ipsData: response.ipsDetail,
-                                            result_count: data.ipRanges.result_count,
-                                            currentRoute: 'isp-name',
-                                            queryParam
-                                        })
+                                      return resolve({
+                                        ipsData: response.ipsDetail,
+                                        result_count: data.ipRanges.result_count,
+                                        currentRoute: 'isp-name',
+                                        queryParam
+                                      })
                                     });
+                                }
                             }
                             else {
                                 return resolve(null);
