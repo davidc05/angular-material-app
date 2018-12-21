@@ -1,5 +1,12 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
-import { Router } from '@angular/router';
+import {
+    Router,
+    Event,
+    NavigationCancel,
+    NavigationEnd,
+    NavigationError,
+    NavigationStart,
+} from '@angular/router';
 import { IpsService } from './services/ips.service';
 import { AuthService } from './services/auth.service';
 import { environment } from '../environments/environment';
@@ -15,12 +22,31 @@ export class AppComponent {
   oktaSignIn;
   subscriptionPlan;
   user;
+  loading = false;
   constructor(
     private authService: AuthService,
     private changeDetectorRef: ChangeDetectorRef,
     public router: Router,
     public ipsService: IpsService,
     public userService: UserService) {
+      this.router.events.subscribe((event: Event) => {
+          switch (true) {
+              case event instanceof NavigationStart: {
+                  this.loading = true;
+                  break;
+              }
+
+              case event instanceof NavigationEnd:
+              case event instanceof NavigationCancel:
+              case event instanceof NavigationError: {
+                  this.loading = false;
+                  break;
+              }
+              default: {
+                  break;
+              }
+          }
+      });
   }
 
   ngOnInit(){

@@ -38,7 +38,8 @@ import {
   MatPaginatorModule,
   MatSlideToggleModule,
   MatExpansionModule,
-  MatTabsModule
+  MatTabsModule,
+  MatProgressBarModule,
 } from '@angular/material';
 import { IpDetailComponent } from './ip-detail/ip-detail.component';
 import { IpDetailResolver } from './ip-detail/ip-detail.resolver';
@@ -132,6 +133,7 @@ import { MyAccountResolver } from './my-account/my-account.resolver';
     MatSlideToggleModule,
     MatExpansionModule,
     MatTabsModule,
+    MatProgressBarModule,
     NgxLoadingModule.forRoot({}),
     NgCircleProgressModule.forRoot({
       // set defaults here

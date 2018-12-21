@@ -92,3 +92,8 @@
 .my-account .mat-button:hover {
 	text-decoration: underline;
 }
+
+/* mat progress bar */
+.mat-progress-bar {
+    height: 3px;
+}
