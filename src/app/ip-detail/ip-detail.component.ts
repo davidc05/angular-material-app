@@ -124,7 +124,7 @@ export class IpDetailComponent implements OnInit {
     circleRadius;
 
     userNote: string = '';
-    userNotesList = [];
+    userNotesList = {};
 
     setCircleData() {
         this.circleRadius = 100;
@@ -209,11 +209,11 @@ export class IpDetailComponent implements OnInit {
             }
         })
         this.noteService.getUserNotesByIp(this.ipDetail.ipaddress).toPromise().then(res => {
-            this.userNotesList = res.map(item => ({
+            this.userNotesList = this.groupByDate(res.map(item => ({
                 ...item,
                 date: moment(item.createdOn).format('MMMM DD, YYYY'),
                 time: moment(item.createdOn).format('h:mm A')
-            })).reverse();
+            })).reverse());
         });
 
         //Automcomplete
@@ -385,13 +385,28 @@ export class IpDetailComponent implements OnInit {
         if (this.userNote !== '') {
             await this.noteService.createNote(this.userNote, this.user.email, this.user.name, this.user.picture, this.ipDetail.ipaddress);
             await this.noteService.getUserNotesByIp(this.ipDetail.ipaddress).toPromise().then(res => {
-                this.userNotesList = res.map(item => ({
+                this.userNotesList = this.groupByDate(res.map(item => ({
                     ...item,
                     date: moment(item.createdOn).format('MMMM DD, YYYY'),
                     time: moment(item.createdOn).format('h:mm A')
-                })).reverse();
+                })).reverse());
             });
         }
+    }
+
+    groupByDate(notes: any) {
+        let dates = {};
+        for (let i = 0; i < notes.length; i += 1) {
+            let obj = notes[i];
+            let date = moment(obj.date).format('MMMM DD, YYYY');
+            if (dates[date]) {
+                dates[date].push(obj);
+            } else {
+                dates[date] = [obj];
+            }
+        }
+
+        return Object.values(dates);
     }
 
 }

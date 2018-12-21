@@ -231,16 +231,18 @@
         <mat-card>
             <mat-card-title>Activity Stream</mat-card-title>
             <mat-list role="list">
-                <mat-list-item *ngFor="let note of userNotesList; last as last">
-                    <h3 mat-line>{{note.date}}</h3>
-                    <h4 mat-line fxLayout="row" style="align-items: center;">
-                        <img mat-list-icon class="userAvatar" [src]="note.avatar" alt="avatar" />
-                        <strong>{{note.userName}} wrote a note:</strong>
-                    </h4>
-                    <p mat-line>{{note.text}}</p>
-                    <p mat-line>{{note.time}} &nbsp; &bull; &nbsp; <a>Edit</a> &nbsp; <a>Delete</a></p>
+                <div *ngFor="let notesByDate of userNotesList | keyvalue ; last as last">
+                    <h3>{{notesByDate.value[0].date}}</h3>
+                    <mat-list-item *ngFor="let note of notesByDate.value">
+                        <h4 mat-line fxLayout="row" style="align-items: center;">
+                            <img mat-list-icon class="userAvatar" [src]="note.avatar" alt="avatar" />
+                            <strong>{{note.userName}} wrote a note:</strong>
+                        </h4>
+                        <p mat-line>{{note.text}}</p>
+                        <p mat-line>{{note.time}} &nbsp; &bull; &nbsp; <a>Edit</a> &nbsp; <a>Delete</a></p>
+                    </mat-list-item>
                     <mat-divider [inset]="true" *ngIf="!last"></mat-divider>
-                </mat-list-item>
+                </div>
             </mat-list>
         </mat-card>
     </section>
