@@ -404,12 +404,6 @@ export class IpDetailComponent implements OnInit {
         return Object.values(dates);
     }
 
-    deleteNote(id: any) {
-        this.noteService.deleteNote(id).then(res => {
-            this.getIPsNotes();
-        });
-    }
-
     getIPsNotes() {
         this.noteService.getUserNotesByIp(this.ipDetail.ipaddress).toPromise().then(res => {
             this.userNotesList = this.groupByDate(res.map(item => ({
@@ -448,6 +442,31 @@ export class IpDetailComponent implements OnInit {
                         }
                     )
                 }
+            }
+        });
+    }
+
+    createNoteDeleteDialog(id) {
+        const dialogRef = this.dialog.open(DeleteNoteDialog, { width: '300px' });
+
+        dialogRef.keydownEvents().subscribe(result => {
+            if (result.key === "Enter") {
+                dialogRef.componentInstance.closeDialog(false);
+            }
+        }, err => {
+
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.noteService.deleteNote(id).then(
+                    result => {
+                        this.getIPsNotes();
+                    },
+                    err => {
+
+                    }
+                );
             }
         });
     }
@@ -499,4 +518,28 @@ export class EditNoteDialog {
         this.dialogRef.close();
     }
 }
+
+
+@Component({
+    selector: 'delete-note-dialog',
+    templateUrl: 'delete-note-dialog.html',
+    styleUrls: ['ip-detail.component.css']
+})
+export class DeleteNoteDialog {
+    constructor(
+        public dialogRef: MatDialogRef<DeleteNoteDialog>,
+    ) { }
+
+    ngOnInit() {
+    }
+
+    closeDialog(value) {
+        this.dialogRef.close(value);
+    }
+
+    onNoClick(): void {
+        this.dialogRef.close();
+    }
+}
+
 
