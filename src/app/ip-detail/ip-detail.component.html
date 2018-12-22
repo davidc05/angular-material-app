@@ -140,8 +140,9 @@
                         <!-- ISP Name -->
                         <mat-chip-list mat-line *ngIf="!isArray(ipISPDetail[ipISPDetailKey]) && subscriptionPlan !== 'free'">
                             <mat-chip>
-                                <!-- <a [routerLink]="['/isp-name/', ipISPDetail[ipISPDetailKey]]"> {{ipISPDetail[ipISPDetailKey]}}</a> -->
-                                {{ipISPDetail[ipISPDetailKey]}}
+                                <!-- <a [routerLink]="['/isp-name/', ipISPDetail[ipISPDetailKey]]"> -->
+                                    {{ipISPDetail[ipISPDetailKey]}}
+                                <!-- </a> -->
                             </mat-chip>
                         </mat-chip-list>
                         <button mat-line mat-mini-fab class="mat-elevation-z0 fab-upgrade" color="primary" (click)="onClickBuyApp()"
