@@ -106,42 +106,14 @@ export class IpRangeApi extends BaseLoopBackApi {
    *
    *  - `ipRanges` – `{any}` -
    */
-  public getIpDetailRangesByNetworkName(networkName: any = {}, page: string, customHeaders?: Function): Observable<any> {
+  public getIpRangeByNetwork(network: any = {}, page: string, customHeaders?: Function): Observable<any> {
     let _method: string = "GET";
     let _url: string = LoopBackConfig.getPath() + "/" + LoopBackConfig.getApiVersion() +
     "/ipRanges/getIpRangeByNetwork";
     let _routeParams: any = {};
     let _postBody: any = {};
     let _urlParams: any = {};
-    if (typeof networkName !== 'undefined' && networkName !== null) _urlParams.networkName = networkName;
-    if (typeof page !== 'undefined' && page !== null) _urlParams.page = page;
-    let result = this.request(_method, _url, _routeParams, _urlParams, _postBody, null, customHeaders);
-    return result;
-  }
-
-  /**
-   * <em>
-         * (The remote method definition does not provide any description.)
-         * </em>
-   *
-   * @param {string} networkType
-   *
-   * @returns {object} An empty reference that will be
-   *   populated with the actual data once the response is returned
-   *   from the server.
-   *
-   * Data properties:
-   *
-   *  - `ipRanges` – `{any}` -
-   */
-  public getIpDetailRangesByNetworkType(networkType: any = {}, page: string, customHeaders?: Function): Observable<any> {
-    let _method: string = "GET";
-    let _url: string = LoopBackConfig.getPath() + "/" + LoopBackConfig.getApiVersion() +
-    "/ipRanges/getIpRangeByNetwork";
-    let _routeParams: any = {};
-    let _postBody: any = {};
-    let _urlParams: any = {};
-    if (typeof networkType !== 'undefined' && networkType !== null) _urlParams.networkType = networkType;
+    if (typeof network !== 'undefined' && network !== null) _urlParams = network;
     if (typeof page !== 'undefined' && page !== null) _urlParams.page = page;
     let result = this.request(_method, _url, _routeParams, _urlParams, _postBody, null, customHeaders);
     return result;
@@ -170,34 +142,6 @@ export class IpRangeApi extends BaseLoopBackApi {
     let _postBody: any = {};
     let _urlParams: any = {};
     if (typeof isp !== 'undefined' && isp !== null) _urlParams.isp = isp;
-    if (typeof page !== 'undefined' && page !== null) _urlParams.page = page;
-    let result = this.request(_method, _url, _routeParams, _urlParams, _postBody, null, customHeaders);
-    return result;
-  }
-
-  /**
-   * <em>
-         * (The remote method definition does not provide any description.)
-         * </em>
-   *
-   * @param {string} ispName
-   *
-   * @returns {object} An empty reference that will be
-   *   populated with the actual data once the response is returned
-   *   from the server.
-   *
-   * Data properties:
-   *
-   *  - `ipRanges` – `{any}` -
-   */
-  public getIpDetailRangesByNetworkGroup(networkGroup: any = {}, page: string, customHeaders?: Function): Observable<any> {
-    let _method: string = "GET";
-    let _url: string = LoopBackConfig.getPath() + "/" + LoopBackConfig.getApiVersion() +
-    "/ipRanges/getIpRangeByNetwork";
-    let _routeParams: any = {};
-    let _postBody: any = {};
-    let _urlParams: any = {};
-    if (typeof networkGroup !== 'undefined' && networkGroup !== null) _urlParams.networkGroup = networkGroup;
     if (typeof page !== 'undefined' && page !== null) _urlParams.page = page;
     let result = this.request(_method, _url, _routeParams, _urlParams, _postBody, null, customHeaders);
     return result;

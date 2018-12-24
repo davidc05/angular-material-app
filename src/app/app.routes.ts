@@ -40,7 +40,7 @@ export const routes: Routes = [
 		}
 	},
 	{
-		path: 'network-name/:networkName',
+		path: 'network-name/:network',
 		component: IpRangesComponent,
 		resolve: {
 			ipRanges: IpRangesResolver,
@@ -48,7 +48,7 @@ export const routes: Routes = [
 		}
 	},
 	{
-		path: 'network-type/:networkType',
+		path: 'network-type/:network',
 		component: IpRangesComponent,
 		resolve: {
 			ipRanges: IpRangesResolver,
@@ -64,7 +64,7 @@ export const routes: Routes = [
 		}
 	},
 	{
-		path: 'network-group/:networkGroup',
+		path: 'network-group/:network',
 		component: IpRangesComponent,
 		resolve: {
 			ipRanges: IpRangesResolver,

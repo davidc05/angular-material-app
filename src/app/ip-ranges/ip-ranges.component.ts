@@ -91,38 +91,23 @@ export class IpRangesComponent implements OnInit {
     this.route.data.subscribe(routeData => {
       this.currentRoute = routeData.ipRanges.currentRoute;
       this.queryParam = routeData.ipRanges.queryParam;
+        if (this.currentRoute.includes('network')) {
+            // ex: convert 'network-name' to 'Network Name'
+            this.title = this.currentRoute.split('-').map(item => `${item.charAt(0).toUpperCase()}${item.slice(1)}`).join(' ');
+            this.itemsLength = routeData.ipRanges.ipRanges.result_count;
+            this.dataSource.data = routeData.ipRanges.ipRanges.entries;
+        } else if (this.currentRoute === 'isp-name') {
+            this.title = 'ISP Name';
+            this.dataSource.data = routeData.ipRanges.ipsData;
+            this.itemsLength = routeData.ipRanges.result_count;
+        } else {
+            this.title = 'Blacklist Network Neighbors';
+            this.ipsListByBlacklistNeighbors = routeData.ipRanges.ipsData;
+            this.dataSource.data = routeData.ipRanges.ipsData.slice(0, this.pageSize);
+            this.itemsLength = routeData.ipRanges.result_count;
+        }
 
-      switch (routeData.ipRanges.currentRoute) {
-        case 'network-type':
-          this.title = 'Network Type';
-          this.itemsLength = routeData.ipRanges.ipRanges.result_count;
-          this.dataSource.data = routeData.ipRanges.ipRanges.entries;
-          break;
-        case 'network-name':
-          this.title = 'Network Name';
-          this.itemsLength = routeData.ipRanges.ipRanges.result_count;
-          this.dataSource.data = routeData.ipRanges.ipRanges.entries;
-          break;
-        case 'network-group':
-          this.title = 'Network Group';
-          this.itemsLength = routeData.ipRanges.ipRanges.result_count;
-          this.dataSource.data = routeData.ipRanges.ipRanges.entries;
-          break;
-        case 'isp-name':
-          this.title = 'ISP Name';
-          this.dataSource.data = routeData.ipRanges.ipsData;
-          this.itemsLength = routeData.ipRanges.result_count;
-          break;
-        case 'blacklist-neighbors':
-          this.title = 'Blacklist Network Neighbors';
-          this.ipsListByBlacklistNeighbors = routeData.ipRanges.ipsData;
-          this.dataSource.data = routeData.ipRanges.ipsData.slice(0, this.pageSize);
-          this.itemsLength = routeData.ipRanges.result_count;
-          break;
-        default:
-          break;
-      }
-      if (this.currentRoute === 'network-name' || this.currentRoute === 'network-type' || this.currentRoute === 'network-group') {
+      if (this.currentRoute.includes('network')) {
         this.initIpRangesFilter(this.dataSource.data);
       } else {
         this.initIpsListFilter(this.dataSource.data);
@@ -155,23 +140,15 @@ export class IpRangesComponent implements OnInit {
     return new Promise((resolve, reject) => {
       switch (this.currentRoute) {
         case 'network-name':
-          this.ipsService.getIpRangesByNetworkName(this.queryParam, (e.pageIndex + 1).toString())
-            .then(data => {
-              this.dataSource.data = data.ipRanges.entries;
-              this.initIpRangesFilter(this.dataSource.data);
-              this.isLoading = false;
-            }, err => resolve(null));
-          break;
         case 'network-type':
-          this.ipsService.getIpRangesByNetworkType(this.queryParam, (e.pageIndex + 1).toString())
-            .then(data => {
-              this.dataSource.data = data.ipRanges.entries;
-              this.initIpRangesFilter(this.dataSource.data);
-              this.isLoading = false;
-            }, err => resolve(null));
-          break;
         case 'network-group':
-          this.ipsService.getIpRangesByNetworkGroup(this.queryParam, (e.pageIndex + 1).toString())
+          this.ipsService.getIpRangeByNetwork(
+              // ex: convert 'network-name' to 'networkName'
+              {[this.currentRoute.split('-').map((item, idx) => idx === 0 ? item : `${item.charAt(0).toUpperCase()}${item.slice(1)}`)
+                  .join('')]: this.queryParam
+              },
+              (e.pageIndex + 1).toString()
+            )
             .then(data => {
               this.dataSource.data = data.ipRanges.entries;
               this.initIpRangesFilter(this.dataSource.data);
@@ -376,7 +353,7 @@ export class IpRangesComponent implements OnInit {
     this.selectedNetworkName = 'All';
     this.selectedNetworkGroup = 'All';
 
-    if (this.currentRoute === 'network-name' || this.currentRoute === 'network-type' || this.currentRoute === 'network-group') {
+    if (this.currentRoute.includes('network')) {
       this.filteredIpRangesResult.data = this.dataSource.data;
       this.networkNames =
         chain(this.filteredIpRangesResult.data)
