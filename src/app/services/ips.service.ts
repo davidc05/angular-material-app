@@ -23,13 +23,13 @@ export class IpsService {
     .toPromise();
   }
 
-  getIpRangeByNetwork(network, page){
-    return this.ipRangeApi.getIpRangeByNetwork(network, page)
+  getIpRangeByNetwork(network, page, pageBy){
+    return this.ipRangeApi.getIpRangeByNetwork(network, page, pageBy)
     .toPromise();
   }
 
-  getIpRangesByIspName(ispName, pageNum){
-    return this.ipRangeApi.getIpDetailRangesByIspName(ispName, pageNum)
+  getIpRangesByIspName(ispName, page, pageBy){
+    return this.ipRangeApi.getIpDetailRangesByIspName(ispName, page, pageBy)
     .toPromise();
   }
 

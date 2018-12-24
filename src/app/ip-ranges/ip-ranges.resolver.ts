@@ -23,7 +23,7 @@ export class IpRangesResolver implements Resolve<any> {
                 [currentRouteString]: encodedNetwork
             }
             return new Promise((resolve, reject) => {
-                let ipDetail = this.ipsService.getIpRangeByNetwork(requestParam, 1)
+                let ipDetail = this.ipsService.getIpRangeByNetwork(requestParam, 1, 100)
                     .then(
                         data => {
                             if (this.userService.user.subscriptionPlan === 'large') {
@@ -50,7 +50,7 @@ export class IpRangesResolver implements Resolve<any> {
             let parser = new DOMParser();
             let encodedIspName = parser.parseFromString(queryParam, "text/html").documentElement.textContent;
             return new Promise((resolve, reject) => {
-                let ipDetail = this.ipsService.getIpRangesByIspName(encodedIspName, 1)
+                let ipDetail = this.ipsService.getIpRangesByIspName(encodedIspName, 1, 100)
                     .then(
                         data => {
                             if (this.userService.user.subscriptionPlan !== 'free') {

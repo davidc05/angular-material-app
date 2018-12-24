@@ -90,7 +90,7 @@
             </table>
         </div>
         <mat-paginator #paginator [length]="itemsLength" [pageIndex]="pageIndex" [pageSize]="pageSize"
-            [showFirstLastButtons]="true" (page)="pageEvent = getPageInfo($event)">
+            [pageSizeOptions]="pageSizeOptions" [showFirstLastButtons]="true" (page)="pageEvent = getPageInfo($event)">
         </mat-paginator>
         <ngx-loading [show]="isLoading"></ngx-loading>
     </section>
@@ -172,7 +172,7 @@
             </table>
         </div>
         <mat-paginator #paginator [length]="itemsLength" [pageIndex]="pageIndex" [pageSize]="pageSize" *ngIf="filteredIpsListResult.data.length !== 0"
-            [showFirstLastButtons]="true" (page)="pageEvent = getPageInfo($event)">
+            [pageSizeOptions]="pageSizeOptions" [showFirstLastButtons]="true" (page)="pageEvent = getPageInfo($event)">
         </mat-paginator>
         <ngx-loading [show]="isLoading"></ngx-loading>
         <section *ngIf="filteredIpsListResult.data.length === 0" style="text-align: center;">

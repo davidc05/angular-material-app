@@ -36,7 +36,8 @@ export class IpRangesComponent implements OnInit {
     ipsListByBlacklistNeighbors;
 
     page = 1;
-    pageSize = 50;
+    pageSize = 100;
+    pageSizeOptions: number[] = [25, 50, 100, 200];
     itemsLength: number;
 
     title = '';
@@ -137,6 +138,8 @@ export class IpRangesComponent implements OnInit {
         this.selectedThreatClassification = 'All';
         this.selectedBlacklistClass = 'All';
 
+        this.pageSize = e.pageSize;
+
         return new Promise((resolve, reject) => {
             switch (this.currentRoute) {
                 case 'network-name':
@@ -148,7 +151,8 @@ export class IpRangesComponent implements OnInit {
                             [this.currentRoute.split('-').map((item, idx) => idx === 0 ? item : `${item.charAt(0).toUpperCase()}${item.slice(1)}`)
                                 .join('')]: this.queryParam
                         },
-                        (e.pageIndex + 1).toString()
+                        (e.pageIndex + 1).toString(),
+                        this.pageSize
                     )
                         .then(data => {
                             this.dataSource.data = data.ipRanges.entries;
@@ -157,7 +161,7 @@ export class IpRangesComponent implements OnInit {
                         }, err => resolve(null));
                     break;
                 case 'isp-name':
-                    this.ipsService.getIpRangesByIspName(this.queryParam, (e.pageIndex + 1).toString())
+                    this.ipsService.getIpRangesByIspName(this.queryParam, (e.pageIndex + 1).toString(), this.pageSize)
                         .then(data => {
                             const ips = data.ipRanges.entries.map(item => item.ipaddress);
                             this.ipsService.getIpsDetail(ips).then(response => {
