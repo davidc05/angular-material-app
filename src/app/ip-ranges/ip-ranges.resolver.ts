@@ -12,7 +12,7 @@ export class IpRangesResolver implements Resolve<any> {
 
     resolve(route: ActivatedRouteSnapshot) {
         var currentRoute = route.url[0].path;
-        
+
         if (currentRoute.includes('network')) {
             var currentRouteTemp = currentRoute.split('-');
             var currentRouteString = `${currentRouteTemp[0]}${currentRouteTemp[1].charAt(0).toUpperCase()}${currentRouteTemp[1].slice(1)}`;

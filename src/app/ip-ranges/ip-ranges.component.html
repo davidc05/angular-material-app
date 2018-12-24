@@ -1,182 +1,182 @@
 <div class="content-container">
-  <div class="breadcrumb">
-    <a mat-button matTooltip="Go back to previous page." (click)="backButton()">
-      <mat-icon>arrow_back</mat-icon>Back
-    </a>
-  </div>
-  <section class="loading" *ngIf="currentRoute.includes('network')">
-    <h2>{{title}} Drill-In</h2>
-    <h3>{{queryParam}}</h3>
-
-    <div class="filters">
-      <div class="filter">
-        <label class="horizontal-center" *ngIf="currentRoute !== 'network-name'">Network Name: </label>
-        <mat-form-field *ngIf="currentRoute !== 'network-name'">
-          <mat-select class="horizontal-center" (selectionChange)="filterValueChange('networkName', selectedNetworkName)"
-            [(value)]="selectedNetworkName">
-            <mat-option value="All">All</mat-option>
-            <mat-option *ngFor="let name of networkNames" [value]="name">{{name}}</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <div class="filter">
-        <label class="horizontal-center" *ngIf="currentRoute !== 'network-type'">Network Type: </label>
-        <mat-form-field *ngIf="currentRoute !== 'network-type'">
-          <mat-select class="horizontal-center" (selectionChange)="filterValueChange('nameworkType', selectedNetworkType)"
-            [(value)]="selectedNetworkType">
-            <mat-option value="All">All</mat-option>
-            <mat-option *ngFor="let type of networkTypes" [value]="type">{{type}}</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <div class="filter">
-        <label class="horizontal-center" *ngIf="currentRoute !== 'network-group'">Network Group: </label>
-        <mat-form-field *ngIf="currentRoute !== 'network-group'">
-          <mat-select class="horizontal-center" (selectionChange)="filterValueChange('networkGroup', selectedNetworkGroup)"
-            [(value)]="selectedNetworkGroup">
-            <mat-option value="All">All</mat-option>
-            <mat-option *ngFor="let group of networkGroups" [value]="group">{{group}}</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <span class="filter-clear-btn">
-        <button mat-mini-fab color="primary" (click)="resetFilters()">
-          <mat-icon aria-label="reset">clear_all</mat-icon>
-        </button>
-      </span>
+    <div class="breadcrumb">
+        <a mat-button matTooltip="Go back to previous page." (click)="backButton()">
+            <mat-icon>arrow_back</mat-icon>Back
+        </a>
     </div>
+    <section class="loading" *ngIf="currentRoute.includes('network')">
+        <h2>{{title}} Drill-In</h2>
+        <h3>{{queryParam}}</h3>
 
-    <div class="table-wrapper">
-      <table mat-table [dataSource]="filteredIpRangesResult" matSort *ngIf="filteredIpRangesResult && filteredIpRangesResult.length !== 0"
-        class="mat-elevation-z8 results-table">
+        <div class="filters">
+            <div class="filter">
+                <label class="horizontal-center" *ngIf="currentRoute !== 'network-name'">Network Name: </label>
+                <mat-form-field *ngIf="currentRoute !== 'network-name'">
+                    <mat-select class="horizontal-center" (selectionChange)="filterValueChange('networkName', selectedNetworkName)"
+                        [(value)]="selectedNetworkName">
+                        <mat-option value="All">All</mat-option>
+                        <mat-option *ngFor="let name of networkNames" [value]="name">{{name}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="filter">
+                <label class="horizontal-center" *ngIf="currentRoute !== 'network-type'">Network Type: </label>
+                <mat-form-field *ngIf="currentRoute !== 'network-type'">
+                    <mat-select class="horizontal-center" (selectionChange)="filterValueChange('nameworkType', selectedNetworkType)"
+                        [(value)]="selectedNetworkType">
+                        <mat-option value="All">All</mat-option>
+                        <mat-option *ngFor="let type of networkTypes" [value]="type">{{type}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="filter">
+                <label class="horizontal-center" *ngIf="currentRoute !== 'network-group'">Network Group: </label>
+                <mat-form-field *ngIf="currentRoute !== 'network-group'">
+                    <mat-select class="horizontal-center" (selectionChange)="filterValueChange('networkGroup', selectedNetworkGroup)"
+                        [(value)]="selectedNetworkGroup">
+                        <mat-option value="All">All</mat-option>
+                        <mat-option *ngFor="let group of networkGroups" [value]="group">{{group}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <span class="filter-clear-btn">
+                <button mat-mini-fab color="primary" (click)="resetFilters()">
+                    <mat-icon aria-label="reset">clear_all</mat-icon>
+                </button>
+            </span>
+        </div>
 
-        <ng-container matColumnDef="ip_start_int">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> IP Start </th>
-          <td mat-cell *matCellDef="let element">
-            <a matTooltip="Click here for IP Record info." [routerLink]="['/detail/', element.ip_start_int]">{{element.ip_start_int}}</a>
-          </td>
-        </ng-container>
+        <div class="table-wrapper">
+            <table mat-table [dataSource]="filteredIpRangesResult" matSort *ngIf="filteredIpRangesResult && filteredIpRangesResult.length !== 0"
+                class="mat-elevation-z8 results-table">
 
-        <ng-container matColumnDef="ip_end_int">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> IP End </th>
-          <td mat-cell *matCellDef="let element">
-            <a matTooltip="Click here for IP Record info." [routerLink]="['/detail/', element.ip_end_int]">{{element.ip_end_int}}</a>
-          </td>
-        </ng-container>
+                <ng-container matColumnDef="ip_start_int">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> IP Start </th>
+                    <td mat-cell *matCellDef="let element">
+                        <a matTooltip="Click here for IP Record info." [routerLink]="['/detail/', element.ip_start_int]">{{element.ip_start_int}}</a>
+                    </td>
+                </ng-container>
 
-        <ng-container matColumnDef="network_name">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Network Name </th>
-          <td mat-cell *matCellDef="let element">
-            {{element.network_name}}
-          </td>
-        </ng-container>
+                <ng-container matColumnDef="ip_end_int">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> IP End </th>
+                    <td mat-cell *matCellDef="let element">
+                        <a matTooltip="Click here for IP Record info." [routerLink]="['/detail/', element.ip_end_int]">{{element.ip_end_int}}</a>
+                    </td>
+                </ng-container>
 
-        <ng-container matColumnDef="network_type">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Network Type </th>
-          <td mat-cell *matCellDef="let element">
-            {{element.network_type}}
-          </td>
-        </ng-container>
+                <ng-container matColumnDef="network_name">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Network Name </th>
+                    <td mat-cell *matCellDef="let element">
+                        {{element.network_name}}
+                    </td>
+                </ng-container>
 
-        <ng-container matColumnDef="network_group">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Network Group </th>
-          <td mat-cell *matCellDef="let element">
-            {{element.network_group}}
-          </td>
-        </ng-container>
+                <ng-container matColumnDef="network_type">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Network Type </th>
+                    <td mat-cell *matCellDef="let element">
+                        {{element.network_type}}
+                    </td>
+                </ng-container>
 
-        <tr mat-header-row *matHeaderRowDef="ipRangesColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: ipRangesColumns;"></tr>
-      </table>
-    </div>
-    <mat-paginator #paginator [length]="itemsLength" [pageIndex]="pageIndex" [pageSize]="pageSize"
-      [showFirstLastButtons]="true" (page)="pageEvent = getPageInfo($event)">
-    </mat-paginator>
-    <ngx-loading [show]="isLoading"></ngx-loading>
-  </section>
+                <ng-container matColumnDef="network_group">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Network Group </th>
+                    <td mat-cell *matCellDef="let element">
+                        {{element.network_group}}
+                    </td>
+                </ng-container>
 
-
-
-  <section *ngIf="currentRoute === 'isp-name' || currentRoute === 'blacklist-neighbors'">
-    <h2>{{title}} Drill-In</h2>
-    <h3>{{queryParam}}</h3>
-
-    <div class="filters" *ngIf="filteredIpsListResult.data.length !== 0">
-      <div class="filter">
-        <label class="horizontal-center">Threat Profile: </label>
-        <mat-form-field>
-          <mat-select class="horizontal-center" (selectionChange)="filterValueChange('threatClassification', selectedThreatClassification)"
-            [(value)]="selectedThreatClassification">
-            <mat-option value="All">All</mat-option>
-            <mat-option *ngFor="let classification of threatClassifications" [value]="classification">{{classification}}</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <div class="filter">
-        <label class="horizontal-center">Blacklist Class: </label>
-        <mat-form-field>
-          <mat-select class="horizontal-center" (selectionChange)="filterValueChange('blacklistClass', selectedBlacklistClass)"
-            [(value)]="selectedBlacklistClass">
-            <mat-option value="All">All</mat-option>
-            <mat-option *ngFor="let class of blacklistClasses" [value]="class">{{class}}</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <div class="filter">
-        <label class="horizontal-center">Network Type: </label>
-        <mat-form-field>
-          <mat-select class="horizontal-center" (selectionChange)="filterValueChange('networkType', selectedNetworkType)"
-            [(value)]="selectedNetworkType">
-            <mat-option value="All">All</mat-option>
-            <mat-option *ngFor="let type of networkTypes" [value]="type">{{type}}</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <span class="filter-clear-btn">
-        <button mat-mini-fab color="primary" (click)="resetFilters()">
-          <mat-icon aria-label="reset">clear_all</mat-icon>
-        </button>
-      </span>
-    </div>
-
-    <div class="table-wrapper" *ngIf="filteredIpsListResult.data.length !== 0">
-      <table mat-table [dataSource]="filteredIpsListResult" matSort *ngIf="filteredIpsListResult && filteredIpsListResult.length !== 0"
-        class="mat-elevation-z8 results-table">
-        <ng-container matColumnDef="ipaddress">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> IP Address </th>
-          <td mat-cell *matCellDef="let element">
-            <a matTooltip="Click here for IP Record info." [routerLink]="['/detail/', element.ipaddress]">{{element.ipaddress}}</a>
-          </td>
-        </ng-container>
-        <!-- Threat Potential Column -->
-        <ng-container matColumnDef="threat_profile">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Threat Profile </th>
-          <td mat-cell *matCellDef="let element"> {{element.threat_profile}} </td>
-        </ng-container>
-
-        <ng-container matColumnDef="blacklist_class">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Blacklist Class </th>
-          <td mat-cell *matCellDef="let element">
-            {{element.blacklist_class}}
-          </td>
-        </ng-container>
-
-        <!-- Network Type Column -->
-        <ng-container matColumnDef="network_type">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Network Type </th>
-          <td mat-cell *matCellDef="let element"> {{element.network_type}} </td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="ipsListColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: ipsListColumns;"></tr>
-      </table>
-    </div>
-    <mat-paginator #paginator [length]="itemsLength" [pageIndex]="pageIndex" [pageSize]="pageSize" *ngIf="filteredIpsListResult.data.length !== 0"
-      [showFirstLastButtons]="true" (page)="pageEvent = getPageInfo($event)">
-    </mat-paginator>
-    <ngx-loading [show]="isLoading"></ngx-loading>
-    <section *ngIf="filteredIpsListResult.data.length === 0" style="text-align: center;">
-      <h3>No result</h3>
+                <tr mat-header-row *matHeaderRowDef="ipRangesColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: ipRangesColumns;"></tr>
+            </table>
+        </div>
+        <mat-paginator #paginator [length]="itemsLength" [pageIndex]="pageIndex" [pageSize]="pageSize"
+            [showFirstLastButtons]="true" (page)="pageEvent = getPageInfo($event)">
+        </mat-paginator>
+        <ngx-loading [show]="isLoading"></ngx-loading>
     </section>
-  </section>
+
+
+
+    <section *ngIf="currentRoute === 'isp-name' || currentRoute === 'blacklist-neighbors'">
+        <h2>{{title}} Drill-In</h2>
+        <h3>{{queryParam}}</h3>
+
+        <div class="filters" *ngIf="filteredIpsListResult.data.length !== 0">
+            <div class="filter">
+                <label class="horizontal-center">Threat Profile: </label>
+                <mat-form-field>
+                    <mat-select class="horizontal-center" (selectionChange)="filterValueChange('threatClassification', selectedThreatClassification)"
+                        [(value)]="selectedThreatClassification">
+                        <mat-option value="All">All</mat-option>
+                        <mat-option *ngFor="let classification of threatClassifications" [value]="classification">{{classification}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="filter">
+                <label class="horizontal-center">Blacklist Class: </label>
+                <mat-form-field>
+                    <mat-select class="horizontal-center" (selectionChange)="filterValueChange('blacklistClass', selectedBlacklistClass)"
+                        [(value)]="selectedBlacklistClass">
+                        <mat-option value="All">All</mat-option>
+                        <mat-option *ngFor="let class of blacklistClasses" [value]="class">{{class}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="filter">
+                <label class="horizontal-center">Network Type: </label>
+                <mat-form-field>
+                    <mat-select class="horizontal-center" (selectionChange)="filterValueChange('networkType', selectedNetworkType)"
+                        [(value)]="selectedNetworkType">
+                        <mat-option value="All">All</mat-option>
+                        <mat-option *ngFor="let type of networkTypes" [value]="type">{{type}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <span class="filter-clear-btn">
+                <button mat-mini-fab color="primary" (click)="resetFilters()">
+                    <mat-icon aria-label="reset">clear_all</mat-icon>
+                </button>
+            </span>
+        </div>
+
+        <div class="table-wrapper" *ngIf="filteredIpsListResult.data.length !== 0">
+            <table mat-table [dataSource]="filteredIpsListResult" matSort *ngIf="filteredIpsListResult && filteredIpsListResult.length !== 0"
+                class="mat-elevation-z8 results-table">
+                <ng-container matColumnDef="ipaddress">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> IP Address </th>
+                    <td mat-cell *matCellDef="let element">
+                        <a matTooltip="Click here for IP Record info." [routerLink]="['/detail/', element.ipaddress]">{{element.ipaddress}}</a>
+                    </td>
+                </ng-container>
+                <!-- Threat Potential Column -->
+                <ng-container matColumnDef="threat_profile">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Threat Profile </th>
+                    <td mat-cell *matCellDef="let element"> {{element.threat_profile}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="blacklist_class">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Blacklist Class </th>
+                    <td mat-cell *matCellDef="let element">
+                        {{element.blacklist_class}}
+                    </td>
+                </ng-container>
+
+                <!-- Network Type Column -->
+                <ng-container matColumnDef="network_type">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Network Type </th>
+                    <td mat-cell *matCellDef="let element"> {{element.network_type}} </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="ipsListColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: ipsListColumns;"></tr>
+            </table>
+        </div>
+        <mat-paginator #paginator [length]="itemsLength" [pageIndex]="pageIndex" [pageSize]="pageSize" *ngIf="filteredIpsListResult.data.length !== 0"
+            [showFirstLastButtons]="true" (page)="pageEvent = getPageInfo($event)">
+        </mat-paginator>
+        <ngx-loading [show]="isLoading"></ngx-loading>
+        <section *ngIf="filteredIpsListResult.data.length === 0" style="text-align: center;">
+            <h3>No result</h3>
+        </section>
+    </section>
 </div>

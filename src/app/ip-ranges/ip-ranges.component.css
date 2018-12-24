@@ -4,13 +4,13 @@ table {
 }
 
 section.loading {
-  height: 100%;
-  width: 100%;
-  padding: 0;
+    height: 100%;
+    width: 100%;
+    padding: 0;
 }
 
 .breadcrumb{
-	padding: 20px 0;
+    padding: 20px 0;
 }
 
 /* Filters */
@@ -26,6 +26,6 @@ label.horizontal-center {
     padding-right: 3%;
 }
 .filter-clear-btn {
-	float: left;
+    float: left;
     margin-top: 14px;
 }
