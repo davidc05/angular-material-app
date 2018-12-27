@@ -47,7 +47,26 @@
                 </mat-card-title>
                 <mat-list role="list">
                     <mat-list-item role="listitem" *ngFor="let ipThreatDetailKey of getKeys(ipThreatDetail); last as last">
-                        <h3 mat-line>{{fieldNames[ipThreatDetailKey]}}</h3>
+                        <h3 mat-line>
+                        	{{fieldNames[ipThreatDetailKey]}}
+                        	<!-- Threat Classification -->
+                        	<span class="help-tooltip" *ngIf="ipThreatDetailKey === 'threat_classification'">
+                        		<mat-icon matTooltipPosition="above" matTooltip="High – Threat Score >=70. Medium – Threat Score from >=40 but <70. Nuisance – Threat Score >=20 but <40. Low – No threat profile threshold met <20.">help</mat-icon>
+                        	</span>
+                        	<!-- Blacklist Count -->
+                        	<span class="help-tooltip" *ngIf="ipThreatDetailKey === 'blacklist_class_cnt'">
+                        		<mat-icon matTooltipPosition="above" matTooltip="The total number of blacklists this IP appears on.">help</mat-icon>
+                        	</span>
+                        	<!-- Blacklist Network Neighbors -->
+                        	<span class="help-tooltip" *ngIf="ipThreatDetailKey === 'blacklist_network_neighbor_cnt'">
+                        		<mat-icon matTooltipPosition="above" matTooltip="The number of other IPs blacklisted on the same subnet.">help</mat-icon>
+                        	</span>
+                        	<!-- Blacklist Observations -->
+                        	<span class="help-tooltip" *ngIf="ipThreatDetailKey === 'blacklist_observations'">
+                        		<mat-icon matTooltipPosition="above" matTooltip="The number of times this IP has been blacklisted for the last 90 days.">help</mat-icon>
+                        	</span>
+                        </h3>
+                        <p mat-line>{{ipThreatDetailKey}}</p>
                         <p mat-line *ngIf="ipThreatDetailKey !== 'threat_potential_score_pct' && ipThreatDetailKey !== 'threat_classification' && ipThreatDetailKey !== 'blacklist_class' && ipThreatDetailKey !== 'blacklist_network_neighbor_cnt'">{{ipThreatDetail[ipThreatDetailKey]}}
                         </p>
 

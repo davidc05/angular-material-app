@@ -128,6 +128,11 @@ button.button-black,
     vertical-align: text-bottom;
 }
 
+/* tooltips */
+.mat-tooltip{
+	font-size: 13px !important;
+	line-height: 1.5;
+}
 
 /* toggle switch */
 .musubu-app .mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-bar{

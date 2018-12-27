@@ -29,6 +29,10 @@ div, .content-container{
 .mat-list h3{
 	font-weight: 500;
 }
+.help-tooltip .mat-icon{
+	font-size: 16px;
+	color: #6d6d6d;
+}
 
 /* Threat Score & Threat Classification Pill */
 .threat-score.low.mat-chip,
