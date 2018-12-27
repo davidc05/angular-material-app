@@ -36,24 +36,6 @@
                         <mat-hint align="end">{{tags.length}} / {{tagsLimit}}</mat-hint>
                     </mat-form-field>
                 </mat-card>
-                <section>
-                    <!-- no section around first card because it doubles the spacing between the cards -->
-                    <mat-card class="note-card">
-                        <mat-card-title>Add Notes</mat-card-title>
-                        <mat-form-field class="note-input">
-                            <textarea matInput maxlength="1000" placeholder="Add a note here." [(ngModel)]="userNote"></textarea>
-                            <mat-hint align="start">
-                                <mat-error *ngIf="userNote.length === 1000">
-                                    Note can't be longer than 1000 characters.
-                                </mat-error>
-                            </mat-hint>
-                            <mat-hint align="end">{{userNote.length}} / 1000</mat-hint>
-                        </mat-form-field>
-                        <button mat-line mat-flat-button color="primary" (click)="submitNote()">
-                            Add Note
-                        </button>
-                    </mat-card>
-                </section>
             </div>
         </div>
     </section>
