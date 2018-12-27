@@ -245,10 +245,13 @@ tr.mat-header-row{
 	min-width: 150px;
 }
 
-/* my account button dropdown style */
-.musubu-app #cdk-overlay-1 {
-	margin-top: 42px;
+
+/* IP Details - Activity Stream */
+.activity-stream .mat-list .mat-list-item.mat-list-item-with-avatar{
+	height: auto;
+	margin-bottom: 0.5em;
 }
+
 
 @media screen and (max-width: 1200px){
 	.content-container{
