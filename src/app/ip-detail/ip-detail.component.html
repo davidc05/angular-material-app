@@ -233,18 +233,18 @@
             <mat-card-title>Activity Stream </mat-card-title>
             <mat-list role="list">
                 <div *ngFor="let notesByDate of userNotesList | keyvalue ; last as last">
-                    <p class="note-date">{{notesByDate.value[0].date}}</p>
+                    <p class="note-date" matSubheader>{{notesByDate.value[0].date}}</p>
                     <mat-list-item class="note" *ngFor="let note of notesByDate.value">
-                        <p mat-line fxLayout="row" style="align-items: center;">
-                            <img mat-list-icon class="userAvatar" [src]="note.avatar" alt="avatar" />
-                            <span class="username">{{note.userName}} wrote a note:</span>
-                        </p>
-                        <p class="note-text" mat-line>{{note.text}}</p>
-                        <p class="note-actions" mat-line>
-                        	{{note.time}} &nbsp; &bull; &nbsp; 
-                        	<a (click)="createEditNoteDialog(note, 'update')">Edit</a> &nbsp; 
-                        	<a (click)="createNoteDeleteDialog(note.id)">Delete</a>
-                        </p>
+                    	<img mat-list-icon class="userAvatar" [src]="note.avatar" alt="avatar" />
+                    	<div class="mat-list-text">
+	                        <p class="username">{{note.userName}} wrote a note:</p>
+	                        <p class="note-text">{{note.text}}</p>
+	                        <p class="note-actions">
+	                        	{{note.time}} &nbsp; &bull; &nbsp; 
+	                        	<a (click)="createEditNoteDialog(note, 'update')">Edit</a> &nbsp; 
+	                        	<a (click)="createNoteDeleteDialog(note.id)">Delete</a>
+	                        </p>
+	                    </div>
                     </mat-list-item>
                     <mat-divider [inset]="true" *ngIf="!last"></mat-divider>
                 </div>
