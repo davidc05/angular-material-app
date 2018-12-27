@@ -1,7 +1,7 @@
 <h1 mat-dialog-title>{{data.dialogName}}</h1>
 <div mat-dialog-content>
     <mat-form-field class="dialog-input">
-        <textarea matInput maxlength="1000" placeholder="Add a note here." [formControl]="userNoteInput" required cdkFocusInitial></textarea>
+        <textarea matInput rows="6" maxlength="1000" placeholder="Add a note here." [formControl]="userNoteInput" required cdkFocusInitial></textarea>
         <mat-error align="start" *ngIf="userNoteInput.invalid">{{getNameErrorMessage()}}</mat-error>
         <mat-hint align="end">{{userNoteInput.value.length}} / 1000</mat-hint>
     </mat-form-field>
