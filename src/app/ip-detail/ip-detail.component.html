@@ -213,10 +213,9 @@
     <section class="activity-stream">
         <mat-card>
             <mat-card-title fxLayout="row">
-                <h3>Activity Stream</h3>
+                Activity Stream
                 <button mat-flat-button (click)="createEditNoteDialog({}, 'Add Note', 'create')">Add Note</button>
             </mat-card-title>
-
             <mat-list role="list">
                 <div *ngFor="let notesByDate of userNotesList | keyvalue ; last as last">
                     <p class="note-date" matSubheader>{{notesByDate.value[0].date}}</p>
