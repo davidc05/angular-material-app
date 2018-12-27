@@ -76,12 +76,12 @@ button,
 }
 button.button-narrow,
 .musubu-app .mat-raised-button.button-narrow,
-.musubu-app .mat-flat-button.button-narrow,{
+.musubu-app .mat-flat-button.button-narrow{
 	line-height: 1;
 }
 button.button-small,
 .musubu-app .mat-raised-button.button-small,
-.musubu-app .mat-flat-button.button-small,{
+.musubu-app .mat-flat-button.button-small{
 	line-height: 1;
 	padding: 0.3 0;
 }
@@ -127,6 +127,7 @@ button.button-black,
 .mat-flat-button .mat-button-wrapper .mat-icon{
     vertical-align: text-bottom;
 }
+
 
 /* toggle switch */
 .musubu-app .mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-bar{
