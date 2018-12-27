@@ -42,6 +42,7 @@ export class GmapComponent implements OnInit, AfterViewInit {
   queryName;
   description;
   isFormInvalid: boolean;
+  bounds: LatLngBounds;
 
   readonly separatorKeysCodes: number[] = [ENTER, COMMA, SPACE];
   @ViewChild(MatSort) sort: MatSort;
@@ -205,6 +206,7 @@ export class GmapComponent implements OnInit, AfterViewInit {
 
   setFlagShow() {
     this.isOpen = !this.isOpen;
+    this.map.fitBounds(this.bounds);
   }
 
   submitQuery = (ipsList): void => {
@@ -215,8 +217,8 @@ export class GmapComponent implements OnInit, AfterViewInit {
     this.isLoading = true;
     Promise.all(ipsList.map(ip =>
       this.ipsService.getIpDetail(ip).then(data => data.ipDetail)
-    )).then(result => {
-      this.isLoading = false;
+    )).then(async result => {
+
       this.checked = !!result.length;
       this.ipsGeoData = result.map((item: any) => ({
         latitude: item.latitude,
@@ -237,14 +239,17 @@ export class GmapComponent implements OnInit, AfterViewInit {
         }
       }));
 
-      const bounds: LatLngBounds = new google.maps.LatLngBounds();
-      let mm: any;
-      for (mm of result) {
-        bounds.extend(new google.maps.LatLng(mm.latitude, mm.longitude));
-      }
+      this.bounds = await new google.maps.LatLngBounds();
+
+      await result.forEach((item: any) => {
+          this.bounds.extend(new google.maps.LatLng(item.latitude, item.longitude));
+      });
+
       if (this.map && !!result.length) {
-        this.map.fitBounds(bounds);
+        await this.map.fitBounds(this.bounds);
       }
+
+      this.isLoading = await false;
     });
   }
 }

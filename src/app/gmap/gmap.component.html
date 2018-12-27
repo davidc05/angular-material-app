@@ -39,12 +39,13 @@
     </mat-card>
   </section>
   <section class="loading" *ngIf="subscriptionPlan === 'large'">
-    <agm-map #AgmMap [latitude]="latitude" [longitude]="longitude" [zoom]="3" [maxZoom]="maxZoomLevel" [scrollwheel]="false">
+    <agm-map #AgmMap [latitude]="latitude" [longitude]="longitude"  [zoom]="2" [maxZoom]="maxZoomLevel" [scrollwheel]="false">
       <agm-marker
         *ngFor="let ip of ipsGeoData; let i = index"
         [latitude]="+ip.latitude"
         [longitude]="+ip.longitude"
         [iconUrl]="ip.iconUrl"
+        [agmFitBounds]="true"
       >
         <agm-snazzy-info-window
           [latitude]="+ip.latitude"
