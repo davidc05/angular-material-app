@@ -137,14 +137,6 @@ export class IpDetailComponent implements OnInit {
     circleOuterStrokeColor;
     circleRadius;
 
-    userNote: string = '';
-    userNotesList = {};
-
-    queryName;
-    description;
-
-    blacklistClassTooltip: string;
-
     // Chip input properties for tags section
     visible = true;
     selectable = true;
@@ -194,7 +186,11 @@ export class IpDetailComponent implements OnInit {
             }
         });
 
+<<<<<<< HEAD
         // Autocomplete
+=======
+        // utomcomplete
+>>>>>>> clean up ip-detail-component
         // this.filteredOptions = this.tagsFormControl.valueChanges
         //   .pipe(
         //     startWith(''),
