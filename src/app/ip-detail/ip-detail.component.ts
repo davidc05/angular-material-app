@@ -190,7 +190,7 @@ export class IpDetailComponent implements OnInit {
         this.tags = [];
         this.latitude = 0;
         this.longitude = 0;
-        this.subscriptionPlan = this.userService.user.subscriptionPlan;
+        this.subscriptionPlan = 'large';
         this.route.data.subscribe(routeData => {
             let data = routeData['data'];
             if (data) {
@@ -380,15 +380,6 @@ export class IpDetailComponent implements OnInit {
         this._location.back();
     }
 
-
-    async submitNote() {
-        this.user = JSON.parse(localStorage.getItem("profile"));
-        if (this.userNote !== '') {
-            await this.noteService.createNote(this.userNote, this.user.email, this.user.name, this.user.picture, this.ipDetail.ipaddress);
-            await this.getIPsNotes();
-        }
-    }
-
     groupByDate(notes: any) {
         let dates = {};
         for (let i = 0; i < notes.length; i += 1) {
@@ -414,11 +405,15 @@ export class IpDetailComponent implements OnInit {
         });
     }
 
-    createEditNoteDialog(userNote, type) {
+    createEditNoteDialog(userNote, dialogName, type) {
         const dialogRef = this.dialog.open(EditNoteDialog, {
             width: '300px',
             data: {
-                userNote: userNote,
+                dialogName: dialogName,
+                userNote: {
+                    ...userNote,
+                    text: userNote.text ? userNote.text : '',
+                },
             }
         });
 
@@ -432,6 +427,23 @@ export class IpDetailComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
+                if (type === 'create') {
+                    this.user = JSON.parse(localStorage.getItem('profile'));
+                    this.noteService.createNote(
+                        result.userNote.text,
+                        this.user.email,
+                        this.user.name,
+                        this.user.picture,
+                        this.ipDetail.ipaddress
+                    ).then(
+                        () => {
+                            this.getIPsNotes();
+                        },
+                        err => {
+
+                        }
+                    );
+                }
                 if (type === "update") {
                     this.noteService.updateNote(result.userNote).then(
                         result => {
@@ -478,7 +490,7 @@ export class IpDetailComponent implements OnInit {
     styleUrls: ['ip-detail.component.css']
 })
 
-export class EditNoteDialog {
+export class EditNoteDialog implements OnInit {
     userNoteInput = new FormControl(this.data.userNote.text,
         {
             updateOn: 'change',

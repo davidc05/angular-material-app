@@ -1,4 +1,4 @@
-<h1 mat-dialog-title>Edit User Note</h1>
+<h1 mat-dialog-title>{{data.dialogName}}</h1>
 <div mat-dialog-content>
     <mat-form-field class="dialog-input">
         <textarea matInput maxlength="1000" placeholder="Add a note here." [formControl]="userNoteInput" required></textarea>

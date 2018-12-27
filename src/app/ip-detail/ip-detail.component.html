@@ -210,9 +210,13 @@
             </div>
         </mat-card>
     </section>
-    <section class="activity-stream" *ngIf="userNotesList.length !== 0">
+    <section class="activity-stream">
         <mat-card>
-            <mat-card-title>Activity Stream </mat-card-title>
+            <mat-card-title fxLayout="row">
+                <h3>Activity Stream</h3>
+                <button mat-flat-button (click)="createEditNoteDialog({}, 'Add Note', 'create')">Add Note</button>
+            </mat-card-title>
+
             <mat-list role="list">
                 <div *ngFor="let notesByDate of userNotesList | keyvalue ; last as last">
                     <p class="note-date" matSubheader>{{notesByDate.value[0].date}}</p>
@@ -223,7 +227,7 @@
 	                        <p class="note-text">{{note.text}}</p>
 	                        <p class="note-actions">
 	                        	{{note.time}} &nbsp; &bull; &nbsp; 
-	                        	<a (click)="createEditNoteDialog(note, 'update')">Edit</a> &nbsp; 
+	                        	<a (click)="createEditNoteDialog(note, 'Edit User Note', 'update')">Edit</a> &nbsp; 
 	                        	<a (click)="createNoteDeleteDialog(note.id)">Delete</a>
 	                        </p>
 	                    </div>

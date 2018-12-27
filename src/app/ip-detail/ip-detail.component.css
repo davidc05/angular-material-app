@@ -179,6 +179,14 @@ agm-snazzy-info-window .si-content-wrapper{
 	margin: 1em 0;
 }
 
+.activity-stream mat-card-title {
+    justify-content: space-between;
+    align-items: center;
+}
+
+.activity-stream mat-card-title button {
+    height: 46px;
+}
 /* edit note */
 .button-row button,
 .button-row a {
