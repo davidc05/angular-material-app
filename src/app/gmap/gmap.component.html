@@ -1,84 +1,147 @@
 <div class="content-container">
-  <section *ngIf="subscriptionPlan === 'large'">
-    <h2>Map</h2>
-    <p>Enter comma-separated IP addresses below, then click Plot.</p>
-    <mat-card>
-        <form class="ip-query">
-            <mat-form-field class="search-width">
-                <mat-chip-list #chipList>
-                    <mat-chip *ngFor="let ip of ipsList" [selectable]="selectable" [removable]="removable" (removed)="remove(ip)">
-                        {{ip}}
-                        <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
-                    </mat-chip>
-                    <input placeholder="Plot IP addresses" [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                      [matChipInputAddOnBlur]="addOnBlur" (matChipInputTokenEnd)="add($event)" (paste)="paste($event)">
-                </mat-chip-list>
-                <mat-hint align="end">{{ipsList.length}} / {{ipsLimit}}</mat-hint>
-            </mat-form-field>
-        </form>
-        <div class="button-row">
-            <button mat-flat-button (click)="submitQuery(ipsList)" [disabled]="ipsList.length === 0" class="button-bottom-spacing">
-                <mat-icon>add_location</mat-icon> Plot
-            </button>
-            <button mat-flat-button color="warn" (click)="clear()" [disabled]="ipsList.length === 0" class="button-bottom-spacing">
-                <mat-icon>clear</mat-icon> Clear
-            </button>
-            <button mat-flat-button (click)="openDialog()" [disabled]="ipsList.length === 0" class="button-bottom-spacing">
-                <mat-icon>save</mat-icon> Save
-            </button>
-            <mat-slide-toggle
-              #flagToggle
-              class="flag-toggle"
-              [checked]="checked"
-              [disabled]="ipsList.length === 0"
-              (change)="setFlagShow()"
-            >
-              Show IP Info
-            </mat-slide-toggle>
-        </div>
-    </mat-card>
-  </section>
-  <section class="loading" *ngIf="subscriptionPlan === 'large'">
-    <agm-map #AgmMap [latitude]="latitude" [longitude]="longitude"  [zoom]="2" [maxZoom]="maxZoomLevel" [scrollwheel]="false">
-      <agm-marker
-        *ngFor="let ip of ipsGeoData; let i = index"
-        [latitude]="+ip.latitude"
-        [longitude]="+ip.longitude"
-        [iconUrl]="ip.iconUrl"
-        [agmFitBounds]="true"
-      >
-        <agm-snazzy-info-window
-          [latitude]="+ip.latitude"
-          [longitude]="+ip.longitude"
-          [isOpen]="isOpen"
+    <section *ngIf="subscriptionPlan === 'large'">
+        <h2>Map</h2>
+        <p>Enter comma-separated IP addresses below, then click Plot.</p>
+        <mat-card>
+            <form class="ip-query">
+                <mat-form-field class="search-width">
+                    <mat-chip-list #chipList>
+                        <mat-chip
+                            *ngFor="let ip of ipsList"
+                            [selectable]="selectable"
+                            [removable]="removable"
+                            (removed)="remove(ip)"
+                        >
+                            {{ip}}
+                            <mat-icon
+                                matChipRemove
+                                *ngIf="removable"
+                            >cancel</mat-icon>
+                        </mat-chip>
+                        <input
+                            placeholder="Plot IP addresses"
+                            [matChipInputFor]="chipList"
+                            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                            [matChipInputAddOnBlur]="addOnBlur"
+                            (matChipInputTokenEnd)="add($event)"
+                            (paste)="paste($event)"
+                        >
+                    </mat-chip-list>
+                    <mat-hint align="end">{{ipsList.length}} / {{ipsLimit}}</mat-hint>
+                </mat-form-field>
+            </form>
+            <div class="button-row">
+                <button
+                    mat-flat-button
+                    (click)="submitQuery(ipsList)"
+                    [disabled]="ipsList.length === 0"
+                    class="button-bottom-spacing"
+                >
+                    <mat-icon>add_location</mat-icon> Plot
+                </button>
+                <button
+                    mat-flat-button
+                    color="warn"
+                    (click)="clear()"
+                    [disabled]="ipsList.length === 0"
+                    class="button-bottom-spacing"
+                >
+                    <mat-icon>clear</mat-icon> Clear
+                </button>
+                <button
+                    mat-flat-button
+                    (click)="openDialog()"
+                    [disabled]="ipsList.length === 0"
+                    class="button-bottom-spacing"
+                >
+                    <mat-icon>save</mat-icon> Save
+                </button>
+                <mat-slide-toggle
+                    #flagToggle
+                    class="flag-toggle"
+                    [checked]="checked"
+                    [disabled]="ipsList.length === 0"
+                    (change)="setFlagShow()"
+                >
+                    Show IP Info
+                </mat-slide-toggle>
+            </div>
+        </mat-card>
+    </section>
+    <section
+        class="loading"
+        *ngIf="subscriptionPlan === 'large'"
+    >
+        <agm-map
+            #AgmMap
+            [latitude]="latitude"
+            [longitude]="longitude"
+            [zoom]="2"
+            [maxZoom]="maxZoomLevel"
+            [scrollwheel]="false"
         >
-          <ng-template>
-            <div>
-              <strong>IP: </strong>
-              <a matTooltip="View IP Details." [routerLink]="['/detail/', ip.ipaddress]">{{ip.ipaddress}}</a>
-            </div>
-            <div>
-              <strong>Threat level: </strong>
-              <span *ngIf="ip.threatLevel == 'High' || ip.threatLevel == 'high' || ip.threatLevel == 'HIGH'" style="color: #CD444A;">{{ip.threatLevel}}</span>
-              <span *ngIf="ip.threatLevel == 'Medium' || ip.threatLevel == 'medium' || ip.threatLevel == 'MEDIUM'" style="color: #FFB300;">{{ip.threatLevel}}</span>
-              <span *ngIf="ip.threatLevel == 'Low' || ip.threatLevel == 'low' || ip.threatLevel == 'LOW'" style="color: #28A745;">{{ip.threatLevel}}</span>
-            </div>
-            <div>
-              <strong>Blacklist class: </strong>
-              <span>{{ip.blacklistClass}}</span>
-            </div>
-          </ng-template>
-        </agm-snazzy-info-window>
-      </agm-marker>
-    </agm-map>
-    <ngx-loading [show]="isLoading"></ngx-loading>
-  </section>
+            <agm-marker
+                *ngFor="let ip of ipsGeoData; let i = index"
+                [latitude]="+ip.latitude"
+                [longitude]="+ip.longitude"
+                [iconUrl]="ip.iconUrl"
+                [agmFitBounds]="true"
+            >
+                <agm-snazzy-info-window
+                    [latitude]="+ip.latitude"
+                    [longitude]="+ip.longitude"
+                    [isOpen]="isOpen"
+                >
+                    <ng-template>
+                        <div>
+                            <strong>IP: </strong>
+                            <a
+                                matTooltip="View IP Details."
+                                [routerLink]="['/detail/', ip.ipaddress]"
+                            >{{ip.ipaddress}}</a>
+                        </div>
+                        <div>
+                            <strong>Threat level: </strong>
+                            <span
+                                *ngIf="ip.threatLevel == 'High' || ip.threatLevel == 'high' || ip.threatLevel == 'HIGH'"
+                                style="color: #CD444A;"
+                            >{{ip.threatLevel}}</span>
+                            <span
+                                *ngIf="ip.threatLevel == 'Medium' || ip.threatLevel == 'medium' || ip.threatLevel == 'MEDIUM'"
+                                style="color: #FFB300;"
+                            >{{ip.threatLevel}}</span>
+                            <span
+                                *ngIf="ip.threatLevel == 'Low' || ip.threatLevel == 'low' || ip.threatLevel == 'LOW'"
+                                style="color: #28A745;"
+                            >{{ip.threatLevel}}</span>
+                        </div>
+                        <div>
+                            <strong>Blacklist class: </strong>
+                            <span>{{ip.blacklistClass}}</span>
+                        </div>
+                    </ng-template>
+                </agm-snazzy-info-window>
+            </agm-marker>
+        </agm-map>
+        <ngx-loading [show]="isLoading"></ngx-loading>
+    </section>
 
-  <section *ngIf="subscriptionPlan != 'large'">
-    <h2>Map</h2>
-    <a href="https://musubu.io/app-pricing" target="_blank">
-      <img class="map-teaser desktop-teaser" src="assets/img/map-teaser-min.jpg" alt="map teaser" />
-      <img class="map-teaser mobile-teaser" src="assets/img/map-teaser-mobile-min.jpg" alt="map teaser" />
-    </a>
-  </section>
+    <section *ngIf="subscriptionPlan != 'large'">
+        <h2>Map</h2>
+        <a
+            href="https://musubu.io/app-pricing"
+            target="_blank"
+        >
+            <img
+                class="map-teaser desktop-teaser"
+                src="assets/img/map-teaser-min.jpg"
+                alt="map teaser"
+            />
+            <img
+                class="map-teaser mobile-teaser"
+                src="assets/img/map-teaser-mobile-min.jpg"
+                alt="map teaser"
+            />
+        </a>
+    </section>
 </div>
