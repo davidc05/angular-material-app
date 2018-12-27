@@ -509,9 +509,6 @@ export class EditNoteDialog implements OnInit {
         if (this.userNoteInput.hasError('required')) {
             return 'You must enter a value.';
         }
-        else if (this.userNoteInput.value.length === 1000) {
-            return `Note can't be longer than 1000 characters.`
-        }
         return '';
     }
 
