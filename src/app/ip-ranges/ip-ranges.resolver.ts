@@ -12,44 +12,24 @@ export class IpRangesResolver implements Resolve<any> {
 
     resolve(route: ActivatedRouteSnapshot) {
         var currentRoute = route.url[0].path;
-        if (currentRoute === 'network-name') {
-            let queryParam = route.paramMap.get('networkName');
+
+        if (currentRoute.includes('network')) {
+            var currentRouteTemp = currentRoute.split('-');
+            var currentRouteString = `${currentRouteTemp[0]}${currentRouteTemp[1].charAt(0).toUpperCase()}${currentRouteTemp[1].slice(1)}`;
+            let queryParam = decodeURI(route.paramMap.get('network'));
             let parser = new DOMParser();
-            let encodedNetworkName = parser.parseFromString(queryParam, "text/html").documentElement.textContent;
+            let encodedNetwork = parser.parseFromString(queryParam, "text/html").documentElement.textContent;
+            let requestParam = {
+                [currentRouteString]: encodedNetwork
+            }
             return new Promise((resolve, reject) => {
-                let ipDetail = this.ipsService.getIpRangesByNetworkName(encodedNetworkName, 1)
+                let ipDetail = this.ipsService.getIpRangeByNetwork(requestParam, 1, 100)
                     .then(
                         data => {
                             if (this.userService.user.subscriptionPlan === 'large') {
                                 return resolve({
                                     ...data,
-                                    currentRoute: 'network-name',
-                                    queryParam: queryParam
-                                });
-                            }
-                            else {
-                                return resolve(null);
-                            }
-                        },
-                        err => {
-                            console.log(err)
-                            return resolve(null)
-                        }
-                    )
-            });
-        }
-        if (currentRoute === 'network-type') {
-            let queryParam = route.paramMap.get('networkType');
-            let parser = new DOMParser();
-            let encodedNetworkType = parser.parseFromString(queryParam, "text/html").documentElement.textContent;
-            return new Promise((resolve, reject) => {
-                let ipDetail = this.ipsService.getIpRangesByNetworkType(encodedNetworkType, 1)
-                    .then(
-                        data => {
-                            if (this.userService.user.subscriptionPlan === 'large') {
-                                return resolve({
-                                    ...data,
-                                    currentRoute: 'network-type',
+                                    currentRoute,
                                     queryParam: queryParam
                                 });
                             }
@@ -66,60 +46,20 @@ export class IpRangesResolver implements Resolve<any> {
         }
 
         if (currentRoute === 'isp-name') {
-            let queryParam = route.paramMap.get('ispName');
+            let queryParam = decodeURI(route.paramMap.get('ispName'));
             let parser = new DOMParser();
             let encodedIspName = parser.parseFromString(queryParam, "text/html").documentElement.textContent;
             return new Promise((resolve, reject) => {
-                let ipDetail = this.ipsService.getIpRangesByIspName(encodedIspName, 1)
+                let ipDetail = this.ipsService.getIpRangesByIspName(encodedIspName, 1, 100)
                     .then(
                         data => {
                             if (this.userService.user.subscriptionPlan !== 'free') {
-                                if (!data.ipRanges.entries) {
-                                  return resolve({
-                                    ipsData: [],
+                                return resolve({
+                                    ipsData: !data.ipRanges.entries ? [] : data.ipRanges,
                                     result_count: data.ipRanges.result_count,
                                     currentRoute: 'isp-name',
                                     queryParam
-                                  })
-                                } else {
-                                  const ips = data.ipRanges.entries.map(item => item.ipaddress);
-                                  let ipsData = this.ipsService.getIpsDetail(ips)
-                                    .then(response => {
-                                      return resolve({
-                                        ipsData: response.ipsDetail,
-                                        result_count: data.ipRanges.result_count,
-                                        currentRoute: 'isp-name',
-                                        queryParam
-                                      })
-                                    });
-                                }
-                            }
-                            else {
-                                return resolve(null);
-                            }
-                        },
-                        err => {
-                            console.log(err)
-                            return resolve(null)
-                        }
-                    )
-            });
-        }
-
-        if (currentRoute === 'network-group') {
-            let queryParam = route.paramMap.get('networkGroup');
-            let parser = new DOMParser();
-            let encodedNetworkGroup = parser.parseFromString(queryParam, "text/html").documentElement.textContent;
-            return new Promise((resolve, reject) => {
-                let ipDetail = this.ipsService.getIpRangesByNetworkGroup(encodedNetworkGroup, 1)
-                    .then(
-                        data => {
-                            if (this.userService.user.subscriptionPlan === 'large') {
-                                return resolve({
-                                    ...data,
-                                    currentRoute: 'network-group',
-                                    queryParam: queryParam
-                                });
+                                })
                             }
                             else {
                                 return resolve(null);

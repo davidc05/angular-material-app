@@ -380,6 +380,10 @@ export class IpDetailComponent implements OnInit {
         this._location.back();
     }
 
+    encodeURI(value: any) {
+        return encodeURI(value);
+    }
+
     groupByDate(notes: any) {
         let dates = {};
         for (let i = 0; i < notes.length; i += 1) {
