@@ -61,8 +61,7 @@
         </mat-toolbar-row>
 
     </mat-toolbar>
-    <mat-progress-bar *ngIf="loading" color="accent" mode="indeterminate">
-    </mat-progress-bar>
+    <ngx-loading [show]="isLoading"></ngx-loading>
     <mat-sidenav-container class="example-container">
         <mat-sidenav #drawer mode="side" closed (click)="drawer.toggle()" role="navigation">
             <mat-nav-list>

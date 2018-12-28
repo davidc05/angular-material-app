@@ -22,7 +22,7 @@ export class AppComponent {
   oktaSignIn;
   subscriptionPlan;
   user;
-  loading = false;
+  isLoading = false;
   constructor(
     private authService: AuthService,
     private changeDetectorRef: ChangeDetectorRef,
@@ -32,14 +32,14 @@ export class AppComponent {
       this.router.events.subscribe((event: Event) => {
           switch (true) {
               case event instanceof NavigationStart: {
-                  this.loading = true;
+                  this.isLoading = true;
                   break;
               }
 
               case event instanceof NavigationEnd:
               case event instanceof NavigationCancel:
               case event instanceof NavigationError: {
-                  this.loading = false;
+                  this.isLoading = false;
                   break;
               }
               default: {

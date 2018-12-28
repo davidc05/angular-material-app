@@ -152,6 +152,10 @@ section{
     padding: 20px 0;
 }
 
+/* main */
+.musubu-app main {
+    position: relative;
+}
 
 /* HEADER */
 /* my account button dropdown style */
