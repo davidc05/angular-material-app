@@ -1,5 +1,9 @@
 export const blacklistClassData = [
     {
+        blacklistClass: `unlisted`,
+        tooltip: `No identified and specific threat type`,
+    },
+    {
         blacklistClass: `90dayComp`,
         tooltip: `Network addresses which are reported by sources in a compiled list as being blacklisted with no additional details.`,
     },
