@@ -14,7 +14,8 @@ div, .content-container{
 	padding-bottom: 10px;
 }
 
-.tags-input{
+.tags-input,
+.note-input {
 	width: 100%;
 }
 
@@ -152,6 +153,48 @@ agm-map{
 }
 agm-snazzy-info-window .si-content-wrapper{
 	padding: 10px;
+}
+
+/* activity stream */
+.note-date{
+	font-size: 18px;
+	color: #000;
+}
+.userAvatar{
+	width: 50px;
+	height: 50px;
+}
+.username{
+	color: #000;
+}
+.noteText.mat-line{
+	white-space: initial;
+	font-style: italic;
+}
+.note .note-text{
+	font-size: 15px;
+	line-height: 1.5;
+}
+.activity-stream .mat-divider{
+	margin: 1em 0;
+}
+
+.activity-stream mat-card-title {
+    justify-content: space-between;
+    align-items: center;
+}
+
+.activity-stream mat-card-title button {
+    height: 46px;
+}
+/* edit note */
+.button-row button,
+.button-row a {
+  margin-right: 8px;
+}
+
+.dialog-input.mat-form-field {
+    width: 100%;
 }
 
 @media screen and (max-width: 900px){

@@ -1,14 +1,21 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { MatGridList, MatChipInputEvent, MatAutocompleteSelectedEvent } from '@angular/material';
+import { MatGridList, MatChipInputEvent, MatAutocompleteSelectedEvent, MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
 import { ObservableMedia, MediaChange } from '@angular/flex-layout';
 import { ENTER, COMMA, SPACE } from '@angular/cdk/keycodes';
 import { TagsService } from '../services/tags.service';
-import { FormControl } from '@angular/forms';
+import { FormControl, Validators } from '@angular/forms';
 import { map, startWith, switchMap, debounceTime } from 'rxjs/operators';
 import { Observable, from } from 'rxjs';
 import { UserService } from '../services/user.service';
+import { NoteService } from '../services/note.service';
+import * as moment from 'moment';
+
+export interface EditNoteDialogData {
+    dialogName: string;
+    userNote: any;
+}
 
 export interface IpDetail {
     ipaddress: string,
@@ -45,11 +52,14 @@ export class IpDetailComponent implements OnInit {
         private _location: Location,
         private observableMedia: ObservableMedia,
         private tagsService: TagsService,
-        private userService: UserService
+        private userService: UserService,
+        private noteService: NoteService,
+        public dialog: MatDialog,
     ) { }
 
     tagsFormControl = new FormControl();
     @ViewChild('tagInput') tagInput: ElementRef<HTMLInputElement>;
+    user;
     subscriptionPlan;
     last;
     ipDetail: IpDetail;
@@ -118,6 +128,9 @@ export class IpDetailComponent implements OnInit {
     circleBackgroundColor;
     circleOuterStrokeColor;
     circleRadius;
+
+    userNote: string = '';
+    userNotesList = {};
 
     setCircleData() {
         this.circleRadius = 100;
@@ -201,6 +214,8 @@ export class IpDetailComponent implements OnInit {
                 this.getIpTags();
             }
         })
+
+        this.getIPsNotes();
 
         //Automcomplete
         // this.filteredOptions = this.tagsFormControl.valueChanges
@@ -294,6 +309,7 @@ export class IpDetailComponent implements OnInit {
                                         },
                                         err => {
 
+
                                         }
                                     );
                                 }
@@ -367,5 +383,176 @@ export class IpDetailComponent implements OnInit {
     encodeURI(value: any) {
         return encodeURI(value);
     }
- 
+
+    groupByDate(notes: any) {
+        let dates = {};
+        for (let i = 0; i < notes.length; i += 1) {
+            let obj = notes[i];
+            let date = moment(obj.date).format('MMMM DD, YYYY');
+            if (dates[date]) {
+                dates[date].push(obj);
+            } else {
+                dates[date] = [obj];
+            }
+        }
+
+        return Object.values(dates);
+    }
+
+    getIPsNotes() {
+        this.noteService.getUserNotesByIp(this.ipDetail.ipaddress).toPromise().then(res => {
+            this.userNotesList = this.groupByDate(res.map(item => ({
+                ...item,
+                date: moment(item.createdOn).format('MMMM DD, YYYY'),
+                time: moment(item.createdOn).format('h:mm A')
+            })).reverse());
+        });
+    }
+
+    createEditNoteDialog(userNote, dialogName, type) {
+        const dialogRef = this.dialog.open(EditNoteDialog, {
+            width: '300px',
+            data: {
+                dialogName: dialogName,
+                userNote: {
+                    ...userNote,
+                    text: userNote.text ? userNote.text : '',
+                },
+            }
+        });
+
+        dialogRef.keydownEvents().subscribe(result => {
+            if (result.key === "Enter") {
+                dialogRef.componentInstance.closeDialog();
+            }
+        }, err => {
+
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                if (type === 'create') {
+                    this.user = JSON.parse(localStorage.getItem('profile'));
+                    this.noteService.createNote(
+                        result.userNote.text,
+                        this.user.email,
+                        this.user.name,
+                        this.user.picture,
+                        this.ipDetail.ipaddress
+                    ).then(
+                        () => {
+                            this.getIPsNotes();
+                        },
+                        err => {
+
+                        }
+                    );
+                }
+                if (type === "update") {
+                    this.noteService.updateNote(result.userNote).then(
+                        result => {
+                            this.getIPsNotes();
+                        },
+                        err => {
+
+                        }
+                    )
+                }
+            }
+        });
+    }
+
+    createNoteDeleteDialog(id) {
+        const dialogRef = this.dialog.open(DeleteNoteDialog, { width: '300px' });
+
+        dialogRef.keydownEvents().subscribe(result => {
+            if (result.key === "Enter") {
+                dialogRef.componentInstance.closeDialog(false);
+            }
+        }, err => {
+
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.noteService.deleteNote(id).then(
+                    result => {
+                        this.getIPsNotes();
+                    },
+                    err => {
+
+                    }
+                );
+            }
+        });
+    }
 }
+
+@Component({
+    selector: 'edit-note-dialog',
+    templateUrl: 'edit-note-dialog.html',
+    styleUrls: ['ip-detail.component.css']
+})
+
+export class EditNoteDialog implements OnInit {
+    userNoteInput = new FormControl(this.data.userNote.text,
+        {
+            updateOn: 'change',
+            validators: [Validators.required],
+        }
+    );
+    constructor(
+        public dialogRef: MatDialogRef<EditNoteDialog>,
+        @Inject(MAT_DIALOG_DATA) public data: EditNoteDialogData,
+    ) { }
+
+    ngOnInit() {
+    }
+
+    getNameErrorMessage() {
+        if (this.userNoteInput.hasError('required')) {
+            return 'You must enter a value.';
+        }
+        return '';
+    }
+
+    closeDialog() {
+        if (!this.userNoteInput.invalid) {
+            this.data.userNote.text = this.userNoteInput.value;
+            this.dialogRef.close(this.data);
+        }
+        else {
+            this.userNoteInput.markAsTouched();
+            this.getNameErrorMessage();
+        }
+    }
+
+    onNoClick(): void {
+        this.dialogRef.close();
+    }
+}
+
+
+@Component({
+    selector: 'delete-note-dialog',
+    templateUrl: 'delete-note-dialog.html',
+    styleUrls: ['ip-detail.component.css']
+})
+export class DeleteNoteDialog {
+    constructor(
+        public dialogRef: MatDialogRef<DeleteNoteDialog>,
+    ) { }
+
+    ngOnInit() {
+    }
+
+    closeDialog(value) {
+        this.dialogRef.close(value);
+    }
+
+    onNoClick(): void {
+        this.dialogRef.close();
+    }
+}
+
+

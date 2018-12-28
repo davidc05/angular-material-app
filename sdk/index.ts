@@ -52,6 +52,7 @@ import { IpDetailApi } from './services/custom/IpDetail';
 import { UserApi } from './services/custom/User';
 import { WatchlistApi } from './services/custom/Watchlist';
 import { TagApi } from './services/custom/Tag';
+import { NoteApi } from './services/custom/Note';
 import { IpRangeApi } from './services/custom/IpRange';
 import { SubscriptionPlanApi } from './services/custom/SubscriptionPlan';
 /**
@@ -88,6 +89,7 @@ export class SDKBrowserModule {
         UserApi,
         WatchlistApi,
         TagApi,
+        NoteApi,
         IpRangeApi,
         SubscriptionPlanApi,
         internalStorageProvider,

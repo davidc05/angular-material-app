@@ -32,6 +32,7 @@
                                 {{option.name}}
                             </mat-option>
                         </mat-autocomplete>
+                        <mat-hint align="start">Hit enter to add each tag.</mat-hint>
                         <mat-hint align="end">{{tags.length}} / {{tagsLimit}}</mat-hint>
                     </mat-form-field>
                 </mat-card>
@@ -207,6 +208,32 @@
                     </agm-map>
                 </div>
             </div>
+        </mat-card>
+    </section>
+    <section class="activity-stream">
+        <mat-card>
+            <mat-card-title fxLayout="row">
+                Activity Stream
+                <button mat-flat-button (click)="createEditNoteDialog({}, 'Add Note', 'create')">Add Note</button>
+            </mat-card-title>
+            <mat-list role="list">
+                <div *ngFor="let notesByDate of userNotesList | keyvalue ; last as last">
+                    <p class="note-date" matSubheader>{{notesByDate.value[0].date}}</p>
+                    <mat-list-item class="note" *ngFor="let note of notesByDate.value">
+                    	<img mat-list-icon class="userAvatar" [src]="note.avatar" alt="avatar" />
+                    	<div class="mat-list-text">
+	                        <p class="username">{{note.userName}} wrote a note:</p>
+	                        <p class="note-text">{{note.text}}</p>
+	                        <p class="note-actions">
+	                        	{{note.time}} &nbsp; &bull; &nbsp; 
+	                        	<a (click)="createEditNoteDialog(note, 'Edit User Note', 'update')">Edit</a> &nbsp; 
+	                        	<a (click)="createNoteDeleteDialog(note.id)">Delete</a>
+	                        </p>
+	                    </div>
+                    </mat-list-item>
+                    <mat-divider [inset]="true" *ngIf="!last"></mat-divider>
+                </div>
+            </mat-list>
         </mat-card>
     </section>
 </div>

@@ -4,6 +4,7 @@ import { IpDetail } from '../../models/IpDetail';
 import { User } from '../../models/User';
 import { Watchlist } from '../../models/Watchlist';
 import { Tag } from '../../models/Tag';
+import { Note } from '../../models/Note';
 import { IpRange } from '../../models/IpRange';
 import { SubscriptionPlan } from '../../models/SubscriptionPlan';
 
@@ -11,15 +12,14 @@ export interface Models { [name: string]: any }
 
 @Injectable()
 export class SDKModels {
-
     private models: Models = {
         IpDetail: IpDetail,
         User: User,
         Watchlist: Watchlist,
         Tag: Tag,
+        Note: Note,
         IpRange: IpRange,
         SubscriptionPlan: SubscriptionPlan,
-
     };
 
     public get(modelName: string): any {
