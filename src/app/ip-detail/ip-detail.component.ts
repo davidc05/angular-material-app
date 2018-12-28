@@ -190,6 +190,7 @@ export class IpDetailComponent implements OnInit {
         this.tags = [];
         this.latitude = 0;
         this.longitude = 0;
+        this.user = JSON.parse(localStorage.getItem('profile'));
         this.subscriptionPlan = this.userService.user.subscriptionPlan;
         this.route.data.subscribe(routeData => {
             let data = routeData['data'];
@@ -400,7 +401,7 @@ export class IpDetailComponent implements OnInit {
     }
 
     getIPsNotes() {
-        this.noteService.getUserNotesByIp(this.ipDetail.ipaddress).toPromise().then(res => {
+        this.noteService.getUserNotesByIp(this.ipDetail.ipaddress, this.user.email).toPromise().then(res => {
             this.userNotesList = this.groupByDate(res.map(item => ({
                 ...item,
                 date: moment(item.createdOn).format('MMMM DD, YYYY'),
@@ -432,7 +433,6 @@ export class IpDetailComponent implements OnInit {
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
                 if (type === 'create') {
-                    this.user = JSON.parse(localStorage.getItem('profile'));
                     this.noteService.createNote(
                         result.userNote.text,
                         this.user.email,

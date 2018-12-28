@@ -23,10 +23,11 @@ export class NoteService {
         .toPromise();
   }
 
-  getUserNotesByIp(ip){
+  getUserNotesByIp(ip, userEmail){
     let filter: LoopBackFilter = {
       "where": {
-        "ip": ip
+        "ip": ip,
+        "userEmail": userEmail
       }
     }
     return this.noteApi.find<Note>(filter);
