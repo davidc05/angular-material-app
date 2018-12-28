@@ -40,9 +40,10 @@ import {
   MatExpansionModule,
   MatTabsModule
 } from '@angular/material';
-import { IpDetailComponent } from './ip-detail/ip-detail.component';
+import { IpDetailComponent, EditNoteDialog, DeleteNoteDialog } from './ip-detail/ip-detail.component';
 import { IpDetailResolver } from './ip-detail/ip-detail.resolver';
 import { IpsService } from './services/ips.service';
+import { NoteService } from './services/note.service';
 import { HttpClientModule } from '@angular/common/http';
 import { LoginComponent } from './login/login.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -72,6 +73,8 @@ import { MyAccountResolver } from './my-account/my-account.resolver';
     AppComponent,
     IpQueryComponent,
     IpDetailComponent,
+    EditNoteDialog,
+    DeleteNoteDialog,
     LoginComponent,
     IpRiskCircleComponent,
     ImportDialogComponent,
@@ -169,6 +172,7 @@ import { MyAccountResolver } from './my-account/my-account.resolver';
   ],
   providers: [
     IpsService,
+    NoteService,
     IpDetailResolver,
     WatchlistResolver,
     IpQueryResolver,
@@ -188,7 +192,9 @@ import { MyAccountResolver } from './my-account/my-account.resolver';
     DeleteUserDialog,
     CreateUserDialog,
     TagDeleteDialog,
-    SaveListDialog
+    SaveListDialog,
+    EditNoteDialog,
+    DeleteNoteDialog,
   ],
   bootstrap: [AppComponent]
 })
