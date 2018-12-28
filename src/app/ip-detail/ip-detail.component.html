@@ -98,6 +98,12 @@
                         <mat-chip-list mat-line *ngIf="ipThreatDetailKey == 'blacklist_class'">
                             <mat-chip id="{{ipThreatDetail[ipThreatDetailKey]}}"> {{ipThreatDetail[ipThreatDetailKey]}}
                             </mat-chip>
+                            <span class="help-tooltip">
+                                <mat-icon
+                                    matTooltipPosition="above"
+                                    [matTooltip]="blacklistClassTooltip"
+                                >help</mat-icon>
+                            </span>
                         </mat-chip-list>
 
                         <!-- Blacklist Network Neighbors -->

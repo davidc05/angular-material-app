@@ -12,6 +12,8 @@ import { UserService } from '../services/user.service';
 import { NoteService } from '../services/note.service';
 import * as moment from 'moment';
 
+import { blacklistClassData } from './blacklistClassTooltip';
+
 export interface EditNoteDialogData {
     dialogName: string;
     userNote: any;
@@ -132,6 +134,8 @@ export class IpDetailComponent implements OnInit {
     userNote: string = '';
     userNotesList = {};
 
+    blacklistClassTooltip: string;
+
     setCircleData() {
         this.circleRadius = 100;
         switch (this.ipDetail.threat_classification) {
@@ -204,6 +208,7 @@ export class IpDetailComponent implements OnInit {
                 this.ipThreatDetailFields.forEach(key => {
                     this.ipThreatDetail[key] = data[key];
                 });
+                this.blacklistClassTooltip = this.getBlacklistClassTooltip(this.ipThreatDetail.blacklist_class);
                 this.ipGeoDetailFields.forEach(key => {
                     this.ipGeoDetail[key] = data[key];
                     this.latitude = data['latitude'];
@@ -358,7 +363,7 @@ export class IpDetailComponent implements OnInit {
                         }
                     }
                 }
-            })
+            });
     }
 
     onClickBuyApp() {
@@ -485,6 +490,11 @@ export class IpDetailComponent implements OnInit {
                 );
             }
         });
+    }
+
+    getBlacklistClassTooltip(value: string) {
+        const tooltip = blacklistClassData.filter(item => item.blacklistClass === value);
+        return !tooltip.length ? 'No info for this blacklist class' : tooltip[0].tooltip ;
     }
 }
 
