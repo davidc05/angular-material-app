@@ -21,8 +21,6 @@ content-container .loading {
     margin-top: 20px;
 }
 .mat-expansion-panel-header-title{
-    font-size: 1.75em;
-    font-weight: bold;
     font-family: 'Open Sans',Helvetica,Arial,Lucida,sans-serif;
 }
 .mat-chip.High {

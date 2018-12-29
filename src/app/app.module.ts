@@ -6,7 +6,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { SDKBrowserModule } from '../../sdk/index';
 import { AppComponent } from './app.component';
-import { IpQueryComponent, QueryNameDialogComponent, ImportDialogComponent } from './ip-query/ip-query.component';
+import { IpQueryComponent, QueryNameDialogComponent, ImportDialogComponent, ConfirmOverwriteDialog } from './ip-query/ip-query.component';
 import { IpRangesComponent } from './ip-ranges/ip-ranges.component';
 import { IpRangesResolver } from './ip-ranges/ip-ranges.resolver';
 import { NgCircleProgressModule } from 'ng-circle-progress';
@@ -78,6 +78,7 @@ import { MyAccountResolver } from './my-account/my-account.resolver';
     LoginComponent,
     IpRiskCircleComponent,
     ImportDialogComponent,
+    ConfirmOverwriteDialog,
     QueryNameDialogComponent,
     WatchlistComponent,
     TrendsComponent,
@@ -164,6 +165,7 @@ import { MyAccountResolver } from './my-account/my-account.resolver';
     MatSortModule,
     ImportDialogComponent,
     QueryNameDialogComponent,
+    ConfirmOverwriteDialog,
     MatSidenavModule,
     MatMenuModule,
     MatButtonToggleModule,
@@ -186,6 +188,7 @@ import { MyAccountResolver } from './my-account/my-account.resolver';
   entryComponents: [
     ImportDialogComponent,
     QueryNameDialogComponent,
+    ConfirmOverwriteDialog,
     CreateTagDialog,
     CreateWatchlistDialog,
     SearchDeleteDialog,

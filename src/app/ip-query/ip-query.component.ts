@@ -13,7 +13,7 @@ import saveAs from 'file-saver';
 import * as moment from 'moment';
 import { UserService } from '../services/user.service';
 
-import { map, filter, flatten, uniqBy, findIndex, chain, chunk } from 'lodash';
+import { map, filter, flatten, uniqBy, findIndex, chain, chunk, find, union } from 'lodash';
 
 import { Address4, Address6 } from 'ip-address';
 
@@ -32,6 +32,9 @@ export interface IPSummary {
 export interface QueryNameDialogData {
   queryName: string;
   description: string;
+  watchlists: any[];
+  selectedWatchlistId: string;
+  method: string;
 }
 
 export interface ImportDialogData {
@@ -281,22 +284,66 @@ export class IpQueryComponent implements OnInit {
   }
 
   openDialog(): void {
-    const dialogRef = this.dialog.open(QueryNameDialogComponent, {
-      width: '275px',
-      data: {
-        queryName: this.queryName,
-        description: this.description
-      }
-    });
+      this.watchlistService.getUserSearches(this.user.email).then(
+          watchlists => {
+              const dialogRef = this.dialog.open(QueryNameDialogComponent, {
+                  width: '375px',
+                  data: {
+                      queryName: this.queryName,
+                      description: this.description,
+                      watchlists: watchlists,
+                      selectedWatchlistId: '',
+                  }
+              });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.queryName = result.queryName;
-        this.description = result.description;
-        this.save();
-      }
-    });
+              dialogRef.afterClosed().subscribe(result => {
+                  if (result) {
+                      if (result.method === 'modify') {
+                          const originalData = find(watchlists, { id: result.selectedWatchlistId });
+                          const modifiedData = {
+                              ...originalData,
+                              ips: union(originalData.ips, this.ipsList.map(item => item.label))
+                          };
+                          this.createConfirmDialog(modifiedData);
+                      }
+                      if (result.method === 'create') {
+                        this.queryName = result.queryName;
+                        this.description = result.description;
+                        this.save();
+                      }
+                  }
+              });
+          },
+          err => {
+
+          }
+      );
   }
+
+    createConfirmDialog(data) {
+        const dialogRef = this.dialog.open(ConfirmOverwriteDialog, { width: '300px' });
+
+        dialogRef.keydownEvents().subscribe(result => {
+            if (result.key === "Enter") {
+                dialogRef.componentInstance.closeDialog(false);
+            }
+        }, err => {
+
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.watchlistService.updateSearch(data).then(
+                    result => {
+
+                    },
+                    err => {
+
+                    }
+                );
+            }
+        });
+    }
 
   openImportDialog(): void {
     const importDialogRef = this.dialog.open(ImportDialogComponent, {
@@ -685,6 +732,12 @@ export class IpQueryComponent implements OnInit {
 })
 export class QueryNameDialogComponent {
 
+    modifyOpenState = false;
+    createOpenState = false;
+
+    selectedWatchlistId: string;
+    description: string;
+
   constructor(
     public dialogRef: MatDialogRef<QueryNameDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: QueryNameDialogData) { }
@@ -693,7 +746,61 @@ export class QueryNameDialogComponent {
     this.dialogRef.close();
   }
 
+  selectWatchlist(value: string) {
+      this.data.selectedWatchlistId = value;
+      this.selectedWatchlistId = value;
+      this.description = !find(this.data.watchlists, { id: value }).description.length
+        ? 'No Description'
+        : find(this.data.watchlists, { id: value }).description
+  }
+
+    handleOpenState(key: string, value: boolean) {
+        if (value) {
+            this.data.method = key;
+        } else {
+            switch (key) {
+                case 'create':
+                    this.data.queryName = '';
+                    this.data.description = '';
+                    break;
+                case 'modify':
+                    this.data.selectedWatchlistId = '';
+                    this.selectedWatchlistId = '';
+                    this.description = 'No Description';
+                    break;
+                default:
+                    break;
+            }
+            this.data.method = '';
+        }
+
+    }
+
 }
+
+@Component({
+    selector: 'app-confirm-overwrite',
+    templateUrl: 'confirm-overwrite-dialog.html',
+    styleUrls: ['ip-query.component.css']
+})
+export class ConfirmOverwriteDialog {
+    constructor(
+        public dialogRef: MatDialogRef<ConfirmOverwriteDialog>,
+    ) { }
+
+    ngOnInit() {
+    }
+
+    closeDialog(value) {
+        this.dialogRef.close(value);
+    }
+
+    onNoClick(): void {
+        this.dialogRef.close();
+    }
+}
+
+
 
 @Component({
   selector: 'app-import-dialog',
