@@ -274,6 +274,7 @@ export class IpQueryComponent implements OnInit {
 
   // Save search
   save() {
+      console.log('-----------', this.ipsList)
     this.watchlistService.createSearch(this.user.email, this.ipsList, this.queryName, this.description).then(
       result => {
 
@@ -302,32 +303,12 @@ export class IpQueryComponent implements OnInit {
                   if (result) {
                       if (result.method === 'modify') {
                           const originalData = find(watchlists, { id: result.selectedWatchlistId });
-                          switch (result.modifyOption) {
-                              case 'Add':
-                                const modifiedData = {
-                                    ...originalData,
-                                    ips: union(originalData.ips, this.ipsList.map(item => item.label))
-                                };
-                                  this.watchlistService.updateSearch(modifiedData).then(
-                                      result => {
-
-                                      },
-                                      err => {
-
-                                      }
-                                  );
-                                break;
-                              case 'Overwrite':
-                                  const data = {
-                                      ...originalData,
-                                      ips: this.ipsList.map(item => item.label)
-                                  };
-                                  this.createConfirmDialog(data);
-                                break;
-                              default:
-                                break;
-
-                          }
+                          console.log
+                          const modifiedData = {
+                              ...originalData,
+                              ips: union(originalData.ips, this.ipsList.map(item => item.label))
+                          };
+                          this.createConfirmDialog(modifiedData);
                       }
                       if (result.method === 'create') {
                         this.queryName = result.queryName;

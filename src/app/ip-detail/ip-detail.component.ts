@@ -11,6 +11,7 @@ import { UserService } from '../services/user.service';
 import { NoteService } from '../services/note.service';
 import { WatchlistService } from '../services/watchlist.service';
 import * as moment from 'moment';
+
 import { find, union } from 'lodash';
 
 export interface EditNoteDialogData {
@@ -137,6 +138,12 @@ export class IpDetailComponent implements OnInit {
     circleOuterStrokeColor;
     circleRadius;
 
+    userNote: string = '';
+    userNotesList = {};
+
+    queryName;
+    description;
+
     // Chip input properties for tags section
     visible = true;
     selectable = true;
@@ -186,11 +193,8 @@ export class IpDetailComponent implements OnInit {
             }
         });
 
-<<<<<<< HEAD
         // Autocomplete
-=======
-        // utomcomplete
->>>>>>> clean up ip-detail-component
+
         // this.filteredOptions = this.tagsFormControl.valueChanges
         //   .pipe(
         //     startWith(''),
