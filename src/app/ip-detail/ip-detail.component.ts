@@ -9,13 +9,21 @@ import { switchMap, debounceTime } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { UserService } from '../services/user.service';
 import { NoteService } from '../services/note.service';
+import { WatchlistService } from '../services/watchlist.service';
 import * as moment from 'moment';
-
-import { blacklistClassData } from './blacklistClassTooltip';
+import { find, union } from 'lodash';
 
 export interface EditNoteDialogData {
     dialogName: string;
     userNote: any;
+}
+
+export interface QueryNameDialogData {
+    queryName: string;
+    description: string;
+    watchlists: any[];
+    selectedWatchlistId: string;
+    method: string;
 }
 
 export interface IpDetail {
@@ -54,6 +62,7 @@ export class IpDetailComponent implements OnInit {
         private userService: UserService,
         private noteService: NoteService,
         public dialog: MatDialog,
+        private watchlistService: WatchlistService,
     ) { }
 
     tagsFormControl = new FormControl();
@@ -127,6 +136,12 @@ export class IpDetailComponent implements OnInit {
     circleBackgroundColor;
     circleOuterStrokeColor;
     circleRadius;
+
+    userNote: string = '';
+    userNotesList = {};
+
+    queryName;
+    description;
 
     // Chip input properties for tags section
     visible = true;
@@ -481,9 +496,158 @@ export class IpDetailComponent implements OnInit {
         });
     }
 
-    getBlacklistClassTooltip(value: string) {
-        const tooltip = blacklistClassData.filter(item => item.blacklistClass === value);
-        return !tooltip.length ? 'No info for this blacklist class.' : tooltip[0].tooltip ;
+    // Save search
+    save() {
+        this.watchlistService.createSearch(
+            this.user.email,
+            [{ label: this.ipDetail.ipaddress, threatLevel: '' }],
+            this.queryName, this.description
+        ).then(
+            result => {
+
+            },
+            err => {
+
+            }
+        );
+    }
+
+    openDialog(): void {
+        this.watchlistService.getUserSearches(this.user.email).then(
+            watchlists => {
+                const dialogRef = this.dialog.open(WatchlistDialogComponent, {
+                    width: '375px',
+                    data: {
+                        queryName: !this.queryName ? '' : this.queryName,
+                        description: !this.description ? '' : this.description,
+                        watchlists: watchlists,
+                        selectedWatchlistId: '',
+                    }
+                });
+
+                dialogRef.afterClosed().subscribe(result => {
+                    if (result) {
+                        if (result.method === 'modify') {
+                            const originalData = find(watchlists, { id: result.selectedWatchlistId });
+                            const modifiedData = {
+                                ...originalData,
+                                ips: union(originalData.ips, [this.ipDetail.ipaddress])
+                            };
+                            this.createConfirmDialog(modifiedData);
+                        }
+                        if (result.method === 'create') {
+                            this.queryName = result.queryName;
+                            this.description = result.description;
+                            this.save();
+                        }
+                    }
+                });
+            },
+            err => {
+
+            }
+        );
+    }
+
+    createConfirmDialog(data) {
+        const dialogRef = this.dialog.open(ConfirmWatchlistDialog, { width: '300px' });
+
+        dialogRef.keydownEvents().subscribe(result => {
+            if (result.key === "Enter") {
+                dialogRef.componentInstance.closeDialog(false);
+            }
+        }, err => {
+
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.watchlistService.updateSearch(data).then(
+                    result => {
+
+                    },
+                    err => {
+
+                    }
+                );
+            }
+        });
+    }
+}
+
+
+@Component({
+    selector: 'app-save-watchlist-dialog',
+    templateUrl: 'save-watchlist-dialog.html',
+    styleUrls: ['ip-detail.component.css']
+})
+export class WatchlistDialogComponent {
+
+    modifyOpenState = false;
+    createOpenState = false;
+
+    selectedWatchlistId: string;
+    description: string;
+
+    constructor(
+        public dialogRef: MatDialogRef<WatchlistDialogComponent>,
+        @Inject(MAT_DIALOG_DATA) public data: QueryNameDialogData) { }
+
+    onNoClick(): void {
+        this.dialogRef.close();
+    }
+
+    selectWatchlist(value: string) {
+        this.data.selectedWatchlistId = value;
+        this.selectedWatchlistId = value;
+        this.description = !find(this.data.watchlists, { id: value }).description.length
+            ? 'No Description'
+            : find(this.data.watchlists, { id: value }).description
+    }
+
+    handleOpenState(key: string, value: boolean) {
+        if (value) {
+            this.data.method = key;
+        } else {
+            switch (key) {
+                case 'create':
+                    this.data.queryName = '';
+                    this.data.description = '';
+                    break;
+                case 'modify':
+                    this.data.selectedWatchlistId = '';
+                    this.selectedWatchlistId = '';
+                    this.description = 'No Description';
+                    break;
+                default:
+                    break;
+            }
+            this.data.method = '';
+        }
+
+    }
+
+}
+
+@Component({
+    selector: 'app-confirm-overwrite',
+    templateUrl: 'confirm-overwrite-dialog.html',
+    styleUrls: ['ip-detail.component.css']
+})
+export class ConfirmWatchlistDialog {
+    constructor(
+        public dialogRef: MatDialogRef<ConfirmWatchlistDialog>,
+    ) { }
+
+    ngOnInit() {
+    }
+
+    closeDialog(value) {
+        this.dialogRef.close(value);
+    }
+
+    onNoClick(): void {
+        this.dialogRef.close();
     }
 }
 
@@ -543,6 +707,7 @@ export class DeleteNoteDialog {
     ) { }
 
     ngOnInit() {
+
     }
 
     closeDialog(value) {

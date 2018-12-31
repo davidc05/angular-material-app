@@ -11,6 +11,14 @@
                 <app-ip-risk-circle [title]="circleTitle" [subtitle]="circleSubtitle" [riskLevel]="circleRiskLevel"
                     [backgroundColor]="circleBackgroundColor" [outerStrokeColor]="circleOuterStrokeColor">
                 </app-ip-risk-circle>
+                <button
+                    mat-flat-button
+                    (click)="openDialog()"
+                    
+                    class="button-bottom-spacing"
+                >
+                    <mat-icon>save</mat-icon> Save
+                </button>
             </div>
             <div class="cols lg-2 md-2 sm-1">
                 <mat-card class="tags-card">

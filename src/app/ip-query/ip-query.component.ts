@@ -273,6 +273,7 @@ export class IpQueryComponent implements OnInit {
 
   // Save search
   save() {
+      console.log('-----------', this.ipsList)
     this.watchlistService.createSearch(this.user.email, this.ipsList, this.queryName, this.description).then(
       result => {
 
@@ -300,6 +301,7 @@ export class IpQueryComponent implements OnInit {
                   if (result) {
                       if (result.method === 'modify') {
                           const originalData = find(watchlists, { id: result.selectedWatchlistId });
+                          console.log
                           const modifiedData = {
                               ...originalData,
                               ips: union(originalData.ips, this.ipsList.map(item => item.label))
