@@ -105,7 +105,7 @@ export const blacklistClassData = [
     },
     {
         blacklistClass: `phishing`,
-        tooltip: `Phishing is the fraudulent attempt to obtain sensitive information such as usernames, passwords and credit card details by disguising as a trustworthy entity in an electronic communication.`,
+        tooltip: `Phishing is the fraudulent attempt to obtain sensitive information such as usernames, passwords and credit card details by disguising as a trustworthy entity in an electronic communication, usually email or SMS.`,
     },
     {
         blacklistClass: `ransomware`,
