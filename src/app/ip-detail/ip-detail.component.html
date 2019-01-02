@@ -49,8 +49,8 @@
                     <mat-list-item role="listitem" *ngFor="let ipThreatDetailKey of getKeys(ipThreatDetail); last as last">
                         <h3 mat-line>
                         	{{fieldNames[ipThreatDetailKey]}}
-                        	<!-- Threat Classification -->
-                        	<span class="help-tooltip" *ngIf="ipThreatDetailKey === 'threat_classification'">
+                        	<!-- Threat Score -->
+                        	<span class="help-tooltip" *ngIf="ipThreatDetailKey === 'threat_potential_score_pct'">
                         		<mat-icon matTooltipPosition="above" matTooltip="High – Threat Score >=70. Medium – Threat Score from >=40 but <70. Nuisance – Threat Score >=20 but <40. Low – No threat profile threshold met <20.">help</mat-icon>
                         	</span>
                         	<!-- Blacklist Count -->
