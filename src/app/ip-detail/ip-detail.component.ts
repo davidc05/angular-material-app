@@ -143,6 +143,8 @@ export class IpDetailComponent implements OnInit {
     queryName;
     description;
 
+    blacklistClassTooltip: string;
+
     // Chip input properties for tags section
     visible = true;
     selectable = true;
