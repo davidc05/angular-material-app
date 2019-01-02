@@ -494,7 +494,7 @@ export class IpDetailComponent implements OnInit {
 
     getBlacklistClassTooltip(value: string) {
         const tooltip = blacklistClassData.filter(item => item.blacklistClass === value);
-        return !tooltip.length ? 'No info for this blacklist class' : tooltip[0].tooltip ;
+        return !tooltip.length ? 'No info for this blacklist class.' : tooltip[0].tooltip ;
     }
 }
 

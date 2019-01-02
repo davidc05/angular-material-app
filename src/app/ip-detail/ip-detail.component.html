@@ -66,7 +66,6 @@
                         		<mat-icon matTooltipPosition="above" matTooltip="The number of times this IP has been blacklisted for the last 90 days.">help</mat-icon>
                         	</span>
                         </h3>
-                        <p mat-line>{{ipThreatDetailKey}}</p>
                         <p mat-line *ngIf="ipThreatDetailKey !== 'threat_potential_score_pct' && ipThreatDetailKey !== 'threat_classification' && ipThreatDetailKey !== 'blacklist_class' && ipThreatDetailKey !== 'blacklist_network_neighbor_cnt'">{{ipThreatDetail[ipThreatDetailKey]}}
                         </p>
 
