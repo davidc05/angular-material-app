@@ -223,3 +223,8 @@ agm-snazzy-info-window .si-content-wrapper{
 		padding-left: 0;
 	}
 }
+/* all devices with touch */
+@media (hover: none) { 
+	/* tooltips are not click-able/hover-able on mobile to display the message, so hide for now */
+	.help-tooltip{ display: none; }
+}
