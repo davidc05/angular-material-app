@@ -35,6 +35,7 @@ export interface QueryNameDialogData {
   watchlists: any[];
   selectedWatchlistId: string;
   method: string;
+  modifyOption: string;
 }
 
 export interface ImportDialogData {
@@ -293,6 +294,7 @@ export class IpQueryComponent implements OnInit {
                       description: this.description,
                       watchlists: watchlists,
                       selectedWatchlistId: '',
+                      modifyOption: 'Add',
                   }
               });
 
@@ -300,11 +302,32 @@ export class IpQueryComponent implements OnInit {
                   if (result) {
                       if (result.method === 'modify') {
                           const originalData = find(watchlists, { id: result.selectedWatchlistId });
-                          const modifiedData = {
-                              ...originalData,
-                              ips: union(originalData.ips, this.ipsList.map(item => item.label))
-                          };
-                          this.createConfirmDialog(modifiedData);
+                          switch (result.modifyOption) {
+                              case 'Add':
+                                const modifiedData = {
+                                    ...originalData,
+                                    ips: union(originalData.ips, this.ipsList.map(item => item.label))
+                                };
+                                  this.watchlistService.updateSearch(modifiedData).then(
+                                      result => {
+
+                                      },
+                                      err => {
+
+                                      }
+                                  );
+                                break;
+                              case 'Overwrite':
+                                  const data = {
+                                      ...originalData,
+                                      ips: this.ipsList.map(item => item.label)
+                                  };
+                                  this.createConfirmDialog(data);
+                                break;
+                              default:
+                                break;
+
+                          }
                       }
                       if (result.method === 'create') {
                         this.queryName = result.queryName;
@@ -738,6 +761,9 @@ export class QueryNameDialogComponent {
     selectedWatchlistId: string;
     description: string;
 
+    modifyOption = this.data.modifyOption;
+    modifyOptions: string[] = ['Add', 'Overwrite'];
+
   constructor(
     public dialogRef: MatDialogRef<QueryNameDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: QueryNameDialogData) { }
@@ -774,6 +800,11 @@ export class QueryNameDialogComponent {
             this.data.method = '';
         }
 
+    }
+
+    handleOptionChange(e) {
+        this.modifyOption = e.source.value;
+        this.data.modifyOption = e.source.value;
     }
 
 }

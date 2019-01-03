@@ -39,6 +39,7 @@ import {
   MatSlideToggleModule,
   MatExpansionModule,
   MatTabsModule,
+  MatRadioModule,
 } from '@angular/material';
 import {
     IpDetailComponent,
@@ -144,6 +145,7 @@ import { MyAccountResolver } from './my-account/my-account.resolver';
     MatSlideToggleModule,
     MatExpansionModule,
     MatTabsModule,
+    MatRadioModule,
     NgxLoadingModule.forRoot({}),
     NgCircleProgressModule.forRoot({
       // set defaults here
@@ -178,6 +180,7 @@ import { MyAccountResolver } from './my-account/my-account.resolver';
     MatMenuModule,
     MatButtonToggleModule,
     MatAutocompleteModule,
+    MatRadioModule,
     SaveListDialog
   ],
   providers: [

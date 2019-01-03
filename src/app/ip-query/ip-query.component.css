@@ -44,6 +44,14 @@ content-container .loading {
     border: 3px solid #686868;
 }
 
+/* save dialog */
+.modify-option {
+  margin: 5px;
+}
+
+.example-selected-value {
+  margin: 15px 0;
+}
 
 /* Import Dialog */
 

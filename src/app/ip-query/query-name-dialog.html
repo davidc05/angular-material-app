@@ -10,7 +10,20 @@
                     Modify Existing Watchlist
                 </mat-panel-title>
             </mat-expansion-panel-header>
-            <h1 mat-dialog-title>Add to existing watchlist</h1>
+            <mat-radio-group
+                class="modify-options"
+                [(ngModel)]="modifyOption"
+                (change)="handleOptionChange($event)"
+            >
+                <mat-radio-button
+                    class="modify-option"
+                    *ngFor="let option of modifyOptions"
+                    [value]="option"
+                >
+                    {{option}}
+                </mat-radio-button>
+            </mat-radio-group>
+            <h1 mat-dialog-title>{{modifyOption}} to existing watchlist</h1>
             <mat-form-field>
                 <mat-select
                     (selectionChange)="selectWatchlist(selectedWatchlistId)"
