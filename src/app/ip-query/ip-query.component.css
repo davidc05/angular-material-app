@@ -20,9 +20,13 @@ content-container .loading {
 .content-container .mat-accordion .mat-expansion-panel{
     margin-top: 20px;
 }
+.search-query-title {
+    font-size: 1.75em;
+    font-weight: 700;
+}
 .mat-expansion-panel-header-title{
     font-family: 'Open Sans',Helvetica,Arial,Lucida,sans-serif;
-}
+} 
 .mat-chip.High {
     padding: 4px 4px 4px 12px;
     background-color: #FDC6CA;
