@@ -763,6 +763,7 @@ export class QueryNameDialogComponent {
 
     modifyOption = this.data.modifyOption;
     modifyOptions: string[] = ['Add', 'Overwrite'];
+    title = 'Add to';
 
   constructor(
     public dialogRef: MatDialogRef<QueryNameDialogComponent>,
@@ -804,6 +805,7 @@ export class QueryNameDialogComponent {
 
     handleOptionChange(e) {
         this.modifyOption = e.source.value;
+        this.title = e.source.value === 'Add' ? 'Add to' : 'Overwrite';
         this.data.modifyOption = e.source.value;
     }
 
