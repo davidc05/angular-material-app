@@ -14,10 +14,7 @@ export class WatchlistService {
         data.queryName = queryName;
         data.userEmail = userEmail;
 
-        data.ips = [];
-        ips.forEach(element => {
-            data.ips.push(element.label);
-        });
+        data.ips = ips;
 
         data.description = description ? description : '';
 

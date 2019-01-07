@@ -214,7 +214,7 @@ export class IpQueryComponent implements OnInit {
     this.watchlistService.getUserSearchById(watchlistId).then(
       (result) => {
         if (result && result.ips) {
-          this.ipsList = result.ips.map(ip => ({ label: ip, threatLevel: '' }));
+        this.ipsList = result.ips.map(item => item.ipaddress);
 
           this.ipsService.highRiskCircle.count = 0;
           this.ipsService.mediumRiskCircle.count = 0;
@@ -223,30 +223,13 @@ export class IpQueryComponent implements OnInit {
           let self = this;
 
           if (this.ipsList.length !== 0) {
-            this.validateIpListDeferred(this.ipsList)
-              .then(async (cleanIpsList) => {
-                this.isFormInvalid = false;
-                let ipsChunk = chunk(cleanIpsList, 20);
-
-                this.processArray(ipsChunk).then((result) => {
-                    const ipsDetail = flatten(result.map(item => item.ipsDetail));
-
-                    self.ipsList = ipsDetail.map(ip => ({
-                      label: ip.ipaddress,
-                      threatLevel: ip.threat_classification
-                    }));
-
-                    this.handleIpsDetail(ipsDetail);
-                    this.isLoading = false;
-                }, (reason) => {
-                    // rejection happened
-                    this.isLoading = false;
-                });
-
-              }, (invalidList) => {
-                this.isFormInvalid = true;
-                this.ipsService.dataSource.data = [];
-              });
+            const ipsDetail = result.ips;
+            self.ipsList = ipsDetail.map(ip => ({
+                label: ip.ipaddress,
+                threatLevel: ip.threat_classification
+            }));
+            self.handleIpsDetail(ipsDetail);
+            this.isLoading = false;
           }
         }
       },
@@ -274,8 +257,7 @@ export class IpQueryComponent implements OnInit {
 
   // Save search
   save() {
-      console.log('-----------', this.ipsList)
-    this.watchlistService.createSearch(this.user.email, this.ipsList, this.queryName, this.description).then(
+    this.watchlistService.createSearch(this.user.email, this.ipsService.dataSource.data, this.queryName, this.description).then(
       result => {
 
       },
@@ -283,6 +265,7 @@ export class IpQueryComponent implements OnInit {
 
       }
     );
+
   }
 
   openDialog(): void {
