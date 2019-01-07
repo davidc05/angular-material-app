@@ -286,12 +286,32 @@ export class IpQueryComponent implements OnInit {
                   if (result) {
                       if (result.method === 'modify') {
                           const originalData = find(watchlists, { id: result.selectedWatchlistId });
-                          console.log
-                          const modifiedData = {
-                              ...originalData,
-                              ips: union(originalData.ips, this.ipsList.map(item => item.label))
-                          };
-                          this.createConfirmDialog(modifiedData);
+                          switch (result.modifyOption) {
+                              case 'Add':
+                                const modifiedData = {
+                                    ...originalData,
+                                    ips: uniqBy([...originalData.ips, ...this.ipsService.dataSource.data], 'ipaddress')
+                                };
+                                  this.watchlistService.updateSearch(modifiedData).then(
+                                      result => {
+
+                                      },
+                                      err => {
+
+                                      }
+                                  );
+                                break;
+                              case 'Overwrite':
+                                  const data = {
+                                      ...originalData,
+                                      ips: this.ipsService.dataSource.data
+                                  };
+                                  this.createConfirmDialog(data);
+                                break;
+                              default:
+                                break;
+
+                          }
                       }
                       if (result.method === 'create') {
                         this.queryName = result.queryName;
