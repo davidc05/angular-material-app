@@ -43,6 +43,7 @@ export class GmapComponent implements OnInit, AfterViewInit {
     description;
     isFormInvalid: boolean;
     bounds: LatLngBounds;
+    ipsData;
 
     readonly separatorKeysCodes: number[] = [ENTER, COMMA, SPACE];
     @ViewChild(MatSort) sort: MatSort;
@@ -98,8 +99,9 @@ export class GmapComponent implements OnInit, AfterViewInit {
     getAndRunUserSearch(watchlistId) {
         this.watchlistService.getUserSearchById(watchlistId).then(
             (result) => {
-                this.ipsList = result.ips;
-                this.submitQuery(this.ipsList);
+                this.ipsList = result.ips.map(item => item.ipaddress);
+                this.ipsData = result.ips;
+                this.handleIPsData(result.ips);
             },
             (err) => {
 
@@ -121,8 +123,7 @@ export class GmapComponent implements OnInit, AfterViewInit {
 
     // Save search
     save() {
-        const ipsList = this.ipsList.map(ip => ({ label: ip }));
-        this.watchlistService.createSearch(this.user.email, ipsList, this.queryName, this.description).then(
+        this.watchlistService.createSearch(this.user.email, this.ipsData, this.queryName, this.description).then(
             result => {
 
             },
@@ -216,32 +217,8 @@ export class GmapComponent implements OnInit, AfterViewInit {
         this.ipsList = ipsList;
         this.isLoading = true;
         Promise.all(ipsList.map(ip => this.ipsService.getIpDetail(ip).then(data => data.ipDetail))).then(async (result) => {
-            this.checked = !!result.length;
-            this.ipsGeoData = result.map((item: any) => ({
-                latitude: item.latitude,
-                longitude: item.longitude,
-                ipaddress: item.ipaddress,
-                threatLevel: item.threat_classification,
-                blacklistClass: item.blacklist_class,
-                iconUrl: {
-                    url: item.threat_classification === 'Low'
-                        ? '../../assets/markers/green.svg'
-                        : item.threat_classification === 'Medium'
-                            ? '../../assets/markers/yellow.svg'
-                            : '../../assets/markers/red.svg',
-                    scaledSize: {
-                        width: 40,
-                        height: 40
-                    }
-                }
-            }));
-            this.bounds = await new google.maps.LatLngBounds();
-            await result.forEach((item: any) => {
-                this.bounds.extend(new google.maps.LatLng(item.latitude, item.longitude));
-            });
-            if (this.map && !!result.length) {
-                await this.map.fitBounds(this.bounds);
-            }
+            this.handleIPsData(result);
+            this.ipsData = result;
             this.isLoading = await false;
         });
     }
@@ -250,6 +227,35 @@ export class GmapComponent implements OnInit, AfterViewInit {
     }
     public set submitQuery(value) {
         this._submitQuery = value;
+    }
+
+    handleIPsData(data) {
+        this.checked = !!data.length;
+        this.ipsGeoData = data.map((item: any) => ({
+            latitude: item.latitude,
+            longitude: item.longitude,
+            ipaddress: item.ipaddress,
+            threatLevel: item.threat_classification,
+            blacklistClass: item.blacklist_class,
+            iconUrl: {
+                url: item.threat_classification === 'Low'
+                    ? '../../assets/markers/green.svg'
+                    : item.threat_classification === 'Medium'
+                        ? '../../assets/markers/yellow.svg'
+                        : '../../assets/markers/red.svg',
+                scaledSize: {
+                    width: 40,
+                    height: 40
+                }
+            }
+        }));
+        this.bounds = new google.maps.LatLngBounds();
+        data.forEach((item: any) => {
+            this.bounds.extend(new google.maps.LatLng(item.latitude, item.longitude));
+        });
+        if (this.map && !!data.length) {
+            this.map.fitBounds(this.bounds);
+        }
     }
 }
 
