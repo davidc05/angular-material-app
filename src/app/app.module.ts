@@ -40,6 +40,8 @@ import {
   MatExpansionModule,
   MatTabsModule,
   MatRadioModule,
+  MatDatepickerModule,
+  MatNativeDateModule,
 } from '@angular/material';
 import {
     IpDetailComponent,
@@ -146,6 +148,8 @@ import { MyAccountResolver } from './my-account/my-account.resolver';
     MatExpansionModule,
     MatTabsModule,
     MatRadioModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
     NgxLoadingModule.forRoot({}),
     NgCircleProgressModule.forRoot({
       // set defaults here
@@ -181,6 +185,8 @@ import { MyAccountResolver } from './my-account/my-account.resolver';
     MatButtonToggleModule,
     MatAutocompleteModule,
     MatRadioModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
     SaveListDialog
   ],
   providers: [
