@@ -2,6 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { WatchlistService } from '../services/watchlist.service';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { FormControl, Validators, AbstractControl, ValidationErrors, AsyncValidatorFn } from '@angular/forms';
+import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { Observable } from 'rxjs';
 import { debounce, debounceTime, take, map } from 'rxjs/operators'
 import { timer, from } from 'rxjs'
@@ -26,6 +27,8 @@ export class WatchlistComponent implements OnInit {
   watchlist=[];
   watchlistGridColumns: string[] = ['queryName', 'description', 'createdOn', 'deleteButton']
 
+  createdDate = new FormControl(new Date());
+
   constructor(
     private watchlistService: WatchlistService,
     private router: Router,
@@ -38,7 +41,7 @@ export class WatchlistComponent implements OnInit {
     this.route.data.subscribe(routeData => {
       let data = routeData['data'];
       if (data) {
-        this.watchlist = data;
+        this.watchlist = data.searches;
       }
     })
   }
@@ -47,10 +50,10 @@ export class WatchlistComponent implements OnInit {
     return moment(date).format("LLL");
   }
 
-  getUserSearches(){
-    this.watchlistService.getUserSearches(this.userService.user.email).then(
+  getUserSearches(selectedDate){
+    this.watchlistService.getUserSearches(this.userService.user.email, selectedDate).then(
       (result) => {
-        this.watchlist = result;
+        this.watchlist = result.searches;
       },
       (err) =>{
 
@@ -86,7 +89,7 @@ export class WatchlistComponent implements OnInit {
           result.watchlistData.description = result.watchlistDescription;
           this.watchlistService.updateSearch(result.watchlistData).then(
             result => {
-              this.getUserSearches();
+                this.getUserSearches(this.createdDate.value);
             },
             err =>{
 
@@ -112,7 +115,7 @@ export class WatchlistComponent implements OnInit {
       if(result){
         this.watchlistService.deleteSearch(id).then(
           result => {
-            this.getUserSearches();
+            this.getUserSearches(this.createdDate.value);
           },
           err => {
 
@@ -121,6 +124,10 @@ export class WatchlistComponent implements OnInit {
       }
     });
   }
+
+    onDateChange(type: string, event: MatDatepickerInputEvent<Date>) {
+        this.getUserSearches(this.createdDate.value);
+    }
 }
 
 @Component({
