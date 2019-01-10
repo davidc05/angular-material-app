@@ -29,6 +29,7 @@ export class AppComponent {
     public router: Router,
     public ipsService: IpsService,
     public userService: UserService) {
+      this.isLoading = false;
       this.router.events.subscribe((event: Event) => {
           switch (true) {
               case event instanceof NavigationStart: {

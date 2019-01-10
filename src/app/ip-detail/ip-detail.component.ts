@@ -516,7 +516,7 @@ export class IpDetailComponent implements OnInit {
     }
 
     openDialog(): void {
-        this.watchlistService.getUserSearches(this.user.email).then(
+        this.watchlistService.getUserSearches(this.user.email, new Date()).then(
             watchlists => {
                 const dialogRef = this.dialog.open(WatchlistDialogComponent, {
                     width: '375px',
