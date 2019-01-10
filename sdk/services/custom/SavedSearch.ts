@@ -9,15 +9,15 @@ import { LoopBackFilter,  } from '../../models/BaseModels';
 import { ErrorHandler } from '../core/error.service';
 import { Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { SubscriptionPlan } from '../../models/SubscriptionPlan';
+import { SavedSearch } from '../../models/SavedSearch';
 import { SocketConnection } from '../../sockets/socket.connections';
 
 
 /**
- * Api services for the `SubscriptionPlan` model.
+ * Api services for the `SavedSearch` model.
  */
 @Injectable()
-export class SubscriptionPlanApi extends BaseLoopBackApi {
+export class SavedSearchApi extends BaseLoopBackApi {
 
   constructor(
     @Inject(HttpClient) protected http: HttpClient,
@@ -42,13 +42,13 @@ export class SubscriptionPlanApi extends BaseLoopBackApi {
    *
    * <em>
    * (The remote method definition does not provide any description.
-   * This usually means the response is a `SubscriptionPlan` object.)
+   * This usually means the response is a `SavedSearch` object.)
    * </em>
    */
   public patchOrCreate(data: any = {}, customHeaders?: Function): Observable<any> {
     let _method: string = "PATCH";
     let _url: string = LoopBackConfig.getPath() + "/" + LoopBackConfig.getApiVersion() +
-    "/subscriptionPlans";
+    "/savedSearches";
     let _routeParams: any = {};
     let _postBody: any = {
       data: data
@@ -61,7 +61,7 @@ export class SubscriptionPlanApi extends BaseLoopBackApi {
   /**
    * Patch attributes for a model instance and persist it into the data source.
    *
-   * @param {any} id subscriptionPlan id
+   * @param {any} id savedSearch id
    *
    * @param {object} data Request data.
    *
@@ -73,13 +73,13 @@ export class SubscriptionPlanApi extends BaseLoopBackApi {
    *
    * <em>
    * (The remote method definition does not provide any description.
-   * This usually means the response is a `SubscriptionPlan` object.)
+   * This usually means the response is a `SavedSearch` object.)
    * </em>
    */
   public patchAttributes(id: any, data: any = {}, customHeaders?: Function): Observable<any> {
     let _method: string = "PATCH";
     let _url: string = LoopBackConfig.getPath() + "/" + LoopBackConfig.getApiVersion() +
-    "/subscriptionPlans/:id";
+    "/savedSearches/:id";
     let _routeParams: any = {
       id: id
     };
@@ -93,9 +93,9 @@ export class SubscriptionPlanApi extends BaseLoopBackApi {
 
   /**
    * The name of the model represented by this $resource,
-   * i.e. `SubscriptionPlan`.
+   * i.e. `SavedSearch`.
    */
   public getModelName() {
-    return "SubscriptionPlan";
+    return "SavedSearch";
   }
 }

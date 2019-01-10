@@ -1,15 +1,26 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { UserService } from '../services/user.service';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material';
-import { User } from 'sdk';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialog, MatChipInputEvent } from '@angular/material';
+import { findIndex } from 'lodash';
+import { User, ApiKey } from 'sdk';
+import { ApiKeyService } from '../services/api-key.service';
+import { ENTER, COMMA, SPACE } from '@angular/cdk/keycodes';
 
 export interface DeleteUserDialogData {
+  user: object;
+}
+
+export interface DeleteApiKeyDialogData {
   user: object;
 }
 
 export interface CreateUserDialogData {
   user: User;
   subscriptionPlans: object;
+}
+
+export interface CreateApiKeyDialogData {
+  apiKey: ApiKey
 }
 
 @Component({
@@ -19,11 +30,14 @@ export interface CreateUserDialogData {
 })
 export class AdminComponent implements OnInit {
 
-  constructor(private userService: UserService, public dialog: MatDialog) { }
+  constructor(private userService: UserService, private apiKeyService: ApiKeyService, public dialog: MatDialog) { }
   currentUser;
   users;
+  apiKeys;
   subscriptionPlans;
   usersGridColumns: string[] = ['email', 'subscriptionPlan', 'isAdmin', 'deleteButton'];
+  apiKeysGridColumns: string[] = ["key", "userId", "createdOn", "expiresAt", "totalCalls", "callLimit", "whitelistIps", "deleteButton"];
+  readonly separatorKeysCodes: number[] = [ENTER, COMMA, SPACE];
 
   ngOnInit() {
     let user = JSON.parse(localStorage.getItem("profile"));
@@ -36,6 +50,7 @@ export class AdminComponent implements OnInit {
     })
 
     this.getUsers();
+    this.getApiKeys();
     this.userService.getSubscriptionPlans()
     .then(result => {
       this.subscriptionPlans = result;
@@ -50,6 +65,25 @@ export class AdminComponent implements OnInit {
       this.users = result;
     }, err => {
 
+    });
+  }
+
+  getApiKeys(){
+    this.apiKeyService.getApiKeys()
+    .then(result => {
+      this.apiKeys = result;
+      let userService = this.userService;
+      this.apiKeys.forEach(function(apiKey, index){
+        userService.getUserById(apiKey.userId)
+        .then(userResult => {
+          this.apiKeys[index].user = userResult;
+        }, 
+        err => {
+
+        });
+      }, this);
+    }, err => {
+      
     });
   }
 
@@ -91,6 +125,34 @@ export class AdminComponent implements OnInit {
     });
   }
 
+  openCreateApiKeyDialog(): void {
+    var newApiKey = new ApiKey();
+    var userEmail = "";
+    const dialogRef = this.dialog.open(CreateApiKeyDialog, {
+      width: '325px',
+      data: {
+        apiKey: newApiKey,
+        userEmail: userEmail
+      }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if(result){
+        this.userService.getUserByEmail(result.userEmail)
+        .then(userResult => {
+          result.apiKey.userId = userResult[0].id;
+          this.apiKeyService.createApiKey(result.apiKey)
+          .then(result =>{
+            this.getApiKeys();
+          }, err => {
+
+          });
+        }, err =>{
+
+        })
+      }
+    });
+  }
+
   openDeleteDialog(user): void {
     const dialogRef = this.dialog.open(DeleteUserDialog, {
       width: '275px',
@@ -111,8 +173,65 @@ export class AdminComponent implements OnInit {
     });
   }
 
-}
+  openDeleteApiKeyDialog(apiKey): void {
+    const dialogRef = this.dialog.open(DeleteApiKeyDialog, {
+      width: '275px',
+      data: {
+        apiKey: apiKey
+      }
+    });
 
+    dialogRef.afterClosed().subscribe(result => {
+      if(result){
+        this.apiKeyService.deleteApiKey(result.apiKey)
+        .then(result =>{
+          this.getApiKeys();
+        }, err => {
+
+        });
+      }
+    });
+  }
+
+  // Adds ip to the textbox
+  add(event: MatChipInputEvent, apiKey): void {
+    const input = event.input;
+    const value = event.value;
+    apiKey.whitelistIps.push(value.trim());
+    //Save on DB
+    this.updateApiKey(apiKey);
+    // Reset the input value
+    if (input) {
+      input.value = '';
+    }
+  }
+
+  // Removes chips to the textbox
+  remove(ip, apiKey): void {
+    const index = findIndex(apiKey.whitelistIps, function(o) { return o.label === ip; });
+    if (index >= 0) {
+      apiKey.whitelistIps.splice(index, 1);
+      //Save on DB
+      this.apiKeyService.updateApiKey(apiKey)
+      .then(results => {
+
+      }, err => {
+
+      });
+    }
+  }
+
+  updateApiKey(apiKey){
+    var apiKeyCopy = {...apiKey};
+    apiKeyCopy.user = undefined;
+    this.apiKeyService.updateApiKey(apiKeyCopy)
+    .then(results => {
+
+    }, err => {
+
+    });
+  }
+}
 @Component({
   selector: 'delete-user-dialog',
   templateUrl: 'delete-user-dialog.html',
@@ -123,6 +242,24 @@ export class DeleteUserDialog {
   constructor(
     public dialogRef: MatDialogRef<DeleteUserDialog>,
     @Inject(MAT_DIALOG_DATA) public data: DeleteUserDialogData
+    ) { }
+
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+
+}
+
+@Component({
+  selector: 'delete-api-key-dialog',
+  templateUrl: 'delete-api-key-dialog.html',
+  styleUrls: ['admin.component.css']
+})
+export class DeleteApiKeyDialog {
+
+  constructor(
+    public dialogRef: MatDialogRef<DeleteApiKeyDialog>,
+    @Inject(MAT_DIALOG_DATA) public data: DeleteApiKeyDialogData
     ) { }
 
   onNoClick(): void {
@@ -155,4 +292,39 @@ export class CreateUserDialog {
 
   }
 
+}
+
+@Component({
+  selector: 'create-api-key-dialog',
+  templateUrl: 'create-api-key-dialog.html',
+  styleUrls: ['admin.component.css']
+})
+export class CreateApiKeyDialog {
+
+  constructor(
+    public dialogRef: MatDialogRef<CreateApiKeyDialog>,
+    @Inject(MAT_DIALOG_DATA) public data: CreateApiKeyDialogData
+    ) { }
+
+  readonly separatorKeysCodes: number[] = [ENTER, COMMA, SPACE];
+
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+
+  // Adds ip to the textbox
+  add(event: MatChipInputEvent, apiKey): void {
+    const input = event.input;
+    const value = event.value;
+    if(!apiKey.whitelistIps){
+      apiKey.whitelistIps = [];
+    }
+    apiKey.whitelistIps.push(value.trim());
+  }
+  remove(ip, apiKey): void {
+    const index = findIndex(apiKey.whitelistIps, function(o) { return o.label === ip; });
+    if (index >= 0) {
+      apiKey.whitelistIps.splice(index, 1);
+    }
+  }
 }

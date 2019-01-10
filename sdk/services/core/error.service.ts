@@ -7,7 +7,7 @@ import { Observable, throwError } from 'rxjs';
  */
 @Injectable()
 export class ErrorHandler {
-    public handleError(errorResponse: HttpErrorResponse): Observable<never> {
-        return throwError(errorResponse.error.error || 'Server error');
-    }
+  public handleError(errorResponse: HttpErrorResponse): Observable<never> {
+    return throwError(errorResponse.error.error || 'Server error');
+  }
 }

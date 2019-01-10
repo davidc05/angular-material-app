@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
-import { WatchlistApi, Watchlist, LoopBackFilter } from '../../../sdk'
+import { SavedSearchApi, SavedSearch, LoopBackFilter } from '../../../sdk'
 
 @Injectable({
     providedIn: 'root'
 })
 export class WatchlistService {
     constructor(
-        private watchlistApi: WatchlistApi
+        private watchlistApi: SavedSearchApi
     ) { }
 
     createSearch(userEmail, ips, queryName, description) {
-        const data = new Watchlist();
+        const data = new SavedSearch();
         data.queryName = queryName;
         data.userEmail = userEmail;
 
@@ -21,12 +21,12 @@ export class WatchlistService {
 
         data.description = description ? description : '';
 
-        return this.watchlistApi.create<Watchlist>(data)
+        return this.watchlistApi.create<SavedSearch>(data)
             .toPromise();
     }
 
     getUserSearchById(watchlistId) {
-        return this.watchlistApi.findById<Watchlist>(watchlistId)
+        return this.watchlistApi.findById<SavedSearch>(watchlistId)
             .toPromise();
     }
 
@@ -37,7 +37,7 @@ export class WatchlistService {
                 "userEmail": userEmail
             }
         }
-        return this.watchlistApi.find<Watchlist>(filter);
+        return this.watchlistApi.find<SavedSearch>(filter);
     }
 
     getUserSearches(userEmail) {
@@ -46,17 +46,17 @@ export class WatchlistService {
                 'userEmail': userEmail
             }
         };
-        return this.watchlistApi.find<Watchlist>(filter)
+        return this.watchlistApi.find<SavedSearch>(filter)
             .toPromise();
     }
 
     updateSearch(data) {
-        return this.watchlistApi.updateAttributes<Watchlist>(data.id, data)
+        return this.watchlistApi.updateAttributes<SavedSearch>(data.id, data)
             .toPromise();
     }
 
     deleteSearch(id) {
-        return this.watchlistApi.deleteById<Watchlist>(id)
+        return this.watchlistApi.deleteById<SavedSearch>(id)
             .toPromise();
     }
 }

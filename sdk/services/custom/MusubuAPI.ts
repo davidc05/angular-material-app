@@ -9,15 +9,15 @@ import { LoopBackFilter,  } from '../../models/BaseModels';
 import { ErrorHandler } from '../core/error.service';
 import { Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { IpDetail } from '../../models/IpDetail';
+import { MusubuAPI } from '../../models/MusubuAPI';
 import { SocketConnection } from '../../sockets/socket.connections';
 
 
 /**
- * Api services for the `IpDetail` model.
+ * Api services for the `MusubuAPI` model.
  */
 @Injectable()
-export class IpDetailApi extends BaseLoopBackApi {
+export class MusubuAPIApi extends BaseLoopBackApi {
 
   constructor(
     @Inject(HttpClient) protected http: HttpClient,
@@ -42,13 +42,13 @@ export class IpDetailApi extends BaseLoopBackApi {
    *
    * <em>
    * (The remote method definition does not provide any description.
-   * This usually means the response is a `IpDetail` object.)
+   * This usually means the response is a `MusubuAPI` object.)
    * </em>
    */
   public patchOrCreate(data: any = {}, customHeaders?: Function): Observable<any> {
     let _method: string = "PATCH";
     let _url: string = LoopBackConfig.getPath() + "/" + LoopBackConfig.getApiVersion() +
-    "/ipDetails";
+    "/MusubuAPI";
     let _routeParams: any = {};
     let _postBody: any = {
       data: data
@@ -61,7 +61,7 @@ export class IpDetailApi extends BaseLoopBackApi {
   /**
    * Patch attributes for a model instance and persist it into the data source.
    *
-   * @param {any} id ipDetail id
+   * @param {any} id MusubuAPI id
    *
    * @param {object} data Request data.
    *
@@ -73,13 +73,13 @@ export class IpDetailApi extends BaseLoopBackApi {
    *
    * <em>
    * (The remote method definition does not provide any description.
-   * This usually means the response is a `IpDetail` object.)
+   * This usually means the response is a `MusubuAPI` object.)
    * </em>
    */
   public patchAttributes(id: any, data: any = {}, customHeaders?: Function): Observable<any> {
     let _method: string = "PATCH";
     let _url: string = LoopBackConfig.getPath() + "/" + LoopBackConfig.getApiVersion() +
-    "/ipDetails/:id";
+    "/MusubuAPI/:id";
     let _routeParams: any = {
       id: id
     };
@@ -96,101 +96,67 @@ export class IpDetailApi extends BaseLoopBackApi {
          * (The remote method definition does not provide any description.)
          * </em>
    *
-   * @param {string} ip 
+   * @param {string} IP 
+   *
+   * @param {string} format 
+   *
+   * @param {string} level 
+   *
+   * @param {string} key 
+   *
+   * @param {string} listneighbors 
+   *
+   * @param {string} ISP 
+   *
+   * @param {string} NetworkName 
+   *
+   * @param {string} NetworkType 
+   *
+   * @param {string} NetworkGroup 
+   *
+   * @param {string} Page 
+   *
+   * @param {string} PageBy 
+   *
+   * @param {string} ipNotation 
    *
    * @returns {object} An empty reference that will be
    *   populated with the actual data once the response is returned
    *   from the server.
    *
-   * Data properties:
-   *
-   *  - `ipDetail` – `{string}` - 
+   * <em>
+   * (The remote method definition does not provide any description.
+   * This usually means the response is a `MusubuAPI` object.)
+   * </em>
    */
-  public getIpDetailFromMusubuAPI(ip: any = {}, customHeaders?: Function): Observable<any> {
+  public Musubu(IP: any = {}, format: any = {}, level: any = {}, key: any = {}, listneighbors: any = {}, ISP: any = {}, NetworkName: any = {}, NetworkType: any = {}, NetworkGroup: any = {}, Page: any = {}, PageBy: any = {}, ipNotation: any = {}, customHeaders?: Function): Observable<any> {
     let _method: string = "GET";
     let _url: string = LoopBackConfig.getPath() + "/" + LoopBackConfig.getApiVersion() +
-    "/ipDetails/ipDetailsMusubu";
+    "/MusubuAPI/Musubu";
     let _routeParams: any = {};
     let _postBody: any = {};
     let _urlParams: any = {};
-    if (typeof ip !== 'undefined' && ip !== null) _urlParams.ip = ip;
-    let result = this.request(_method, _url, _routeParams, _urlParams, _postBody, null, customHeaders);
-    return result;
-  }
-
-  /**
-   * <em>
-         * (The remote method definition does not provide any description.)
-         * </em>
-   *
-   * @param {object} data Request data.
-   *
-   *  - `ip` – `{string}` - 
-   *
-   *  - `listNeighbors` – `{boolean}` - 
-   *
-   *  - `verbosity` – `{string}` - 
-   *
-   *  - `notation` – `{string}` - 
-   *
-   * @returns {object} An empty reference that will be
-   *   populated with the actual data once the response is returned
-   *   from the server.
-   *
-   * Data properties:
-   *
-   *  - `ipsDetail` – `{any}` - 
-   */
-  public getIpDetail(ip: any = {}, listNeighbors: any = {}, verbosity: any = {}, notation: any = {}, customHeaders?: Function): Observable<any> {
-    let _method: string = "POST";
-    let _url: string = LoopBackConfig.getPath() + "/" + LoopBackConfig.getApiVersion() +
-    "/ipDetails/getIpDetail";
-    let _routeParams: any = {};
-    let _postBody: any = {};
-    let _urlParams: any = {};
-    if (typeof ip !== 'undefined' && ip !== null) _urlParams.ip = ip;
-    if (typeof listNeighbors !== 'undefined' && listNeighbors !== null) _urlParams.listNeighbors = listNeighbors;
-    if (typeof verbosity !== 'undefined' && verbosity !== null) _urlParams.verbosity = verbosity;
-    if (typeof notation !== 'undefined' && notation !== null) _urlParams.notation = notation;
-    let result = this.request(_method, _url, _routeParams, _urlParams, _postBody, null, customHeaders);
-    return result;
-  }
-
-  /**
-   * <em>
-         * (The remote method definition does not provide any description.)
-         * </em>
-   *
-   * @param {object} data Request data.
-   *
-   * This method expects a subset of model properties as request parameters.
-   *
-   * @returns {object} An empty reference that will be
-   *   populated with the actual data once the response is returned
-   *   from the server.
-   *
-   * Data properties:
-   *
-   *  - `ipsDetail` – `{any}` - 
-   */
-  public getIpsDetail(ips: any = {}, customHeaders?: Function): Observable<any> {
-    let _method: string = "POST";
-    let _url: string = LoopBackConfig.getPath() + "/" + LoopBackConfig.getApiVersion() +
-    "/ipDetails/getIpsDetail";
-    let _routeParams: any = {};
-    let _postBody: any = {
-      ips: ips
-    };
-    let _urlParams: any = {};
+    if (typeof IP !== 'undefined' && IP !== null) _urlParams.IP = IP;
+    if (typeof format !== 'undefined' && format !== null) _urlParams.format = format;
+    if (typeof level !== 'undefined' && level !== null) _urlParams.level = level;
+    if (typeof key !== 'undefined' && key !== null) _urlParams.key = key;
+    if (typeof listneighbors !== 'undefined' && listneighbors !== null) _urlParams.listneighbors = listneighbors;
+    if (typeof ISP !== 'undefined' && ISP !== null) _urlParams.ISP = ISP;
+    if (typeof NetworkName !== 'undefined' && NetworkName !== null) _urlParams.NetworkName = NetworkName;
+    if (typeof NetworkType !== 'undefined' && NetworkType !== null) _urlParams.NetworkType = NetworkType;
+    if (typeof NetworkGroup !== 'undefined' && NetworkGroup !== null) _urlParams.NetworkGroup = NetworkGroup;
+    if (typeof Page !== 'undefined' && Page !== null) _urlParams.Page = Page;
+    if (typeof PageBy !== 'undefined' && PageBy !== null) _urlParams.PageBy = PageBy;
+    if (typeof ipNotation !== 'undefined' && ipNotation !== null) _urlParams.ipNotation = ipNotation;
     let result = this.request(_method, _url, _routeParams, _urlParams, _postBody, null, customHeaders);
     return result;
   }
 
   /**
    * The name of the model represented by this $resource,
-   * i.e. `IpDetail`.
+   * i.e. `MusubuAPI`.
    */
   public getModelName() {
-    return "IpDetail";
+    return "MusubuAPI";
   }
 }

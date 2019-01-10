@@ -1,0 +1,30 @@
+<div mat-dialog-content>
+    <p>Name your search</p>
+    <mat-form-field class="dialog-input">
+        <input matInput placeholder="User Email" [(ngModel)]="data.userEmail">
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput [matDatepicker]="picker" placeholder="Choose a date" [(ngModel)]="data.apiKey.expiresAt">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field class="dialog-input">
+        <input matInput placeholder="Call Limit" [(ngModel)]="data.apiKey.callLimit">
+    </mat-form-field>
+    <mat-form-field class="dialog-input">
+        <mat-chip-list #chipList>
+            <mat-chip *ngFor="let ip of data.apiKey.whitelistIps" [removable]="removable" (removed)="remove(ip, data.apiKey)">
+                {{ip}}
+                <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+            </mat-chip>
+            <input placeholder="Enter IP to Whitelist" [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                [matChipInputAddOnBlur]="addOnBlur" (matChipInputTokenEnd)="add($event, data.apiKey)">
+        </mat-chip-list>
+    </mat-form-field>
+</div>
+<div mat-dialog-actions align="end">
+    <div class="button-row">
+        <button mat-flat-button (click)="onNoClick()">Cancel</button>
+        <button mat-flat-button [mat-dialog-close]="data" cdkFocusInitial [disabled]="!data.userEmail || data.userEmail.length === 0">Save</button>
+    </div>
+</div>

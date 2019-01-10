@@ -39,6 +39,8 @@ import {
   MatSlideToggleModule,
   MatExpansionModule,
   MatTabsModule,
+  MatDatepickerModule,
+  MatNativeDateModule
 } from '@angular/material';
 import { IpDetailComponent, EditNoteDialog, DeleteNoteDialog } from './ip-detail/ip-detail.component';
 import { IpDetailResolver } from './ip-detail/ip-detail.resolver';
@@ -59,7 +61,7 @@ import { WatchlistResolver } from './watchlist/watchlist.resolver';
 import { IpQueryResolver } from './ip-query/ip-query.resolver';
 import { TrendsComponent } from './trends/trends.component';
 import { IpTagsComponent, CreateTagDialog, TagDeleteDialog } from './ip-tags/ip-tags.component';
-import { AdminComponent, DeleteUserDialog, CreateUserDialog } from './admin/admin.component';
+import { AdminComponent, DeleteUserDialog, CreateUserDialog, CreateApiKeyDialog, DeleteApiKeyDialog } from './admin/admin.component';
 import { AdminResolver } from './admin/admin.resolver';
 import { AgmCoreModule } from '@agm/core';
 import { AgmSnazzyInfoWindowModule } from '@agm/snazzy-info-window';
@@ -89,6 +91,8 @@ import { MyAccountResolver } from './my-account/my-account.resolver';
     IpRangesComponent,
     DeleteUserDialog,
     CreateUserDialog,
+    CreateApiKeyDialog,
+    DeleteApiKeyDialog,
     AdminComponent,
     GmapComponent,
     SaveListDialog,
@@ -135,6 +139,8 @@ import { MyAccountResolver } from './my-account/my-account.resolver';
     MatSlideToggleModule,
     MatExpansionModule,
     MatTabsModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
     NgxLoadingModule.forRoot({}),
     NgCircleProgressModule.forRoot({
       // set defaults here
@@ -191,6 +197,8 @@ import { MyAccountResolver } from './my-account/my-account.resolver';
     SearchDeleteDialog,
     DeleteUserDialog,
     CreateUserDialog,
+    CreateApiKeyDialog,
+    DeleteApiKeyDialog,
     TagDeleteDialog,
     SaveListDialog,
     EditNoteDialog,

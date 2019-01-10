@@ -16,7 +16,7 @@
 * ============================================================================
 * import { NgModule }       from '@angular/core';
 * import { BrowserModule }  from '@angular/platform-browser';
-* // App Root
+* // App Root 
 * import { AppComponent }   from './app.component';
 * // Feature Modules
 * import { SDK[Browser|Node|Native]Module } from './shared/sdk/sdk.module';
@@ -50,11 +50,13 @@ import { SocketConnection } from './sockets/socket.connections';
 import { RealTime } from './services/core/real.time';
 import { IpDetailApi } from './services/custom/IpDetail';
 import { UserApi } from './services/custom/User';
-import { WatchlistApi } from './services/custom/Watchlist';
+import { SavedSearchApi } from './services/custom/SavedSearch';
 import { TagApi } from './services/custom/Tag';
 import { NoteApi } from './services/custom/Note';
 import { IpRangeApi } from './services/custom/IpRange';
 import { SubscriptionPlanApi } from './services/custom/SubscriptionPlan';
+import { MusubuAPIApi } from './services/custom/MusubuAPI';
+import { ApiKeyApi } from './services/custom/ApiKey';
 /**
 * @module SDKBrowserModule
 * @description
@@ -87,11 +89,13 @@ export class SDKBrowserModule {
         RealTime,
         IpDetailApi,
         UserApi,
-        WatchlistApi,
+        SavedSearchApi,
         TagApi,
         NoteApi,
         IpRangeApi,
         SubscriptionPlanApi,
+        MusubuAPIApi,
+        ApiKeyApi,
         internalStorageProvider,
         { provide: SDKStorage, useClass: StorageBrowser },
         { provide: SocketDriver, useClass: SocketBrowser }
@@ -109,3 +113,4 @@ export * from './lb.config';
 export * from './storage/storage.swaps';
 export { CookieBrowser } from './storage/cookie.browser';
 export { StorageBrowser } from './storage/storage.browser';
+
