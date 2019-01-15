@@ -67,6 +67,7 @@ export class IpQueryComponent implements OnInit {
   description;
   isFormInvalid: boolean;
   isExceedLimit: boolean;
+  isDuplicateIP: boolean;
 
   exportType = 'csv';
 
@@ -418,6 +419,9 @@ export class IpQueryComponent implements OnInit {
         const trimmedValue = value.trim();
         if (findIndex(this.ipsList, function(o) { return o.label === trimmedValue; }) === -1) {
           this.ipsList.push({ label: value.trim(), threatLevel: '' });
+        } else {
+          this.ipsList.push({ label: value.trim(), threatLevel: 'duplication' });
+          this.isDuplicateIP = true;
         }
       } else {
         this.isExceedLimit = true;
@@ -431,13 +435,16 @@ export class IpQueryComponent implements OnInit {
   }
 
   // Removes chips to the textbox
-  remove(ip): void {
+  remove(ip, i): void {
     const index = findIndex(this.ipsList, function(o) { return o.label === ip; });
     if (index >= 0) {
-      this.ipsList.splice(index, 1);
+      this.ipsList.splice(i, 1);
     }
     if (this.ipsList.length < this.ipQueryLimit) {
       this.isExceedLimit = false;
+    }
+    if (findIndex(this.ipsList, (item) => item.threatLevel === 'duplication') < 0) {
+      this.isDuplicateIP = false;
     }
   }
 
@@ -453,6 +460,9 @@ export class IpQueryComponent implements OnInit {
             const trimmedValue = value.trim();
             if (findIndex(this.ipsList, function(o) { return o.label === trimmedValue; }) === -1) {
               this.ipsList.push({ label: value.trim(), threatLevel: '' });
+            } else {
+              this.ipsList.push({ label: value.trim(), threatLevel: 'duplication' });
+              this.isDuplicateIP = true;
             }
           } else {
             this.isExceedLimit = true;

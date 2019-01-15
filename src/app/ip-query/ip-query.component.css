@@ -47,6 +47,10 @@ content-container .loading {
     background-color: #E0E0E0;
     border: 3px solid #686868;
 }
+.mat-chip.duplication {
+  background-color: red;
+  color: white;
+}
 
 /* save dialog */
 .modify-option {

@@ -14,7 +14,7 @@
                 <form class="ip-query">
                     <mat-form-field class="search-width">
                         <mat-chip-list #chipList>
-                            <mat-chip *ngFor="let ip of ipsList" [removable]="removable" class="search" [ngClass]="ip.threatLevel" (removed)="remove(ip.label)" color="{{ ip.isInvalid ? 'warn' : ''}}">
+                            <mat-chip *ngFor="let ip of ipsList; let i = index" [removable]="removable" class="search" [ngClass]="ip.threatLevel" (removed)="remove(ip.label, i)" color="{{ ip.isInvalid ? 'warn' : ''}}">
                                 {{ip.label}}
                                 <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
                             </mat-chip>
@@ -27,6 +27,9 @@
                             </mat-error>
                             <mat-error *ngIf="isExceedLimit">
                                 You have reached your plan limit of {{ipQueryLimit}} IPs per search. Upgrade your plan to increase this limit. <a href="https://musubu.io/app-pricing/" target="_blank">View Pricing</a>.
+                            </mat-error>
+                            <mat-error *ngIf="isDuplicateIP">
+                              Duplicate IP address entered. Please remove all IPs highlighted in red.
                             </mat-error>
                         </mat-hint>
                         <mat-hint align="end">{{ipsList.length}} / {{ipQueryLimit}}</mat-hint>
