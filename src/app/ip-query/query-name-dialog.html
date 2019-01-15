@@ -23,7 +23,7 @@
                     {{option}}
                 </mat-radio-button>
             </mat-radio-group>
-            <h1 mat-dialog-title>{{title}} Existing Watchlist</h1>
+            <h4 class="modify-title">{{title}} Existing Watchlist</h4>
             <mat-form-field>
                 <mat-select
                     (selectionChange)="selectWatchlist(selectedWatchlistId)"
@@ -37,7 +37,7 @@
                 </mat-select>
             </mat-form-field>
             <div *ngIf="!!selectedWatchlistId">
-                <h3>Description:</h3>
+                <h4 class="overwrite-title">Description:</h4>
                 <span>{{description}}</span>
             </div>
         </mat-expansion-panel>
@@ -51,9 +51,8 @@
                     Create New Watchlist
                 </mat-panel-title>
             </mat-expansion-panel-header>
-            <h1 mat-dialog-title>Save Watchlist</h1>
+            <h4 class="save-title">Save Watchlist</h4>
             <div mat-dialog-content>
-                <p>Name your search.</p>
                 <mat-form-field class="dialog-input">
                     <input
                         matInput

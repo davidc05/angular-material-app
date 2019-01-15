@@ -52,7 +52,17 @@ content-container .loading {
 .modify-option {
   margin: 5px;
 }
-
+.modify-title{
+    margin-bottom: 5px;
+}
+.overwrite-title{
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+.save-title{
+    margin-top: 0;
+    margin-bottom: 5px;
+}
 .example-selected-value {
   margin: 15px 0;
 }
