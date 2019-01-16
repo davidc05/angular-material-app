@@ -285,7 +285,7 @@ export class IpQueryComponent implements OnInit {
               dialogRef.afterClosed().subscribe(result => {
                   if (result) {
                       if (result.method === 'modify') {
-                          const originalData = find(watchlists.searches, { _id: result.selectedWatchlistId });
+                          const originalData = find(watchlists.searches, { id: result.selectedWatchlistId });
                           switch (result.modifyOption) {
                               case 'Add':
                                 const modifiedData = {
@@ -760,9 +760,9 @@ export class QueryNameDialogComponent {
   selectWatchlist(value: string) {
       this.data.selectedWatchlistId = value;
       this.selectedWatchlistId = value;
-      this.description = !find(this.data.watchlists, { _id: value }).description.length
+      this.description = !find(this.data.watchlists, { id: value }).description.length
         ? 'No Description'
-        : find(this.data.watchlists, { _id: value }).description
+        : find(this.data.watchlists, { id: value }).description
   }
 
     handleOpenState(key: string, value: boolean) {

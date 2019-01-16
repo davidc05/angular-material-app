@@ -32,7 +32,7 @@
                 >
                     <mat-option
                         *ngFor="let item of data.watchlists"
-                        [value]="item._id"
+                        [value]="item.id"
                     >{{item.queryName}}</mat-option>
                 </mat-select>
             </mat-form-field>
