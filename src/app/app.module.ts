@@ -48,7 +48,6 @@ import {
     EditNoteDialog,
     DeleteNoteDialog,
     WatchlistDialogComponent,
-    ConfirmWatchlistDialog
 } from './ip-detail/ip-detail.component';
 import { IpDetailResolver } from './ip-detail/ip-detail.resolver';
 import { IpsService } from './services/ips.service';
@@ -85,7 +84,6 @@ import { MyAccountResolver } from './my-account/my-account.resolver';
     EditNoteDialog,
     DeleteNoteDialog,
     WatchlistDialogComponent,
-    ConfirmWatchlistDialog,
     LoginComponent,
     IpRiskCircleComponent,
     ImportDialogComponent,
@@ -216,7 +214,6 @@ import { MyAccountResolver } from './my-account/my-account.resolver';
     EditNoteDialog,
     DeleteNoteDialog,
     WatchlistDialogComponent,
-    ConfirmWatchlistDialog
   ],
   bootstrap: [AppComponent]
 })

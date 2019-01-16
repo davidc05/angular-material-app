@@ -11,8 +11,8 @@ import { UserService } from '../services/user.service';
 import { NoteService } from '../services/note.service';
 import { WatchlistService } from '../services/watchlist.service';
 import * as moment from 'moment';
-
-import { find, union } from 'lodash';
+import { find, union, uniqBy } from 'lodash';
+import { blacklistClassData } from './blacklistClassTooltip';
 
 export interface EditNoteDialogData {
     dialogName: string;
@@ -503,7 +503,7 @@ export class IpDetailComponent implements OnInit {
     save() {
         this.watchlistService.createSearch(
             this.user.email,
-            [{ label: this.ipDetail.ipaddress, threatLevel: '' }],
+            [this.ipDetail],
             this.queryName, this.description
         ).then(
             result => {
@@ -523,7 +523,7 @@ export class IpDetailComponent implements OnInit {
                     data: {
                         queryName: !this.queryName ? '' : this.queryName,
                         description: !this.description ? '' : this.description,
-                        watchlists: watchlists,
+                        watchlists: watchlists.searches,
                         selectedWatchlistId: '',
                     }
                 });
@@ -531,12 +531,19 @@ export class IpDetailComponent implements OnInit {
                 dialogRef.afterClosed().subscribe(result => {
                     if (result) {
                         if (result.method === 'modify') {
-                            const originalData = find(watchlists, { id: result.selectedWatchlistId });
+                            const originalData = find(watchlists.searches, { id: result.selectedWatchlistId });
                             const modifiedData = {
                                 ...originalData,
-                                ips: union(originalData.ips, [this.ipDetail.ipaddress])
+                                ips: uniqBy([...originalData.ips, this.ipDetail], 'ipaddress')
                             };
-                            this.createConfirmDialog(modifiedData);
+                            this.watchlistService.updateSearch(modifiedData).then(
+                                result => {
+
+                                },
+                                err => {
+
+                                }
+                            );
                         }
                         if (result.method === 'create') {
                             this.queryName = result.queryName;
@@ -552,29 +559,9 @@ export class IpDetailComponent implements OnInit {
         );
     }
 
-    createConfirmDialog(data) {
-        const dialogRef = this.dialog.open(ConfirmWatchlistDialog, { width: '300px' });
-
-        dialogRef.keydownEvents().subscribe(result => {
-            if (result.key === "Enter") {
-                dialogRef.componentInstance.closeDialog(false);
-            }
-        }, err => {
-
-        });
-
-        dialogRef.afterClosed().subscribe(result => {
-            if (result) {
-                this.watchlistService.updateSearch(data).then(
-                    result => {
-
-                    },
-                    err => {
-
-                    }
-                );
-            }
-        });
+    getBlacklistClassTooltip(value: string) {
+        const tooltip = blacklistClassData.filter(item => item.blacklistClass === value);
+        return !tooltip.length ? 'No info for this blacklist class.' : tooltip[0].tooltip;
     }
 }
 
@@ -630,28 +617,6 @@ export class WatchlistDialogComponent {
 
     }
 
-}
-
-@Component({
-    selector: 'app-confirm-overwrite',
-    templateUrl: 'confirm-overwrite-dialog.html',
-    styleUrls: ['ip-detail.component.css']
-})
-export class ConfirmWatchlistDialog {
-    constructor(
-        public dialogRef: MatDialogRef<ConfirmWatchlistDialog>,
-    ) { }
-
-    ngOnInit() {
-    }
-
-    closeDialog(value) {
-        this.dialogRef.close(value);
-    }
-
-    onNoClick(): void {
-        this.dialogRef.close();
-    }
 }
 
 @Component({
