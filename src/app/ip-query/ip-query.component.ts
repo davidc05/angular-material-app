@@ -269,14 +269,14 @@ export class IpQueryComponent implements OnInit {
   }
 
   openDialog(): void {
-      this.watchlistService.getUserSearches(this.user.email, new Date()).then(
+      this.watchlistService.getUserSearches(this.user.email).then(
           watchlists => {
               const dialogRef = this.dialog.open(QueryNameDialogComponent, {
                   width: '375px',
                   data: {
                       queryName: this.queryName,
                       description: this.description,
-                      watchlists: watchlists.searches,
+                      watchlists: watchlists,
                       selectedWatchlistId: '',
                       modifyOption: 'Add',
                   }
@@ -285,7 +285,7 @@ export class IpQueryComponent implements OnInit {
               dialogRef.afterClosed().subscribe(result => {
                   if (result) {
                       if (result.method === 'modify') {
-                          const originalData = find(watchlists.searches, { id: result.selectedWatchlistId });
+                          const originalData = find(watchlists, { id: result.selectedWatchlistId });
                           switch (result.modifyOption) {
                               case 'Add':
                                 const modifiedData = {

@@ -41,7 +41,7 @@ export class WatchlistComponent implements OnInit {
     this.route.data.subscribe(routeData => {
       let data = routeData['data'];
       if (data) {
-        this.watchlist = data.searches;
+        this.watchlist = data;
       }
     })
   }
@@ -51,9 +51,9 @@ export class WatchlistComponent implements OnInit {
   }
 
   getUserSearches(selectedDate){
-    this.watchlistService.getUserSearches(this.userService.user.email, selectedDate).then(
+    this.watchlistService.getUserSearches(this.userService.user.email).then(
       (result) => {
-        this.watchlist = result.searches;
+        this.watchlist = result;
       },
       (err) =>{
 

@@ -1,8 +1,8 @@
 <div class="content-container">
     <section>
         <h2>Watchlists</h2>
-        <p *ngIf="watchlist && watchlist.length === 0">You have no watchlists on the selected date.</p>
-        <mat-form-field>
+        <p *ngIf="watchlist && watchlist.length === 0">You have no watchlists!</p>
+        <!-- <mat-form-field>
             <input
                 matInput
                 [matDatepicker]="picker"
@@ -17,7 +17,7 @@
             ></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
         </mat-form-field>
-        <br />
+        <br /> -->
         <button mat-flat-button color="primary" [routerLink]="['/query/']" *ngIf="watchlist && watchlist.length === 0">Create</button>
         <!-- Using [hidden] here because the table needs to be rendered to be initialized -->
         <div class="table-wrapper" *ngIf="watchlist && watchlist.length !== 0">

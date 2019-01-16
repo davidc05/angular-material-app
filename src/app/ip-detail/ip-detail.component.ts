@@ -516,14 +516,14 @@ export class IpDetailComponent implements OnInit {
     }
 
     openDialog(): void {
-        this.watchlistService.getUserSearches(this.user.email, new Date()).then(
+        this.watchlistService.getUserSearches(this.user.email).then(
             watchlists => {
                 const dialogRef = this.dialog.open(WatchlistDialogComponent, {
                     width: '375px',
                     data: {
                         queryName: !this.queryName ? '' : this.queryName,
                         description: !this.description ? '' : this.description,
-                        watchlists: watchlists.searches,
+                        watchlists: watchlists,
                         selectedWatchlistId: '',
                     }
                 });
@@ -531,7 +531,7 @@ export class IpDetailComponent implements OnInit {
                 dialogRef.afterClosed().subscribe(result => {
                     if (result) {
                         if (result.method === 'modify') {
-                            const originalData = find(watchlists.searches, { id: result.selectedWatchlistId });
+                            const originalData = find(watchlists, { id: result.selectedWatchlistId });
                             const modifiedData = {
                                 ...originalData,
                                 ips: uniqBy([...originalData.ips, this.ipDetail], 'ipaddress')

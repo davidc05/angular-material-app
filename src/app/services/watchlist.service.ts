@@ -38,9 +38,16 @@ export class WatchlistService {
         return this.watchlistApi.find<Watchlist>(filter);
     }
 
-    getUserSearches(userEmail, createdDate) {
-      return this.watchlistApi.getUserSearches(userEmail, moment(createdDate).format('YYYY-MM-DD'))
-          .toPromise();
+    getUserSearches(userEmail) {
+    //   return this.watchlistApi.getUserSearches(userEmail, moment(createdDate).format('YYYY-MM-DD'))
+    //       .toPromise();
+        let filter: LoopBackFilter = {
+            "where": {
+                "userEmail": userEmail
+            }
+        }
+        return this.watchlistApi.find<Watchlist>(filter)
+            .toPromise();
     }
 
     updateSearch(data) {

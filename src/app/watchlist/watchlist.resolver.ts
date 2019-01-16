@@ -13,7 +13,7 @@ export class WatchlistResolver implements Resolve<any> {
   resolve(route: ActivatedRouteSnapshot) {
     let user = JSON.parse(localStorage.getItem("profile"));
     return new Promise((resolve, reject) => {
-      let ipDetail = this.watchlistService.getUserSearches(user.email, new Date())
+      let ipDetail = this.watchlistService.getUserSearches(user.email)
       .then(
         data => {
           return resolve(data);
