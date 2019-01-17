@@ -68,7 +68,8 @@ export class ApiKey implements ApiKeyInterface {
         },
         "totalCalls": {
           name: 'totalCalls',
-          type: 'number'
+          type: 'number',
+          default: 0
         },
         "callLimit": {
           name: 'callLimit',
@@ -76,7 +77,8 @@ export class ApiKey implements ApiKeyInterface {
         },
         "whitelistIps": {
           name: 'whitelistIps',
-          type: 'Array&lt;any&gt;'
+          type: 'Array&lt;any&gt;',
+          default: <any>[]
         },
         "createdOn": {
           name: 'createdOn',
