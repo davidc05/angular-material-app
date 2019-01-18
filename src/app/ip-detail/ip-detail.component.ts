@@ -1,10 +1,10 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
-import { MatChipInputEvent, MatAutocompleteSelectedEvent } from '@angular/material';
+import { MatChipInputEvent, MatAutocompleteSelectedEvent, MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
 import { ENTER, COMMA, SPACE } from '@angular/cdk/keycodes';
 import { TagsService } from '../services/tags.service';
-import { FormControl } from '@angular/forms';
+import { FormControl, Validators } from '@angular/forms';
 import { switchMap, debounceTime } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { UserService } from '../services/user.service';
