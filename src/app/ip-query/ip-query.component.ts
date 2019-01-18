@@ -406,6 +406,9 @@ export class IpQueryComponent implements OnInit {
   // Clears chips
   clear() {
     this.ipsList = [];
+    this.isDuplicateIP = false;
+    this.isFormInvalid = false;
+    this.isExceedLimit = false;
   }
 
   // Adds chips to the textbox
@@ -426,6 +429,8 @@ export class IpQueryComponent implements OnInit {
       } else {
         this.isExceedLimit = true;
       }
+
+      this.checkFormValidation(this.ipsList);
     }
 
     // Reset the input value
@@ -446,6 +451,8 @@ export class IpQueryComponent implements OnInit {
     if (findIndex(this.ipsList, (item) => item.threatLevel === 'duplication') < 0) {
       this.isDuplicateIP = false;
     }
+
+    this.checkFormValidation(this.ipsList);
   }
 
   // Handles paste event for chips addition
@@ -469,6 +476,8 @@ export class IpQueryComponent implements OnInit {
           }
         }
       });
+
+    this.checkFormValidation(this.ipsList);
   }
 
   onClickBuyApp() {
@@ -707,6 +716,17 @@ export class IpQueryComponent implements OnInit {
       }
 
     });
+  }
+
+  checkFormValidation(ipsList) {
+    this.validateIpListDeferred(ipsList).then(
+      result => {
+        this.isFormInvalid = false;
+      },
+      err => {
+        this.isFormInvalid = true;
+      }
+    );
   }
 
 
