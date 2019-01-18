@@ -194,6 +194,8 @@ export class IpDetailComponent implements OnInit {
             }
         });
 
+        this.getIPsNotes();
+
         // Autocomplete
 
         // this.filteredOptions = this.tagsFormControl.valueChanges
