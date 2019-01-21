@@ -92,6 +92,36 @@ export class SavedSearchApi extends BaseLoopBackApi {
   }
 
   /**
+   * <em>
+         * (The remote method definition does not provide any description.)
+         * </em>
+   *
+   * @param {string} userEmail 
+   *
+   * @param {string} createdDate 
+   *
+   * @returns {object} An empty reference that will be
+   *   populated with the actual data once the response is returned
+   *   from the server.
+   *
+   * Data properties:
+   *
+   *  - `searches` – `{object}` - 
+   */
+  public savedSearches(userEmail: any = {}, createdDate: any = {}, customHeaders?: Function): Observable<any> {
+    let _method: string = "GET";
+    let _url: string = LoopBackConfig.getPath() + "/" + LoopBackConfig.getApiVersion() +
+    "/savedSearches/savedSearches";
+    let _routeParams: any = {};
+    let _postBody: any = {};
+    let _urlParams: any = {};
+    if (typeof userEmail !== 'undefined' && userEmail !== null) _urlParams.userEmail = userEmail;
+    if (typeof createdDate !== 'undefined' && createdDate !== null) _urlParams.createdDate = createdDate;
+    let result = this.request(_method, _url, _routeParams, _urlParams, _postBody, null, customHeaders);
+    return result;
+  }
+
+  /**
    * The name of the model represented by this $resource,
    * i.e. `SavedSearch`.
    */

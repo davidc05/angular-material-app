@@ -38,6 +38,7 @@ export class AdminComponent implements OnInit {
   usersGridColumns: string[] = ['email', 'subscriptionPlan', 'isAdmin', 'deleteButton'];
   apiKeysGridColumns: string[] = ["key", "userId", "createdOn", "expiresAt", "totalCalls", "callLimit", "whitelistIps", "deleteButton"];
   readonly separatorKeysCodes: number[] = [ENTER, COMMA, SPACE];
+  removable = true;
 
   ngOnInit() {
     let user = JSON.parse(localStorage.getItem("profile"));
@@ -208,7 +209,7 @@ export class AdminComponent implements OnInit {
 
   // Removes chips to the textbox
   remove(ip, apiKey): void {
-    const index = findIndex(apiKey.whitelistIps, function(o) { return o.label === ip; });
+    const index = findIndex(apiKey.whitelistIps, function(o) { return o === ip; });
     if (index >= 0) {
       apiKey.whitelistIps.splice(index, 1);
       //Save on DB
@@ -312,6 +313,8 @@ export class CreateApiKeyDialog {
     this.dialogRef.close();
   }
 
+  removable = true;
+
   // Adds ip to the textbox
   add(event: MatChipInputEvent, apiKey): void {
     const input = event.input;
@@ -320,9 +323,13 @@ export class CreateApiKeyDialog {
       apiKey.whitelistIps = [];
     }
     apiKey.whitelistIps.push(value.trim());
+    // Reset the input value
+    if (input) {
+      input.value = '';
+    }
   }
   remove(ip, apiKey): void {
-    const index = findIndex(apiKey.whitelistIps, function(o) { return o.label === ip; });
+    const index = findIndex(apiKey.whitelistIps, function(o) { return o === ip; });
     if (index >= 0) {
       apiKey.whitelistIps.splice(index, 1);
     }

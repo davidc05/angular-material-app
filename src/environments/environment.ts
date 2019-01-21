@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  api_url: '//142.93.201.9:3000',
+  api_url: '//api.musubu.io',
   ui_url: 'http://localhost:4200',
   auth0_domain: 'vandalssmile.auth0.com',
   auth0_client_id: 'Psv23sFWeB17Qg9bjoazRIE7c0D7dYzv'
