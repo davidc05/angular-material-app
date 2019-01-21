@@ -5,6 +5,7 @@ import { findIndex } from 'lodash';
 import { User, ApiKey } from 'sdk';
 import { ApiKeyService } from '../services/api-key.service';
 import { ENTER, COMMA, SPACE } from '@angular/cdk/keycodes';
+import { EmailValidator } from '@angular/forms';
 
 export interface DeleteUserDialogData {
   user: object;
@@ -17,6 +18,11 @@ export interface DeleteApiKeyDialogData {
 export interface CreateUserDialogData {
   user: User;
   subscriptionPlans: object;
+}
+
+export interface CreateApiKeyDialogData {
+  apiKey: ApiKey;
+  userEmail: string;
 }
 
 @Component({
@@ -300,7 +306,7 @@ export class CreateApiKeyDialog {
 
   constructor(
     public dialogRef: MatDialogRef<CreateApiKeyDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: ApiKey
+    @Inject(MAT_DIALOG_DATA) public data: CreateApiKeyDialogData
     ) { }
 
   readonly separatorKeysCodes: number[] = [ENTER, COMMA, SPACE];
@@ -310,6 +316,7 @@ export class CreateApiKeyDialog {
   }
 
   removable = true;
+  addOnBlur = true;
 
   // Adds ip to the textbox
   add(event: MatChipInputEvent, apiKey): void {
