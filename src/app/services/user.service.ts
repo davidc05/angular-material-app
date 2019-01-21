@@ -52,6 +52,11 @@ export class UserService {
             .toPromise();
     }
 
+    getUserById(userId) {
+        return this.userApi.findById(userId)
+            .toPromise();
+    }
+
     getSubscriptionPlanObject(subscriptionType) {
         let filter: LoopBackFilter = {
             "where": {

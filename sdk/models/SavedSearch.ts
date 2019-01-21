@@ -1,7 +1,7 @@
 /* tslint:disable */
 
 declare var Object: any;
-export interface WatchlistInterface {
+export interface SavedSearchInterface {
   "queryName": string;
   "description"?: string;
   "createdOn": Date;
@@ -10,31 +10,31 @@ export interface WatchlistInterface {
   "id"?: any;
 }
 
-export class Watchlist implements WatchlistInterface {
+export class SavedSearch implements SavedSearchInterface {
   "queryName": string;
   "description": string;
   "createdOn": Date;
   "userEmail": string;
   "ips": Array<any>;
   "id": any;
-  constructor(data?: WatchlistInterface) {
+  constructor(data?: SavedSearchInterface) {
     Object.assign(this, data);
   }
   /**
    * The name of the model represented by this $resource,
-   * i.e. `Watchlist`.
+   * i.e. `SavedSearch`.
    */
   public static getModelName() {
-    return "Watchlist";
+    return "SavedSearch";
   }
   /**
   * @method factory
   * @author Jonathan Casarrubias
   * @license MIT
-  * This method creates an instance of Watchlist for dynamic purposes.
+  * This method creates an instance of SavedSearch for dynamic purposes.
   **/
-  public static factory(data: WatchlistInterface): Watchlist{
-    return new Watchlist(data);
+  public static factory(data: SavedSearchInterface): SavedSearch{
+    return new SavedSearch(data);
   }
   /**
   * @method getModelDefinition
@@ -45,8 +45,8 @@ export class Watchlist implements WatchlistInterface {
   **/
   public static getModelDefinition() {
     return {
-      name: 'Watchlist',
-      plural: 'watchlist',
+      name: 'SavedSearch',
+      plural: 'savedSearches',
       path: 'savedSearches',
       idName: 'id',
       properties: {

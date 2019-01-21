@@ -11,6 +11,7 @@ import { IpsService } from './services/ips.service';
 import { AuthService } from './services/auth.service';
 import { environment } from '../environments/environment';
 import { UserService } from './services/user.service';
+import { LoopBackConfig } from 'sdk';
 
 @Component({
   selector: 'app-root',
@@ -29,7 +30,9 @@ export class AppComponent {
     public router: Router,
     public ipsService: IpsService,
     public userService: UserService) {
+      LoopBackConfig.setBaseURL(`https://${environment.api_url}`);
       this.isLoading = false;
+      // LoopBackConfig.setApiVersion('');
       this.router.events.subscribe((event: Event) => {
           switch (true) {
               case event instanceof NavigationStart: {

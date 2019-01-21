@@ -67,7 +67,7 @@ import { WatchlistResolver } from './watchlist/watchlist.resolver';
 import { IpQueryResolver } from './ip-query/ip-query.resolver';
 import { TrendsComponent } from './trends/trends.component';
 import { IpTagsComponent, CreateTagDialog, TagDeleteDialog } from './ip-tags/ip-tags.component';
-import { AdminComponent, DeleteUserDialog, CreateUserDialog } from './admin/admin.component';
+import { AdminComponent, DeleteUserDialog, CreateUserDialog, CreateApiKeyDialog, DeleteApiKeyDialog } from './admin/admin.component';
 import { AdminResolver } from './admin/admin.resolver';
 import { AgmCoreModule } from '@agm/core';
 import { AgmSnazzyInfoWindowModule } from '@agm/snazzy-info-window';
@@ -99,6 +99,8 @@ import { MyAccountResolver } from './my-account/my-account.resolver';
     IpRangesComponent,
     DeleteUserDialog,
     CreateUserDialog,
+    CreateApiKeyDialog,
+    DeleteApiKeyDialog,
     AdminComponent,
     GmapComponent,
     SaveListDialog,
@@ -209,6 +211,8 @@ import { MyAccountResolver } from './my-account/my-account.resolver';
     SearchDeleteDialog,
     DeleteUserDialog,
     CreateUserDialog,
+    CreateApiKeyDialog,
+    DeleteApiKeyDialog,
     TagDeleteDialog,
     SaveListDialog,
     EditNoteDialog,

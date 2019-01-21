@@ -9,15 +9,15 @@ import { LoopBackFilter,  } from '../../models/BaseModels';
 import { ErrorHandler } from '../core/error.service';
 import { Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { SubscriptionPlan } from '../../models/SubscriptionPlan';
+import { ApiKey } from '../../models/ApiKey';
 import { SocketConnection } from '../../sockets/socket.connections';
 
 
 /**
- * Api services for the `SubscriptionPlan` model.
+ * Api services for the `ApiKey` model.
  */
 @Injectable()
-export class SubscriptionPlanApi extends BaseLoopBackApi {
+export class ApiKeyApi extends BaseLoopBackApi {
 
   constructor(
     @Inject(HttpClient) protected http: HttpClient,
@@ -42,13 +42,13 @@ export class SubscriptionPlanApi extends BaseLoopBackApi {
    *
    * <em>
    * (The remote method definition does not provide any description.
-   * This usually means the response is a `SubscriptionPlan` object.)
+   * This usually means the response is a `ApiKey` object.)
    * </em>
    */
   public patchOrCreate(data: any = {}, customHeaders?: Function): Observable<any> {
     let _method: string = "PATCH";
     let _url: string = LoopBackConfig.getPath() + "/" + LoopBackConfig.getApiVersion() +
-    "/subscriptionPlans";
+    "/apiKeys";
     let _routeParams: any = {};
     let _postBody: any = {
       data: data
@@ -61,7 +61,7 @@ export class SubscriptionPlanApi extends BaseLoopBackApi {
   /**
    * Patch attributes for a model instance and persist it into the data source.
    *
-   * @param {any} id subscriptionPlan id
+   * @param {any} id apiKey id
    *
    * @param {object} data Request data.
    *
@@ -73,13 +73,13 @@ export class SubscriptionPlanApi extends BaseLoopBackApi {
    *
    * <em>
    * (The remote method definition does not provide any description.
-   * This usually means the response is a `SubscriptionPlan` object.)
+   * This usually means the response is a `ApiKey` object.)
    * </em>
    */
   public patchAttributes(id: any, data: any = {}, customHeaders?: Function): Observable<any> {
     let _method: string = "PATCH";
     let _url: string = LoopBackConfig.getPath() + "/" + LoopBackConfig.getApiVersion() +
-    "/subscriptionPlans/:id";
+    "/apiKeys/:id";
     let _routeParams: any = {
       id: id
     };
@@ -92,10 +92,39 @@ export class SubscriptionPlanApi extends BaseLoopBackApi {
   }
 
   /**
+   * <em>
+         * (The remote method definition does not provide any description.)
+         * </em>
+   *
+   * @param {string} key 
+   *
+   * @param {object} req 
+   *
+   * @returns {object} An empty reference that will be
+   *   populated with the actual data once the response is returned
+   *   from the server.
+   *
+   * Data properties:
+   *
+   *  - `keyResult` – `{string}` - 
+   */
+  public checkKey(key: any = {}, req: any = {}, customHeaders?: Function): Observable<any> {
+    let _method: string = "GET";
+    let _url: string = LoopBackConfig.getPath() + "/" + LoopBackConfig.getApiVersion() +
+    "/apiKeys/checkKey";
+    let _routeParams: any = {};
+    let _postBody: any = {};
+    let _urlParams: any = {};
+    if (typeof key !== 'undefined' && key !== null) _urlParams.key = key;
+    let result = this.request(_method, _url, _routeParams, _urlParams, _postBody, null, customHeaders);
+    return result;
+  }
+
+  /**
    * The name of the model represented by this $resource,
-   * i.e. `SubscriptionPlan`.
+   * i.e. `ApiKey`.
    */
   public getModelName() {
-    return "SubscriptionPlan";
+    return "ApiKey";
   }
 }
