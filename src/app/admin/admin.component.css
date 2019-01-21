@@ -11,3 +11,13 @@ table {
 mat-form-field {
   width: 100%;
 }
+
+.table-wrapper{
+	margin-top: 20px;
+}
+
+/* API key Expires date input in table */
+.mat-column-expiresAt,
+.mat-column-whitelistIps{
+	padding-top: 10px;
+}

@@ -1,132 +1,126 @@
 <div class="content-container" *ngIf="currentUser && currentUser.isAdmin">
   <section>
-      <h2>Admin</h2>
-  </section>
-
-      <mat-tab-group>
-        <mat-tab label="Users">
+    <h2>Admin</h2>
+    <mat-tab-group>
+      <mat-tab label="Users">
+        <section>
+          <p *ngIf="users && users.length === 0">No users.</p>
+          <button mat-flat-button (click)="openCreateDialog()">Create User</button>
+          <div class="table-wrapper">
+            <table mat-table [dataSource]="users" matSort *ngIf="users && users.length !== 0" class="mat-elevation-z8 results-table">
+              <ng-container matColumnDef="email">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Email </th>
+                <td mat-cell *matCellDef="let element">
+                  {{element.email}}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="subscriptionPlan">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Subscription Plan </th>
+                <td mat-cell *matCellDef="let element">
+                  <mat-select placeholder="Subscription Plan" (selectionChange)="planChange(element, $event)" [value]="element.subscriptionPlan">
+                    <mat-option *ngFor="let subscriptionPlan of subscriptionPlans" [value]="subscriptionPlan.name">
+                      {{subscriptionPlan.name}}
+                    </mat-option>
+                  </mat-select>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="isAdmin">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Is Admin? </th>
+                <td mat-cell *matCellDef="let element">
+                  <mat-checkbox [(ngModel)]="element.isAdmin" (change)="updateUser(element)"></mat-checkbox>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="deleteButton">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+                <td mat-cell *matCellDef="let element">
+                    <button mat-button color="warn" (click)="openDeleteDialog(element)">
+                        <mat-icon>delete</mat-icon> Delete
+                    </button>
+                </td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="usersGridColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: usersGridColumns;"></tr> 
+            </table>
+          </div>
+        </section>
+      </mat-tab>
+      <mat-tab label="API Keys">
           <section>
-              <p *ngIf="users && users.length === 0">No users.</p>
-              <button mat-flat-button (click)="openCreateDialog()">Create User</button>
-          </section>
-          <section>
+            <p *ngIf="apiKeys && apiKeys.length === 0">No API Keys.</p>
+            <button mat-flat-button (click)="openCreateApiKeyDialog()">Create API Key</button>
             <div class="table-wrapper">
-              <table mat-table [dataSource]="users" matSort *ngIf="users && users.length !== 0" class="mat-elevation-z8 results-table">
-                <ng-container matColumnDef="email">
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header> Email </th>
+              <table mat-table [dataSource]="apiKeys" matSort *ngIf="apiKeys && apiKeys.length !== 0" class="mat-elevation-z8 results-table">
+                <ng-container matColumnDef="key">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header> Key </th>
                   <td mat-cell *matCellDef="let element">
-                    {{element.email}}
+                    {{element.key}}
                   </td>
                 </ng-container>
-                <ng-container matColumnDef="subscriptionPlan">
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header> Subscription Plan </th>
+                <ng-container matColumnDef="userId">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> User </th>
+                    <td mat-cell *matCellDef="let element">
+                      {{element.user ? element.user.email : ""}}
+                    </td>
+                </ng-container>
+                <ng-container matColumnDef="createdOn">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header> Created </th>
                   <td mat-cell *matCellDef="let element">
-                    <mat-select placeholder="Subscription Plan" (selectionChange)="planChange(element, $event)" [value]="element.subscriptionPlan">
-                      <mat-option *ngFor="let subscriptionPlan of subscriptionPlans" [value]="subscriptionPlan.name">
-                        {{subscriptionPlan.name}}
-                      </mat-option>
-                    </mat-select>
+                    {{element.createdOn}}
                   </td>
                 </ng-container>
-                <ng-container matColumnDef="isAdmin">
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header> Is Admin? </th>
+                <ng-container matColumnDef="expiresAt">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header> Expires </th>
                   <td mat-cell *matCellDef="let element">
-                    <mat-checkbox [(ngModel)]="element.isAdmin" (change)="updateUser(element)"></mat-checkbox>
+                    <mat-form-field>
+                      <input matInput [matDatepicker]="picker" placeholder="Choose a date" [(ngModel)]="element.expiresAt" (dateChange)='updateApiKey(element)'>
+                      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                      <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="totalCalls">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header> Total Calls </th>
+                  <td mat-cell *matCellDef="let element">
+                    {{element.totalCalls}}
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="callLimit">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header> Call Limit </th>
+                  <td mat-cell *matCellDef="let element">
+                    <mat-form-field class="dialog-input">
+                      <input matInput [(ngModel)]="element.callLimit" (input)='updateApiKey(element)'>
+                    </mat-form-field>
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="whitelistIps">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header> Whitelist IPs </th>
+                  <td mat-cell *matCellDef="let element">
+                    <mat-form-field class="dialog-input">
+                      <mat-chip-list #chipList>
+                        <mat-chip *ngFor="let ip of element.whitelistIps" [removable]="removable" (removed)="remove(ip, element)">
+                          {{ip}}
+                          <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                        </mat-chip>
+                        <input placeholder="Enter IP to Whitelist" [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                          [matChipInputAddOnBlur]="addOnBlur" (matChipInputTokenEnd)="add($event, element)">
+                      </mat-chip-list>
+                    </mat-form-field>
                   </td>
                 </ng-container>
                 <ng-container matColumnDef="deleteButton">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
                   <td mat-cell *matCellDef="let element">
-                      <button mat-button color="warn" (click)="openDeleteDialog(element)">
+                      <button mat-button color="warn" (click)="openDeleteApiKeyDialog(element)">
                           <mat-icon>delete</mat-icon> Delete
                       </button>
                   </td>
                 </ng-container>
-                <tr mat-header-row *matHeaderRowDef="usersGridColumns"></tr>
-                <tr mat-row *matRowDef="let row; columns: usersGridColumns;"></tr> 
+                <tr mat-header-row *matHeaderRowDef="apiKeysGridColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: apiKeysGridColumns;"></tr> 
               </table>
             </div>
           </section>
-        </mat-tab>
-        <mat-tab label="API Keys">
-            <section>
-                <p *ngIf="apiKeys && apiKeys.length === 0">No API Keys.</p>
-                <button mat-flat-button (click)="openCreateApiKeyDialog()">Create API Key</button>
-            </section>
-            <section>
-              <div class="table-wrapper">
-                <table mat-table [dataSource]="apiKeys" matSort *ngIf="apiKeys && apiKeys.length !== 0" class="mat-elevation-z8 results-table">
-                  <ng-container matColumnDef="key">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Key </th>
-                    <td mat-cell *matCellDef="let element">
-                      {{element.key}}
-                    </td>
-                  </ng-container>
-                  <ng-container matColumnDef="userId">
-                      <th mat-header-cell *matHeaderCellDef mat-sort-header> User </th>
-                      <td mat-cell *matCellDef="let element">
-                        {{element.user ? element.user.email : ""}}
-                      </td>
-                  </ng-container>
-                  <ng-container matColumnDef="createdOn">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Created </th>
-                    <td mat-cell *matCellDef="let element">
-                      {{element.createdOn}}
-                    </td>
-                  </ng-container>
-                  <ng-container matColumnDef="expiresAt">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Expires </th>
-                    <td mat-cell *matCellDef="let element">
-                      <mat-form-field>
-                        <input matInput [matDatepicker]="picker" placeholder="Choose a date" [(ngModel)]="element.expiresAt" (dateChange)='updateApiKey(element)'>
-                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                        <mat-datepicker #picker></mat-datepicker>
-                      </mat-form-field>
-                    </td>
-                  </ng-container>
-                  <ng-container matColumnDef="totalCalls">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Total Calls </th>
-                    <td mat-cell *matCellDef="let element">
-                      {{element.totalCalls}}
-                    </td>
-                  </ng-container>
-                  <ng-container matColumnDef="callLimit">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Call Limit </th>
-                    <td mat-cell *matCellDef="let element">
-                      <mat-form-field class="dialog-input">
-                        <input matInput [(ngModel)]="element.callLimit" (input)='updateApiKey(element)'>
-                      </mat-form-field>
-                    </td>
-                  </ng-container>
-                  <ng-container matColumnDef="whitelistIps">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Whitelist IPs </th>
-                    <td mat-cell *matCellDef="let element">
-                      <mat-form-field class="dialog-input">
-                        <mat-chip-list #chipList>
-                          <mat-chip *ngFor="let ip of element.whitelistIps" [removable]="removable" (removed)="remove(ip, element)">
-                            {{ip}}
-                            <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
-                          </mat-chip>
-                          <input placeholder="Enter IP to Whitelist" [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                            [matChipInputAddOnBlur]="addOnBlur" (matChipInputTokenEnd)="add($event, element)">
-                        </mat-chip-list>
-                      </mat-form-field>
-                    </td>
-                  </ng-container>
-                  <ng-container matColumnDef="deleteButton">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
-                    <td mat-cell *matCellDef="let element">
-                        <button mat-button color="warn" (click)="openDeleteApiKeyDialog(element)">
-                            <mat-icon>delete</mat-icon> Delete
-                        </button>
-                    </td>
-                  </ng-container>
-                  <tr mat-header-row *matHeaderRowDef="apiKeysGridColumns"></tr>
-                  <tr mat-row *matRowDef="let row; columns: apiKeysGridColumns;"></tr> 
-                </table>
-              </div>
-            </section>
-        </mat-tab>
-      </mat-tab-group>
-    
+      </mat-tab>
+    </mat-tab-group>
+  </section>
 </div>
