@@ -19,10 +19,6 @@ export interface CreateUserDialogData {
   subscriptionPlans: object;
 }
 
-export interface CreateApiKeyDialogData {
-  apiKey: ApiKey
-}
-
 @Component({
   selector: 'app-admin',
   templateUrl: './admin.component.html',
@@ -304,7 +300,7 @@ export class CreateApiKeyDialog {
 
   constructor(
     public dialogRef: MatDialogRef<CreateApiKeyDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: CreateApiKeyDialogData
+    @Inject(MAT_DIALOG_DATA) public data: ApiKey
     ) { }
 
   readonly separatorKeysCodes: number[] = [ENTER, COMMA, SPACE];
