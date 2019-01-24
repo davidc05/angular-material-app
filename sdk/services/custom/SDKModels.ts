@@ -9,6 +9,7 @@ import { IpRange } from '../../models/IpRange';
 import { SubscriptionPlan } from '../../models/SubscriptionPlan';
 import { MusubuAPI } from '../../models/MusubuAPI';
 import { ApiKey } from '../../models/ApiKey';
+import { Trends } from '../../models/Trends';
 
 export interface Models { [name: string]: any }
 
@@ -25,6 +26,7 @@ export class SDKModels {
     SubscriptionPlan: SubscriptionPlan,
     MusubuAPI: MusubuAPI,
     ApiKey: ApiKey,
+    Trends: Trends,
     
   };
 

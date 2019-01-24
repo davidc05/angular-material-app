@@ -57,6 +57,7 @@ import { IpRangeApi } from './services/custom/IpRange';
 import { SubscriptionPlanApi } from './services/custom/SubscriptionPlan';
 import { MusubuAPIApi } from './services/custom/MusubuAPI';
 import { ApiKeyApi } from './services/custom/ApiKey';
+import { TrendsApi } from './services/custom/Trends';
 /**
 * @module SDKBrowserModule
 * @description
@@ -96,6 +97,7 @@ export class SDKBrowserModule {
         SubscriptionPlanApi,
         MusubuAPIApi,
         ApiKeyApi,
+        TrendsApi,
         internalStorageProvider,
         { provide: SDKStorage, useClass: StorageBrowser },
         { provide: SocketDriver, useClass: SocketBrowser }
