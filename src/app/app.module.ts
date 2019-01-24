@@ -66,6 +66,7 @@ import {
 import { WatchlistResolver } from './watchlist/watchlist.resolver';
 import { IpQueryResolver } from './ip-query/ip-query.resolver';
 import { TrendsComponent } from './trends/trends.component';
+import { TrendsResolver } from './trends/trends.resolver';
 import { IpTagsComponent, CreateTagDialog, TagDeleteDialog } from './ip-tags/ip-tags.component';
 import { AdminComponent, DeleteUserDialog, CreateUserDialog, CreateApiKeyDialog, DeleteApiKeyDialog } from './admin/admin.component';
 import { AdminResolver } from './admin/admin.resolver';
@@ -194,6 +195,7 @@ import { MyAccountResolver } from './my-account/my-account.resolver';
     NoteService,
     IpDetailResolver,
     WatchlistResolver,
+    TrendsResolver,
     IpQueryResolver,
     LoginResolver,
     AdminResolver,

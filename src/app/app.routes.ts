@@ -8,6 +8,7 @@ import { WatchlistComponent } from './watchlist/watchlist.component';
 import { WatchlistResolver } from './watchlist/watchlist.resolver';
 import { IpQueryResolver } from './ip-query/ip-query.resolver';
 import { TrendsComponent } from './trends/trends.component';
+import { TrendsResolver } from './trends/trends.resolver';
 import { IpTagsComponent } from './ip-tags/ip-tags.component';
 import { GmapComponent } from './gmap/gmap.component';
 import { GmapResolver } from './gmap/gmap.resolver';
@@ -103,7 +104,8 @@ export const routes: Routes = [
 		path: 'trends',
 		component: TrendsComponent,
 		resolve: {
-			isAuthenticated: LoginResolver
+			isAuthenticated: LoginResolver,
+            data: TrendsResolver
 		}
 	},
 	{

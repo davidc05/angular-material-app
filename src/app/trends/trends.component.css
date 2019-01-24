@@ -1,6 +1,7 @@
-.content-container{
-	text-align: center;
-}
 .trends-image {
     height: 200px;
+}
+
+table {
+    width: 100%;
 }

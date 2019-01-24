@@ -1,7 +1,64 @@
 <div class="content-container">
-    <section>
-    	<h2>Trends</h2>
-    	<p class="coming-soon-text">Coming Soon!</p>
-    	<img class="trends-image" src="assets/img/trend-icon-min.jpg"/>
-	</section> 
+    <section *ngIf="watchlistsByThreatlevel && watchlistsByThreatlevel.length !== 0">
+        <h2>Watchlists by Threat Level</h2>
+        <div class="table-wrapper">
+            <table
+                mat-table
+                [dataSource]="watchlistsByThreatlevel"
+                matSort
+                class="mat-elevation-z8 results-table"
+            >
+                <!-- Average Threat Score -->
+                <ng-container matColumnDef="avg_threat_score">
+                    <th
+                        mat-header-cell
+                        *matHeaderCellDef
+                        mat-sort-header
+                    > Average Threat Score </th>
+                    <td
+                        mat-cell
+                        *matCellDef="let element"
+                    >
+
+                        {{element.avg_threat_score}}
+                    </td>
+                </ng-container>
+
+                <!-- Watchlist Name -->
+                <ng-container matColumnDef="queryName">
+                    <th
+                        mat-header-cell
+                        *matHeaderCellDef
+                        mat-sort-header
+                    > Watchlist Name </th>
+                    <td
+                        mat-cell
+                        *matCellDef="let element"
+                    >
+                        <a
+                            matTooltip="Click here to execute search."
+                            [routerLink]="['/query/watchlist', element.id]"
+                        >{{element.queryName}}</a>
+                    </td>
+                </ng-container>
+
+                <tr
+                    mat-header-row
+                    *matHeaderRowDef="trendsGridColumns"
+                ></tr>
+                <tr
+                    mat-row
+                    *matRowDef="let row; columns: trendsGridColumns;"
+                ></tr>
+            </table>
+        </div>
+    </section>
+    <!-- <section>
+        <h2>Trends</h2>
+        <p class="coming-soon-text">Coming Soon!</p>
+        <img
+            class="trends-image"
+            src="assets/img/trend-icon-min.jpg"
+        />
+    </section> -->
 </div>
