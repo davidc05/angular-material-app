@@ -65,7 +65,7 @@ import {
 } from './watchlist/watchlist.component';
 import { WatchlistResolver } from './watchlist/watchlist.resolver';
 import { IpQueryResolver } from './ip-query/ip-query.resolver';
-import { TrendsComponent } from './trends/trends.component';
+import { TrendsComponent, BarChartComponent } from './trends/trends.component';
 import { TrendsResolver } from './trends/trends.resolver';
 import { IpTagsComponent, CreateTagDialog, TagDeleteDialog } from './ip-tags/ip-tags.component';
 import { AdminComponent, DeleteUserDialog, CreateUserDialog, CreateApiKeyDialog, DeleteApiKeyDialog } from './admin/admin.component';
@@ -92,6 +92,7 @@ import { MyAccountResolver } from './my-account/my-account.resolver';
     QueryNameDialogComponent,
     WatchlistComponent,
     TrendsComponent,
+    BarChartComponent,
     IpTagsComponent,
     CreateTagDialog,
     CreateWatchlistDialog,
@@ -220,6 +221,7 @@ import { MyAccountResolver } from './my-account/my-account.resolver';
     EditNoteDialog,
     DeleteNoteDialog,
     WatchlistDialogComponent,
+    BarChartComponent,
   ],
   bootstrap: [AppComponent]
 })
