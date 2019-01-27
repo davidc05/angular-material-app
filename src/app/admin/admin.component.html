@@ -92,11 +92,17 @@
                     </mat-form-field>
                   </td>
                 </ng-container>
+                <ng-container matColumnDef="isWhitelistEnabled">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header> Enable Whitelists? </th>
+                  <td mat-cell *matCellDef="let element">
+                    <mat-checkbox [(ngModel)]="element.isWhitelistEnabled" (change)="updateApiKey(element)"></mat-checkbox>
+                  </td>
+                </ng-container>
                 <ng-container matColumnDef="whitelistIps">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header> Whitelist IPs </th>
                   <td mat-cell *matCellDef="let element">
                     <mat-form-field class="dialog-input">
-                      <mat-chip-list #chipList>
+                      <mat-chip-list [disabled]="!element.isWhitelistEnabled" #chipList>
                         <mat-chip *ngFor="let ip of element.whitelistIps" [removable]="removable" (removed)="remove(ip, element)">
                           {{ip}}
                           <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>

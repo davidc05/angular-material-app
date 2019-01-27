@@ -98,6 +98,8 @@ export class ApiKeyApi extends BaseLoopBackApi {
    *
    * @param {string} key 
    *
+   * @param {string} ip 
+   *
    * @param {object} req 
    *
    * @returns {object} An empty reference that will be
@@ -108,7 +110,7 @@ export class ApiKeyApi extends BaseLoopBackApi {
    *
    *  - `keyResult` – `{string}` - 
    */
-  public checkKey(key: any = {}, req: any = {}, customHeaders?: Function): Observable<any> {
+  public checkKey(key: any = {}, ip: any = {}, req: any = {}, customHeaders?: Function): Observable<any> {
     let _method: string = "GET";
     let _url: string = LoopBackConfig.getPath() + "/" + LoopBackConfig.getApiVersion() +
     "/apiKeys/checkKey";
@@ -116,6 +118,7 @@ export class ApiKeyApi extends BaseLoopBackApi {
     let _postBody: any = {};
     let _urlParams: any = {};
     if (typeof key !== 'undefined' && key !== null) _urlParams.key = key;
+    if (typeof ip !== 'undefined' && ip !== null) _urlParams.ip = ip;
     let result = this.request(_method, _url, _routeParams, _urlParams, _postBody, null, customHeaders);
     return result;
   }
