@@ -12,11 +12,11 @@ export class TrendsResolver implements Resolve<any> {
   resolve(route: ActivatedRouteSnapshot) {
     const user = JSON.parse(localStorage.getItem('profile'));
     return new Promise((resolve, reject) => {
-      const watchlistsByThreatlevel = this.trendsService.watchlistByThreatlevel(user.email)
+      const trendsData = this.trendsService.getTrends(user.email)
         .then(
             data => {
                 return resolve({
-                    watchlistsByThreatlevel: data.trends,
+                    trendsData: data.trends,
                 });
             },
             err => {

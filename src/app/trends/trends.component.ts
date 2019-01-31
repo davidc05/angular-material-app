@@ -11,10 +11,11 @@ import * as d3 from 'd3';
 })
 export class TrendsComponent implements OnInit {
 
-    trendsGridColumns: string[] = ['avg_threat_score', 'queryName'];
+    top10IPsbyThreatColumns: string[] = ['ipaddress', 'threat_potential_score_pct', 'blacklist_class'];
     watchlistsByThreatlevel;
     isLoading;
-    chartDataWatchlistsByThreatlevel;
+
+    top10IPsbyThreat;
 
     constructor(
         private route: ActivatedRoute,
@@ -24,13 +25,12 @@ export class TrendsComponent implements OnInit {
         this.route.data.subscribe(routeData => {
             const data = routeData['data'];
             if (data) {
-                this.watchlistsByThreatlevel = data.watchlistsByThreatlevel;
-                this.chartDataWatchlistsByThreatlevel = data.watchlistsByThreatlevel.map(item => [item.queryName, item.avg_threat_score]);
+                this.watchlistsByThreatlevel = data.trendsData.watchlistbyThreatlevel.map(item => [item.queryName, item.avg_threat_score]);
+                this.top10IPsbyThreat = data.trendsData.top10IPsbyThreat;
             }
         });
     }
 }
-
 
 @Component({
     selector: 'app-bar-chart',

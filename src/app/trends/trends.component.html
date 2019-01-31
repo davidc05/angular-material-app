@@ -2,8 +2,47 @@
     <section>
         <h3>Watchlists by Threat Level</h3>
         <app-bar-chart
-            *ngIf="chartDataWatchlistsByThreatlevel"
-            [data]="chartDataWatchlistsByThreatlevel"
+            *ngIf="watchlistsByThreatlevel"
+            [data]="watchlistsByThreatlevel"
         ></app-bar-chart>
+    </section>
+    <section>
+        <h3>Top 10 IPs by Threat Score - Last 90 Days</h3>
+        <div class="table-wrapper" *ngIf="top10IPsbyThreat && top10IPsbyThreat.length !== 0">
+            <table mat-table [dataSource]="top10IPsbyThreat" matSort class="mat-elevation-z8 results-table">
+                <!--- Note that these columns can be defined in any order.
+                      The actual rendered columns are set as a property on the row definition" -->
+
+                <!-- IP address Column -->
+                <ng-container matColumnDef="ipaddress">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
+                    <td mat-cell *matCellDef="let element">
+                        <a matTooltip="Click here to execute search." [routerLink]="['/detail/', element.ipaddress]">
+                            {{element.ipaddress}}
+                        </a>
+                    </td>
+                </ng-container>
+
+                <!-- Threat Potential Score % Column -->
+                <ng-container matColumnDef="threat_potential_score_pct">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Threat Potential Score % </th>
+                    <td mat-cell *matCellDef="let element">
+                        {{element.threat_potential_score_pct}}
+                    </td>
+                </ng-container>
+
+                <!-- Blacklist Class Column -->
+                <ng-container matColumnDef="blacklist_class">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Blacklist Class </th>
+                    <td mat-cell *matCellDef="let element">
+                        {{element.blacklist_class}}
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="top10IPsbyThreatColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: top10IPsbyThreatColumns;"></tr>
+            </table>
+        </div>
+
     </section>
 </div>
