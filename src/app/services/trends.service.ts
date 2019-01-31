@@ -9,8 +9,8 @@ export class TrendsService {
         private trendsApi: TrendsApi
     ) { }
 
-    watchlistByThreatlevel(userEmail) {
-        return this.trendsApi.watchlistByThreatlevel(userEmail)
+    getTrends(userEmail) {
+        return this.trendsApi.getTrends(userEmail)
             .toPromise();
     }
 }
