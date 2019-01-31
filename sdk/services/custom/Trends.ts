@@ -106,10 +106,10 @@ export class TrendsApi extends BaseLoopBackApi {
    *
    *  - `trends` – `{object}` - 
    */
-  public watchlistByThreatlevel(userEmail: any = {}, customHeaders?: Function): Observable<any> {
+  public getTrends(userEmail: any = {}, customHeaders?: Function): Observable<any> {
     let _method: string = "GET";
     let _url: string = LoopBackConfig.getPath() + "/" + LoopBackConfig.getApiVersion() +
-    "/trends/watchlistByThreatlevel";
+    "/trends/getTrends";
     let _routeParams: any = {};
     let _postBody: any = {};
     let _urlParams: any = {};
