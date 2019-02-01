@@ -96,11 +96,7 @@ export class IpRangeApi extends BaseLoopBackApi {
          * (The remote method definition does not provide any description.)
          * </em>
    *
-   * @param {string} networkName 
-   *
-   * @param {string} networkType 
-   *
-   * @param {string} networkGroup 
+   * @param {object} network 
    *
    * @param {number} page 
    *
@@ -116,16 +112,14 @@ export class IpRangeApi extends BaseLoopBackApi {
    *
    *  - `ipRanges` – `{object}` - 
    */
-  public getIpRangeByNetwork(networkName: any = {}, networkType: any = {}, networkGroup: any = {}, page: any = {}, pageBy: any = {}, notation: any = {}, customHeaders?: Function): Observable<any> {
+  public getIpRangeByNetwork(network: any = {}, page: any = {}, pageBy: any = {}, notation: any = {}, customHeaders?: Function): Observable<any> {
     let _method: string = "GET";
     let _url: string = LoopBackConfig.getPath() + "/" + LoopBackConfig.getApiVersion() +
     "/ipRanges/getIpRangeByNetwork";
     let _routeParams: any = {};
     let _postBody: any = {};
     let _urlParams: any = {};
-    if (typeof networkName !== 'undefined' && networkName !== null) _urlParams.networkName = networkName;
-    if (typeof networkType !== 'undefined' && networkType !== null) _urlParams.networkType = networkType;
-    if (typeof networkGroup !== 'undefined' && networkGroup !== null) _urlParams.networkGroup = networkGroup;
+    if (typeof network !== 'undefined' && network !== null) _urlParams.network = network;
     if (typeof page !== 'undefined' && page !== null) _urlParams.page = page;
     if (typeof pageBy !== 'undefined' && pageBy !== null) _urlParams.pageBy = pageBy;
     if (typeof notation !== 'undefined' && notation !== null) _urlParams.notation = notation;
