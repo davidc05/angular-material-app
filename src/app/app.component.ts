@@ -30,7 +30,7 @@ export class AppComponent {
     public router: Router,
     public ipsService: IpsService,
     public userService: UserService) {
-      LoopBackConfig.setBaseURL(`https://${environment.api_url}`);
+      LoopBackConfig.setBaseURL(environment.api_url);
       this.isLoading = false;
       // LoopBackConfig.setApiVersion('');
       this.router.events.subscribe((event: Event) => {
