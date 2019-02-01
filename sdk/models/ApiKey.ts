@@ -8,6 +8,7 @@ export interface ApiKeyInterface {
   "totalCalls"?: number;
   "callLimit"?: number;
   "whitelistIps"?: Array<any>;
+  "isWhitelistEnabled"?: boolean;
   "createdOn": Date;
   "id"?: any;
 }
@@ -19,6 +20,7 @@ export class ApiKey implements ApiKeyInterface {
   "totalCalls": number;
   "callLimit": number;
   "whitelistIps": Array<any>;
+  "isWhitelistEnabled": boolean;
   "createdOn": Date;
   "id": any;
   constructor(data?: ApiKeyInterface) {
@@ -79,6 +81,10 @@ export class ApiKey implements ApiKeyInterface {
           name: 'whitelistIps',
           type: 'Array&lt;any&gt;',
           default: <any>[]
+        },
+        "isWhitelistEnabled": {
+          name: 'isWhitelistEnabled',
+          type: 'boolean'
         },
         "createdOn": {
           name: 'createdOn',
