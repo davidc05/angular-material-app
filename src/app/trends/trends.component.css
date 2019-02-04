@@ -19,3 +19,14 @@ table {
 .d3-chart .axis text {
     fill: #999;
 }
+
+.threatTypeBreakdown {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+}
+
+.threatTypeBreakdown h4 {
+    margin: 0;
+    text-align: center;
+}

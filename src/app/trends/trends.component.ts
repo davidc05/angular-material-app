@@ -1,7 +1,13 @@
-import { Component, OnInit, OnChanges, ViewEncapsulation, ElementRef, ViewChild, Input } from '@angular/core';
+import { Component, OnInit, OnChanges, ViewEncapsulation, ElementRef, ViewChild, Input, AfterViewInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import * as d3 from 'd3';
+import { groupBy } from 'lodash';
+
+export interface PieChartData {
+    blacklistClass: string;
+    blacklistClassPct: number;
+}
 
 @Component({
     selector: 'app-trends',
@@ -12,10 +18,11 @@ import * as d3 from 'd3';
 export class TrendsComponent implements OnInit {
 
     top10IPsbyThreatColumns: string[] = ['ipaddress', 'threat_potential_score_pct', 'blacklist_class'];
-    watchlistsByThreatlevel;
     isLoading;
 
+    watchlistsByThreatlevel;
     top10IPsbyThreat;
+    threatTypeBreakdown: PieChartData[];
 
     constructor(
         private route: ActivatedRoute,
@@ -23,10 +30,11 @@ export class TrendsComponent implements OnInit {
 
     ngOnInit() {
         this.route.data.subscribe(routeData => {
-            const data = routeData['data'];
+            const data = routeData['data'].trendsData;
             if (data) {
-                this.watchlistsByThreatlevel = data.trendsData.watchlistbyThreatlevel.map(item => [item.queryName, item.avg_threat_score]);
-                this.top10IPsbyThreat = data.trendsData.top10IPsbyThreat;
+                this.watchlistsByThreatlevel = data.watchlistbyThreatlevel.map(item => [item.queryName, item.avg_threat_score]);
+                this.top10IPsbyThreat = data.top10IPsbyThreat;
+                this.threatTypeBreakdown = groupBy(data.threatTypeBreakdown, 'queryName');
             }
         });
     }
@@ -134,4 +142,78 @@ export class BarChartComponent implements OnInit, OnChanges {
             .attr('height', d => this.height - this.yScale(d[1]));
     }
 
+}
+
+@Component({
+    selector: 'app-pie-chart',
+    templateUrl: './pie-chart.component.html'
+})
+
+export class PieChartComponent implements AfterViewInit {
+    @ViewChild('containerPieChart') element: ElementRef;
+    private host;
+    private svg;
+    private width: number;
+    private height: number;
+    private radius: number;
+    private htmlElement: HTMLElement;
+
+    @Input() private pieData: PieChartData[];
+
+    ngAfterViewInit() {
+        this.htmlElement = this.element.nativeElement;
+        this.host = d3.select(this.htmlElement);
+        this.setup();
+        this.buildSVG();
+        this.buildPie();
+    }
+
+    private setup(): void {
+        this.width = 300;
+        this.height = 300;
+        this.radius = Math.min(this.width, this.height) / 2;
+    }
+
+    private buildSVG(): void {
+        this.host.html('');
+        this.svg = this.host.append('svg')
+            .attr('viewBox', `0 0 ${this.width} ${this.height}`)
+            .append('g')
+            .attr('transform', `translate(${this.width / 2},${this.height / 2})`);
+    }
+
+    private buildPie(): void {
+        const pie = d3.pie();
+        const values = this.pieData.map(data => data.blacklistClassPct);
+        const arcSelection = this.svg.selectAll('.arc')
+            .data(pie(values))
+            .enter()
+            .append('g')
+            .attr('class', 'arc');
+
+        this.populatePie(arcSelection);
+    }
+
+    private populatePie(arcSelection): void {
+        const innerRadius = this.radius - 50;
+        const outerRadius = this.radius - 10;
+        const pieColor =  d3.scaleOrdinal(d3.schemeCategory10);
+        const arc = d3.arc()
+            .innerRadius(0)
+            .outerRadius(outerRadius);
+        arcSelection.append('path')
+            .attr('d', arc)
+            .attr('fill', (datum, index) => {
+                return pieColor(this.pieData[index].blacklistClass);
+            });
+
+        arcSelection.append('text')
+            .attr('transform', (datum: any) => {
+                datum.innerRadius = 0;
+                datum.outerRadius = outerRadius;
+                return 'translate(' + arc.centroid(datum) + ')';
+            })
+            .text((datum, index) => this.pieData[index].blacklistClass)
+            .style('text-anchor', 'middle');
+    }
 }

@@ -45,4 +45,15 @@
         </div>
 
     </section>
+    <section>
+        <h3>Threat Type Breakdown - Last 90 Days</h3>
+        <div class="threatTypeBreakdown">
+            <div style="width:350px; height:390px;" *ngFor="let item of threatTypeBreakdown | keyvalue">
+                <h4>{{item.key}}</h4>
+                <app-pie-chart
+                    [pieData]="item.value"
+                ></app-pie-chart>
+            </div>
+        </div>
+    </section>
 </div>
