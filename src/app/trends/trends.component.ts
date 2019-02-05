@@ -1,12 +1,29 @@
-import { Component, OnInit, OnChanges, ViewEncapsulation, ElementRef, ViewChild, Input, AfterViewInit } from '@angular/core';
+import {
+    Component,
+    OnInit,
+    OnChanges,
+    ViewEncapsulation,
+    ElementRef,
+    ViewChild,
+    Input,
+    AfterViewInit,
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import * as d3 from 'd3';
 import { groupBy } from 'lodash';
+import * as moment from 'moment';
 
 export interface PieChartData {
     blacklistClass: string;
     blacklistClassPct: number;
+}
+
+export interface CalenderData {
+    queryName: string;
+    threatDeltaYesterday: number;
+    ceatedon: string;
+    tsToday: number;
 }
 
 @Component({
@@ -23,6 +40,7 @@ export class TrendsComponent implements OnInit {
     watchlistsByThreatlevel;
     top10IPsbyThreat;
     threatTypeBreakdown: PieChartData[];
+    threatScoreVolatility;
 
     constructor(
         private route: ActivatedRoute,
@@ -35,6 +53,11 @@ export class TrendsComponent implements OnInit {
                 this.watchlistsByThreatlevel = data.watchlistbyThreatlevel.map(item => [item.queryName, item.avg_threat_score]);
                 this.top10IPsbyThreat = data.top10IPsbyThreat;
                 this.threatTypeBreakdown = groupBy(data.threatTypeBreakdown, 'queryName');
+                this.threatScoreVolatility = data.threatScoreVolatility.map(item => ({
+                    date: new Date(item.createdon.value),
+                    value: item.tsToday,
+                    name: item.queryname,
+                }));
             }
         });
     }
@@ -106,7 +129,6 @@ export class BarChartComponent implements OnInit, OnChanges {
     }
 
     updateChart() {
-
         // update scales & axis
         this.xScale.domain(this.data.map(d => d[0]));
         this.yScale.domain([0, d3.max(this.data, d => d[1])]);
@@ -197,7 +219,7 @@ export class PieChartComponent implements AfterViewInit {
     private populatePie(arcSelection): void {
         const innerRadius = this.radius - 50;
         const outerRadius = this.radius - 10;
-        const pieColor =  d3.scaleOrdinal(d3.schemeCategory10);
+        const pieColor = d3.scaleOrdinal(d3.schemeCategory10);
         const arc = d3.arc()
             .innerRadius(0)
             .outerRadius(outerRadius);
@@ -215,5 +237,121 @@ export class PieChartComponent implements AfterViewInit {
             })
             .text((datum, index) => this.pieData[index].blacklistClass)
             .style('text-anchor', 'middle');
+    }
+}
+@Component({
+    selector: 'app-calender-chart',
+    template: '<div #containerCalenderChart></div>',
+    styleUrls: ['./trends.component.css'],
+})
+
+export class CalenderChartComponent implements AfterViewInit {
+    @ViewChild('containerCalenderChart') element: ElementRef;
+    private host;
+    private svg;
+    private width: number;
+    private height: number;
+    private cellSize = 17;
+    private timeWeek;
+    private countDay;
+    private format;
+    private formatDate;
+    private formatDay;
+    private formatMonth;
+    private color;
+    private htmlElement: HTMLElement;
+
+    @Input() private calenderData: CalenderData[];
+
+    ngAfterViewInit() {
+        this.htmlElement = this.element.nativeElement;
+        this.host = d3.select(this.htmlElement);
+        this.setup();
+        this.buildSVG();
+        this.buildCalender();
+    }
+
+    private setup(): void {
+        this.width = 900;
+        this.height = this.cellSize * 9;
+        this.timeWeek = d3.timeSunday;
+        this.format = d3.format('.2f');
+        this.formatDate = d3.timeFormat('%x');
+        this.formatDay = d => 'SMTWTFS'[d.getDay()];
+        this.formatMonth = d3.timeFormat('%b');
+        this.color = d3.scaleOrdinal().domain(['0', '100']).range(['#28a745', '#f9c108', '#dc3545']);
+        this.countDay = d => d.getDay();
+    }
+
+    pathMonth(t) {
+        const n = 7;
+        const d = Math.max(0, Math.min(n, this.countDay(t)));
+        const w = this.timeWeek.count(d3.timeYear(t), t);
+        return `${d === 0 ? `M${w * this.cellSize},0`
+            : d === n ? `M${(w + 1) * this.cellSize},0`
+                : `M${(w + 1) * this.cellSize},0V${d * this.cellSize}H${w * this.cellSize}`}V${n * this.cellSize}`;
+    }
+
+    private buildSVG(): void {
+        this.host.html('');
+        this.svg = this.host.append('svg')
+            .attr('viewBox', `0 0 ${this.width} ${this.height}`);
+    }
+
+    private buildCalender(): void {
+        const years = d3.nest()
+            .key((d: any) => d.date.getFullYear())
+            .entries(this.calenderData)
+            .reverse();
+
+        const year = this.svg.selectAll('g')
+            .data(years)
+            .enter().append('g')
+            .attr('transform', (d, i) => `translate(40,${this.height * i + this.cellSize * 1.5})`);
+
+        year.append('text')
+            .attr('x', -5)
+            .attr('y', -5)
+            .attr('font-weight', 'bold')
+            .attr('text-anchor', 'end')
+            .text(d => d.key);
+
+        year.append('g')
+            .attr('text-anchor', 'end')
+            .selectAll('text')
+            .data((d3.range(7)).map(i => new Date(1995, 0, i)))
+            .enter().append('text')
+            .attr('x', -5)
+            .attr('y', d => (this.countDay(d) + 0.5) * this.cellSize)
+            .attr('dy', '0.31em')
+            .text(this.formatDay);
+
+        year.append('g')
+            .selectAll('rect')
+            .data(d => d.values)
+            .enter().append('rect')
+            .attr('width', this.cellSize - 1)
+            .attr('height', this.cellSize - 1)
+            .attr('x', (d: any) => this.timeWeek.count(d3.timeYear(d.date), d.date) * this.cellSize + 0.5)
+            .attr('y', (d: any) => this.countDay(d.date) * this.cellSize + 0.5)
+            .attr('fill', (d: any) => this.color(d.value))
+            .append('title')
+            .text((d: any) => `${this.formatDate(d.date)}: ${this.format(d.value)}`);
+
+        const month = year.append('g')
+            .selectAll('g')
+            .data(d => d3.timeMonths(d3.timeMonth(d.values[0].date), d.values[d.values.length - 1].date))
+            .enter().append('g');
+
+        month.filter((d, i: any) => i).append('path')
+            .attr('fill', 'none')
+            .attr('stroke', '#fff')
+            .attr('stroke-width', 3)
+            .attr('d', this.pathMonth);
+
+        month.append('text')
+            .attr('x', (d: any) => this.timeWeek.count(d3.timeYear(d), this.timeWeek.ceil(d)) * this.cellSize + 2)
+            .attr('y', -5)
+            .text(this.formatMonth);
     }
 }

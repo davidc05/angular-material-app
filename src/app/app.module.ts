@@ -65,7 +65,7 @@ import {
 } from './watchlist/watchlist.component';
 import { WatchlistResolver } from './watchlist/watchlist.resolver';
 import { IpQueryResolver } from './ip-query/ip-query.resolver';
-import { TrendsComponent, BarChartComponent, PieChartComponent } from './trends/trends.component';
+import { TrendsComponent, BarChartComponent, PieChartComponent, CalenderChartComponent } from './trends/trends.component';
 import { TrendsResolver } from './trends/trends.resolver';
 import { IpTagsComponent, CreateTagDialog, TagDeleteDialog } from './ip-tags/ip-tags.component';
 import { AdminComponent, DeleteUserDialog, CreateUserDialog, CreateApiKeyDialog, DeleteApiKeyDialog } from './admin/admin.component';
@@ -94,6 +94,7 @@ import { MyAccountResolver } from './my-account/my-account.resolver';
     TrendsComponent,
     BarChartComponent,
     PieChartComponent,
+    CalenderChartComponent,
     IpTagsComponent,
     CreateTagDialog,
     CreateWatchlistDialog,
@@ -107,7 +108,7 @@ import { MyAccountResolver } from './my-account/my-account.resolver';
     AdminComponent,
     GmapComponent,
     SaveListDialog,
-    MyAccountComponent
+    MyAccountComponent,
   ],
   imports: [
     RouterModule.forRoot(routes,
@@ -224,6 +225,7 @@ import { MyAccountResolver } from './my-account/my-account.resolver';
     WatchlistDialogComponent,
     BarChartComponent,
     PieChartComponent,
+    CalenderChartComponent,
   ],
   bootstrap: [AppComponent]
 })
