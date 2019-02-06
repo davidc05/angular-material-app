@@ -9,6 +9,7 @@ import {
     AfterViewInit,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { MatSort, MatTableDataSource } from '@angular/material';
 
 import * as d3 from 'd3';
 import { groupBy } from 'lodash';
@@ -35,18 +36,23 @@ export interface CalenderData {
 export class TrendsComponent implements OnInit {
 
     top10IPsbyThreatColumns: string[] = ['ipaddress', 'threat_potential_score_pct', 'blacklist_class'];
+    ipHotListColumns: string[] = ['ipAddress', 'severityScore', 'blacklistClass'];
     isLoading;
 
     watchlistsByThreatlevel;
     top10IPsbyThreat;
     threatTypeBreakdown: PieChartData[];
     threatScoreVolatility;
+    ipHotList = new MatTableDataSource([]);
+
+    @ViewChild(MatSort) sort: MatSort;
 
     constructor(
         private route: ActivatedRoute,
     ) { }
 
     ngOnInit() {
+        this.ipHotList.sort = this.sort;
         this.route.data.subscribe(routeData => {
             const data = routeData['data'].trendsData;
             if (data) {
@@ -58,6 +64,7 @@ export class TrendsComponent implements OnInit {
                     value: item.tsToday,
                     name: item.queryname,
                 }));
+                this.ipHotList.data = data.ipHotList;
             }
         });
     }

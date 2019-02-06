@@ -62,4 +62,40 @@
             [calenderData]="threatScoreVolatility"
         ></app-calender-chart>
     </section>
+
+    <section *ngIf="ipHotList && ipHotList.length !== 0">
+        <h3>IP Hot List - All IPs by Risk Severity</h3>
+        <div class="table-wrapper">
+            <table mat-table [dataSource]="ipHotList" matSort class="mat-elevation-z8 results-table">
+                <!-- IP address Column -->
+                <ng-container matColumnDef="ipAddress">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> IP address </th>
+                    <td mat-cell *matCellDef="let element">
+                        <a matTooltip="Click here for IP details." [routerLink]="['/detail/', element.ipAddress]">
+                            {{element.ipAddress}}
+                        </a>
+                    </td>
+                </ng-container>
+
+                <!-- Severity Rating Column -->
+                <ng-container matColumnDef="severityScore">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Severity Rating </th>
+                    <td mat-cell *matCellDef="let element">
+                        {{element.severityScore}}
+                    </td>
+                </ng-container>
+
+                <!-- Blacklist Class Column -->
+                <ng-container matColumnDef="blacklistClass">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Blacklist Class </th>
+                    <td mat-cell *matCellDef="let element">
+                        {{element.blacklistClass}}
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="ipHotListColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: ipHotListColumns;"></tr>
+            </table>
+        </div>
+    </section>
 </div>
