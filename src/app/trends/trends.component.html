@@ -1,14 +1,15 @@
 <div class="content-container">
-    <section>
-        <h3>Watchlists by Threat Level</h3>
-        <app-bar-chart
-            *ngIf="watchlistsByThreatlevel"
-            [data]="watchlistsByThreatlevel"
-        ></app-bar-chart>
+    <section *ngIf="watchlistTrends && watchlistTrends.length !== 0">
+        <h3>Watchlist Trends - Last 90 Days</h3>
+        <nvd3 [options]="barChartOptions1" [data]="watchlistTrends"></nvd3>
     </section>
     <section>
+        <h3>Watchlists by Threat Level</h3>
+        <nvd3 [options]="barChartOptions" [data]="watchlistbyThreatlevel"></nvd3>
+    </section>
+    <section *ngIf="top10IPsbyThreat && top10IPsbyThreat.length !== 0">
         <h3>Top 10 IPs by Threat Score - Last 90 Days</h3>
-        <div class="table-wrapper" *ngIf="top10IPsbyThreat && top10IPsbyThreat.length !== 0">
+        <div class="table-wrapper">
             <table mat-table [dataSource]="top10IPsbyThreat" matSort class="mat-elevation-z8 results-table">
                 <!--- Note that these columns can be defined in any order.
                       The actual rendered columns are set as a property on the row definition" -->
@@ -45,28 +46,22 @@
         </div>
 
     </section>
-    <section>
+    <section class="threatTypeBreakdown">
         <h3>Threat Type Breakdown - Last 90 Days</h3>
-        <div class="threatTypeBreakdown">
-            <div style="width:350px; height:390px;" *ngFor="let item of threatTypeBreakdown | keyvalue">
-                <h4>{{item.key}}</h4>
-                <app-pie-chart
-                    [pieData]="item.value"
-                ></app-pie-chart>
-            </div>
+        <div style="width:290px; height:290px; margin-bottom: 20px" *ngFor="let item of threatTypeBreakdown | keyvalue">
+            <h4>{{item.key}}</h4>
+            <nvd3 [options]="pieChartOptions" [data]="item.value"></nvd3>
         </div>
     </section>
-    <section>
+    <!-- <section>
         <h3>Threat Score Volatility - Last 90 Days</h3>
-        <app-calender-chart
-            [calenderData]="threatScoreVolatility"
-        ></app-calender-chart>
-    </section>
+        <app-heatmap-chart></app-heatmap-chart>
+    </section> -->
 
-    <section *ngIf="ipHotList && ipHotList.length !== 0">
+    <section *ngIf="ipHotListTableData && ipHotListTableData.length !== 0">
         <h3>IP Hot List - All IPs by Risk Severity</h3>
         <div class="table-wrapper">
-            <table mat-table [dataSource]="ipHotList" matSort class="mat-elevation-z8 results-table">
+            <table mat-table [dataSource]="ipHotListTableData" matSort class="mat-elevation-z8 results-table">
                 <!-- IP address Column -->
                 <ng-container matColumnDef="ipAddress">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header> IP address </th>
@@ -97,5 +92,8 @@
                 <tr mat-row *matRowDef="let row; columns: ipHotListColumns;"></tr>
             </table>
         </div>
+        <mat-paginator #paginator [length]="itemsLength" [pageIndex]="pageIndex" [pageSize]="pageSize"
+            [pageSizeOptions]="pageSizeOptions" [showFirstLastButtons]="true" (page)="pageEvent = getPageInfo($event)">
+        </mat-paginator>
     </section>
 </div>

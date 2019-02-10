@@ -26,6 +26,15 @@ table {
     justify-content: center;
 }
 
+.threatTypeBreakdown h3 {
+    width: 100%;
+}
+
+.threatTypeBreakdown svg.nvd3-svg {
+    width: 100%;
+    margin-top: -30px;
+}
+
 .threatTypeBreakdown h4 {
     margin: 0;
     text-align: center;

@@ -11,6 +11,9 @@ import { IpRangesComponent } from './ip-ranges/ip-ranges.component';
 import { IpRangesResolver } from './ip-ranges/ip-ranges.resolver';
 import { NgCircleProgressModule } from 'ng-circle-progress';
 import { NgxLoadingModule } from 'ngx-loading';
+import { NvD3Module } from 'ng2-nvd3';
+import 'd3';
+import 'nvd3';
 
 import {
   MatButtonModule,
@@ -65,7 +68,7 @@ import {
 } from './watchlist/watchlist.component';
 import { WatchlistResolver } from './watchlist/watchlist.resolver';
 import { IpQueryResolver } from './ip-query/ip-query.resolver';
-import { TrendsComponent, BarChartComponent, PieChartComponent, CalenderChartComponent } from './trends/trends.component';
+import { TrendsComponent } from './trends/trends.component';
 import { TrendsResolver } from './trends/trends.resolver';
 import { IpTagsComponent, CreateTagDialog, TagDeleteDialog } from './ip-tags/ip-tags.component';
 import { AdminComponent, DeleteUserDialog, CreateUserDialog, CreateApiKeyDialog, DeleteApiKeyDialog } from './admin/admin.component';
@@ -92,9 +95,6 @@ import { MyAccountResolver } from './my-account/my-account.resolver';
     QueryNameDialogComponent,
     WatchlistComponent,
     TrendsComponent,
-    BarChartComponent,
-    PieChartComponent,
-    CalenderChartComponent,
     IpTagsComponent,
     CreateTagDialog,
     CreateWatchlistDialog,
@@ -111,6 +111,7 @@ import { MyAccountResolver } from './my-account/my-account.resolver';
     MyAccountComponent,
   ],
   imports: [
+    NvD3Module,
     RouterModule.forRoot(routes,
     {
       useHash: false
@@ -223,9 +224,6 @@ import { MyAccountResolver } from './my-account/my-account.resolver';
     EditNoteDialog,
     DeleteNoteDialog,
     WatchlistDialogComponent,
-    BarChartComponent,
-    PieChartComponent,
-    CalenderChartComponent,
   ],
   bootstrap: [AppComponent]
 })
