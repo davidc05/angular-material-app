@@ -120,6 +120,8 @@ export class MusubuAPIApi extends BaseLoopBackApi {
    *
    * @param {string} ipNotation 
    *
+   * @param {object} req 
+   *
    * @returns {object} An empty reference that will be
    *   populated with the actual data once the response is returned
    *   from the server.
@@ -129,7 +131,7 @@ export class MusubuAPIApi extends BaseLoopBackApi {
    * This usually means the response is a `MusubuAPI` object.)
    * </em>
    */
-  public Musubu(IP: any = {}, format: any = {}, level: any = {}, key: any = {}, listneighbors: any = {}, ISP: any = {}, NetworkName: any = {}, NetworkType: any = {}, NetworkGroup: any = {}, Page: any = {}, PageBy: any = {}, ipNotation: any = {}, customHeaders?: Function): Observable<any> {
+  public Musubu(IP: any = {}, format: any = {}, level: any = {}, key: any = {}, listneighbors: any = {}, ISP: any = {}, NetworkName: any = {}, NetworkType: any = {}, NetworkGroup: any = {}, Page: any = {}, PageBy: any = {}, ipNotation: any = {}, req: any = {}, customHeaders?: Function): Observable<any> {
     let _method: string = "GET";
     let _url: string = LoopBackConfig.getPath() + "/" + LoopBackConfig.getApiVersion() +
     "/MusubuAPI/Musubu";

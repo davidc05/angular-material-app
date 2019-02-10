@@ -38,7 +38,7 @@ export class AdminComponent implements OnInit {
   apiKeys;
   subscriptionPlans;
   usersGridColumns: string[] = ['email', 'subscriptionPlan', 'isAdmin', 'deleteButton'];
-  apiKeysGridColumns: string[] = ["key", "userId", "createdOn", "expiresAt", "totalCalls", "callLimit", "whitelistIps", "deleteButton"];
+  apiKeysGridColumns: string[] = ["key", "userId", "createdOn", "expiresAt", "totalCalls", "callLimit", "isWhitelistEnabled", "whitelistIps", "deleteButton"];
   readonly separatorKeysCodes: number[] = [ENTER, COMMA, SPACE];
   removable = true;
 
