@@ -33,7 +33,7 @@
     "file-saver": "^2.0.0-rc.4",
     "ip-address": "^5.8.9",
     "lodash": "^4.17.11",
-    "moment": "^2.22.2",
+    "moment": "^2.29.2",
     "ng-circle-progress": "^1.2.0",
     "ng2-nvd3": "^2.0.0",
     "ngx-loading": "^2.0.1",
